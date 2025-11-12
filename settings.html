@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofai-black.png"
+        />
+        <meta
+            name="description"
+            content="The cheapest inference provider for large models"
+        />
+        <title>CrofAI - Settings</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+        <script src="https://files.nahcrof.com/file/styl.js"></script>
+
+        <style>
+            .page-header {
+                margin-top: 12vh;
+                text-align: center;
+            }
+
+            .page-header h1 {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+                font-size: 2.2rem;
+                color: var(--bright-text);
+                margin: 0;
+            }
+
+            .page-subtitle {
+                color: var(--link-text);
+                margin-top: 6px;
+            }
+
+            .settings-container {
+                margin: 40px auto 80px auto;
+                width: 90%;
+                max-width: 800px;
+            }
+
+            .panel {
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 22px;
+                transition: 0.3s ease;
+                background: transparent;
+                margin-bottom: 20px; /* Space between stacked panels */
+            }
+
+
+            .panel .title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 14px;
+            }
+
+            .panel .title {
+                font-size: 1.1rem;
+                color: var(--text);
+            }
+
+            .panel .subtitle {
+                color: var(--link-text);
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+            }
+
+            .field {
+                margin-top: 12px;
+            }
+
+            .label {
+                color: var(--link-text);
+                margin-bottom: 6px;
+                display: block;
+            }
+
+            .input {
+                width: 95%;
+                background: var(--background);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 9px;
+                padding: 10px 12px;
+                font-size: 0.95rem;
+                outline: none;
+                transition: border 0.2s ease;
+            }
+
+            .row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .btn-row {
+                margin-top: 10px;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            /* Set all buttons to the requested width */
+            .settings-container .btn,
+            .settings-container .btn-white {
+                width: 200px;
+                justify-content: center; /* Center text in the button */
+            }
+
+            .credits-box {
+                font-size: 1.8rem;
+                color: var(--bright-text);
+                text-align: center;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 18px;
+                background: var(--dark-background);
+            }
+
+            .toggle-row {
+                display: flex;
+		flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                border: 1px solid var(--border);
+                background: var(--background);
+                border-radius: 10px;
+                padding: 12px 14px;
+            }
+
+            .toggle-caption {
+		max-width: 625px;
+                color: var(--link-text);
+                margin-top: 6px;
+                font-size: 0.95rem;
+            }
+
+            /* Simpler Toggle Switch */
+            .toggle-switch {
+                position: relative;
+                display: inline-block;
+                width: 50px;
+                height: 28px;
+            }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: var(--border);
+                transition: 0.3s;
+                border-radius: 34px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 20px;
+                width: 20px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: 0.3s;
+                border-radius: 50%;
+            }
+
+            input:checked + .slider {
+                background-color: white;
+            }
+
+            input:checked + .slider:before {
+                background-color: black;
+                transform: translateX(22px);
+            }
+
+            .hr {
+                border-top: 1px solid var(--border);
+                margin: 14px 0;
+            }
+
+            .inline-note {
+                color: var(--bright-text);
+                font-size: 0.95rem;
+            }
+
+            .spacer-vert {
+                height: 12px;
+            }
+	    .btn-wrapper {
+		display: flex;
+		justify-content: center;
+	    }
+
+
+
+
+        </style>
+    </head>
+    <body>
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <div id="sidebar" class="sidebar">
+            <ul>
+                <li><a href="/">Playground</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/docs">Documentation</a></li>
+                <li>
+                    <a style="color: var(--bright-text)" href="/settings">Settings</a>
+                </li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="overlay"></div>
+
+	<br><br><br><br><br><br>
+
+        <div class="settings-container">
+            <!-- Account Settings -->
+            <div class="panel">
+                <div class="title-row">
+                    <div class="title">Account Settings</div>
+                    <div class="inline-note">({{username}})</div>
+                </div>
+
+                <!-- Email -->
+                <div class="subtitle">
+                    {% if email %}
+                    Billing email ({{email}})
+                    {% else %}
+                    Add a Billing Email
+                    {% endif %}
+                </div>
+                <div class="row field">
+                    <input
+                        type="text"
+                        id="email"
+                        class="input"
+                        placeholder="Enter an Email"
+                    />
+                </div>
+                <div class="btn-row">
+                    <button class="btn" onclick="updateEmail()">Update Email</button>
+
+                    {% if email %}
+                    <script>
+                        function addCredits() {
+                            window.location.replace("/settings-api/add-credits");
+                        }
+                    </script>
+                    {% else %}
+                    <script>
+                        function addCredits() {
+                            alert("You must have an email to add credits to your account");
+                        }
+                    </script>
+                    {% endif %}
+                </div>
+
+                <div class="hr"></div>
+
+                <!-- Password -->
+                <div class="title">Change Password</div>
+                <div class="field">
+                    <label class="label" for="current-password">Current password</label>
+                    <input
+                        type="password"
+                        id="current-password"
+                        class="input"
+                        placeholder="Enter current password"
+                    />
+                </div>
+                <div class="field">
+                    <label class="label" for="new-password">New password</label>
+                    <input
+                        type="password"
+                        id="new-password"
+                        class="input"
+                        placeholder="Enter new password"
+                    />
+                </div>
+                <div class="field">
+                    <label class="label" for="confirm-password">Confirm new password</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        class="input"
+                        placeholder="Confirm new password"
+                    />
+                </div>
+                <div class="btn-row">
+                    <button class="btn" onclick="updatePassword()">Update Password</button>
+                </div>
+            </div>
+
+            <!-- Credits + Payment -->
+            <div class="panel">
+                <div class="title">Credits</div>
+                <div class="spacer-vert"></div>
+                <div class="credits-box">${{user_credits}}</div>
+		<br>
+		<button class="btn-wrapper btn-purple" onclick="addCredits()" style="width: 200px;">
+		    Add Credits
+		</button>
+
+                <div class="hr"></div>
+
+                <div class="title">Payment Settings</div>
+                <div class="spacer-vert"></div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="title" style="font-size: 1rem">Auto Top Up</div>
+                        <div class="toggle-caption">
+			    Automatically add credits when your balance is low (adds $10 —
+                            requires a default payment method)
+                        </div>
+                    </div>
+                    <label class="toggle-switch" aria-label="Auto Top Up toggle">
+                        {% if top_up %}
+                        <input type="checkbox" id="autoTopUpToggle" checked />
+                        {% else %}
+                        <input type="checkbox" id="autoTopUpToggle" />
+                        {% endif %}
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="btn-row" style="margin-top: 14px">
+                    {% if email %}
+                    <script>
+                        function manageBilling() {
+                            window.location.replace(
+                                "https://billing.stripe.com/p/login/aEU3ePgBj3aEePe288"
+                            );
+                        }
+                    </script>
+                    {% else %}
+                    <script>
+                        function manageBilling() {
+                            alert(
+                                "You must have an email and purchase credits before you can set a default payment method."
+                            );
+                        }
+                    </script>
+                    {% endif %}
+                    <button class="btn" onclick="manageBilling()">Manage Billing</button>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="title" style="color: var(--bright)">
+                    Danger Zone
+                </div>
+                <div class="subtitle">
+                    Warning: This action is irreversible. Proceed with caution.
+                </div>
+                <div class="btn-row">
+                    <button class="btn-red" onclick="confirmDeleteAccount()" style="width: 200px;">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script src="/ui/crofui.js"></script>
+        <script>
+            // Sidebar/hamburger
+            document.addEventListener("DOMContentLoaded", function () {
+                const hamburger = document.querySelector(".hamburger");
+                const sidebar = document.querySelector(".sidebar");
+                const overlay = document.querySelector(".overlay");
+
+                hamburger.addEventListener("click", function () {
+                    hamburger.classList.toggle("active");
+                    sidebar.classList.toggle("active");
+                    overlay.classList.toggle("active");
+                });
+
+                overlay.addEventListener("click", function () {
+                    hamburger.classList.remove("active");
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+
+                // Auto Top Up toggle
+                const autoTopUpToggle = document.getElementById("autoTopUpToggle");
+                if (autoTopUpToggle) {
+                    autoTopUpToggle.addEventListener("change", function () {
+                        const state = this.checked ? "on" : "off";
+                        try {
+                            styLpost(
+                                "/settings-api/auto-top-up",
+                                JSON.stringify({ toggle: state })
+                            );
+                            console.log(`toggled: ${state}`);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                }
+            });
+
+            function updateEmail() {
+                const newEmail = document.getElementById("email").value;
+                if (newEmail.trim() === "") {
+                    alert("Please enter a username");
+                    return;
+                }
+                window.location.replace("/settings-api/update-email/" + newEmail);
+            }
+
+            function updatePassword() {
+                const currentPassword =
+                    document.getElementById("current-password").value;
+                const newPassword = document.getElementById("new-password").value;
+                const confirmPassword =
+                    document.getElementById("confirm-password").value;
+
+                if (
+                    currentPassword.trim() === "" ||
+                    newPassword.trim() === "" ||
+                    confirmPassword.trim() === ""
+                ) {
+                    alert("Please fill in all password fields");
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    createToast("New passwords do not match");
+                    return;
+                }
+
+                fetch("/settings-api/update-password", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((updatePasswordResponse) => {
+                        if (updatePasswordResponse["error"]) {
+                            createToast(updatePasswordResponse["message"]);
+                        } else {
+                            createToast("Password updated successfully!");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+
+                // Clear fields
+                document.getElementById("current-password").value = "";
+                document.getElementById("new-password").value = "";
+                document.getElementById("confirm-password").value = "";
+            }
+
+            function confirmDeleteAccount() {
+                let confirmDelete = window.prompt(
+                    'This action cannot be undone. Type "Delete my account" to continue'
+                );
+                if (confirmDelete === "Delete my account") {
+                    window.location.replace("/settings-api/delete-user");
+                } else {
+                    createToast("canceled");
+                }
+            }
+        </script>
+
+        {% if error %}
+        <script>
+	    createToast("{{error}}");
+        </script>
+        {% endif %}
+    </body>
+</html>
