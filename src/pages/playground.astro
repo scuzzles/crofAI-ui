@@ -1,11 +1,9 @@
 ---
-import Header from "./Header.astro";
-import Footer from "./Footer.astro";
+import Header from "../components/Header.astro";
+import Playground from "../components/playground/Playground.svelte";
 import "../styles/base.css";
 import "../styles/prose.css";
 import icon from "../lib/icon.svg?url";
-
-const { frontmatter } = Astro.props;
 ---
 
 <!doctype html>
@@ -14,21 +12,10 @@ const { frontmatter } = Astro.props;
     <meta charset="UTF-8" />
     <link rel="icon" href={icon} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{frontmatter.title}</title>
+    <title>Playground</title>
   </head>
   <body>
     <Header />
-    <main class="prose">
-      <slot />
-    </main>
-    <Footer pushToBottom={true} />
+    <Playground client:load />
   </body>
 </html>
-
-<style>
-  main {
-    width: 100%;
-    max-width: 50rem;
-    align-self: center;
-  }
-</style>

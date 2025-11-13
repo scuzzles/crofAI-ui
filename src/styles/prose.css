@@ -1,0 +1,33 @@
+.prose {
+  display: flex;
+  flex-direction: column;
+  > * {
+    margin-top: 1em;
+  }
+  > h1 {
+    font-size: 3rem;
+  }
+  > h2 {
+    font-size: 2rem;
+  }
+  > h3 {
+    font-size: 1.5rem;
+  }
+  > pre {
+    padding: 0.5rem;
+    border-radius: 1rem;
+    background-color: rgb(var(--m3-scheme-surface-container)) !important;
+    color: inherit !important;
+  }
+  > ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+  }
+  > ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+  }
+  a {
+    color: rgb(var(--m3-scheme-primary));
+  }
+}
