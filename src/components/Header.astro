@@ -1,5 +1,6 @@
 ---
 import Layer from "./Layer.astro";
+import If from "./jinja/If.astro";
 import { pages } from "../lib/pages";
 
 const currentPath = Astro.url.pathname;
@@ -8,9 +9,9 @@ const currentPath = Astro.url.pathname;
 <header>
   <nav>
     {
-      pages.map(({ href, title, icon }) => {
+      pages.map(({ href, title, icon, loggedInOnly }) => {
         const isSelected = currentPath.startsWith(href);
-        return (
+        const navItem = (
           <a class="font-label-medium" href={href}>
             <div class:list={{ content: true, selected: isSelected }}>
               <Layer />
@@ -21,6 +22,8 @@ const currentPath = Astro.url.pathname;
             </div>
           </a>
         );
+
+        return loggedInOnly ? <If condition="loggedin">{navItem}</If> : navItem;
       })
     }
   </nav>

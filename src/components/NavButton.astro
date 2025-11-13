@@ -1,5 +1,6 @@
 ---
 import { pages } from "../lib/pages";
+import If from "./jinja/If.astro";
 import Layer from "./Layer.astro";
 ---
 
@@ -18,12 +19,16 @@ import Layer from "./Layer.astro";
   </div>
   <div class="menu">
     {
-      pages.slice(1).map(({ href, title }) => (
-        <a class="font-title-medium" href={href}>
-          <Layer />
-          {title}
-        </a>
-      ))
+      pages.slice(1).map(({ href, title, loggedInOnly }) => {
+        const menuItem = (
+          <a class="font-title-medium" href={href}>
+            <Layer />
+            {title}
+          </a>
+        );
+
+        return loggedInOnly ? <If condition="loggedin">{menuItem}</If> : menuItem;
+      })
     }
   </div>
 </div>

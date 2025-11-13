@@ -2,25 +2,22 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Layer from "../components/Layer.astro";
+import If from "../components/jinja/If.astro";
 import "../styles/base.css";
 import icon from "../lib/icon.svg?url";
-import { loggedIn } from "../lib/state";
 
-const plan = "{{ plan }}" as string;
 const plans = [
   {
     name: "Hobby",
+    planId: "hobby",
     price: "$5/month",
     description: "250 daily requests for all models",
-    action: !loggedIn ? "Sign in" : plan == "hobby" ? "Unsubscribe" : "Purchase",
-    href: !loggedIn ? "/signin" : plan == "hobby" ? "/plan-api/free" : "/plan-api/hobby",
   },
   {
     name: "Pro",
+    planId: "pro",
     price: "$10/month",
     description: "1000 daily requests for all models, plus priority support",
-    action: !loggedIn ? "Sign in" : plan == "pro" ? "Unsubscribe" : "Purchase",
-    href: !loggedIn ? "/signin" : plan == "pro" ? "/plan-api/free" : "/plan-api/pro",
   },
 ];
 ---
@@ -38,31 +35,51 @@ const plans = [
     <main>
       <h2 class="font-headline-large">With plans, never worry about prices per token</h2>
       <div class="plans">
-        <!--
-        <button class="plan">
-          <Layer />
-          <h3>Hobby • <span class="price">$5/month</span></h3>
-          <p>250 daily requests for all models</p>
-          <div class="fake-button">Purchase</div>
-        </button>-->
         {
-          plans.map(({ name, price, description, action, href }) => {
-            const btnClass = action == "Unsubscribe" ? "fake-button error" : "fake-button";
-            const onclick =
-              action == "Sign in"
-                ? undefined
-                : `if(!confirm("Are you sure?")){event.preventDefault()}`;
-            return (
-              <a class="plan" href={href} onclick={onclick}>
-                <Layer />
-                <h3>
-                  {name} • <span class="price">{price}</span>
-                </h3>
-                <p>{description}</p>
-                <div class={btnClass}>{action}</div>
-              </a>
-            );
-          })
+          plans.map(({ name, planId, price, description }) => (
+            <>
+              <If condition={`plan == '${planId}'`}>
+                <a
+                  class="plan"
+                  href="/plan-api/free"
+                  onclick="if(!confirm('Are you sure?')){event.preventDefault()}"
+                >
+                  <Layer />
+                  <h3>
+                    {name} • <span class="price">{price}</span>
+                  </h3>
+                  <p>{description}</p>
+                  <div class="fake-button error">Unsubscribe</div>
+                </a>
+              </If>
+              <If condition={`plan != '${planId}'`}>
+                <If condition="not loggedin">
+                  <a class="plan" href="/signin">
+                    <Layer />
+                    <h3>
+                      {name} • <span class="price">{price}</span>
+                    </h3>
+                    <p>{description}</p>
+                    <div class="fake-button">Sign in</div>
+                  </a>
+                </If>
+                <If condition="loggedin">
+                  <a
+                    class="plan"
+                    href={`/plan-api/${planId}`}
+                    onclick="if(!confirm('Are you sure?')){event.preventDefault()}"
+                  >
+                    <Layer />
+                    <h3>
+                      {name} • <span class="price">{price}</span>
+                    </h3>
+                    <p>{description}</p>
+                    <div class="fake-button">Purchase</div>
+                  </a>
+                </If>
+              </If>
+            </>
+          ))
         }
       </div>
       <h2 class="font-headline-large">Models</h2>

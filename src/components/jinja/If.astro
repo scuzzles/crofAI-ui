@@ -1,0 +1,30 @@
+---
+interface Props {
+  condition: string;
+}
+const { condition } = Astro.props;
+
+// Hardcoded dev context - only used in development
+const devContext: Record<string, boolean> = {
+  loggedin: true,
+  "not loggedin": false,
+  "plan == 'hobby'": false,
+  "plan == 'pro'": false,
+  "plan != 'hobby'": true,
+  "plan != 'pro'": true,
+};
+---
+
+{
+  import.meta.env.DEV ? (
+    devContext[condition] ? (
+      <slot />
+    ) : null
+  ) : (
+    <>
+      <Fragment set:raw={`{% if ${condition} %}`} />
+      <slot />
+      <Fragment set:raw="{% endif %}" />
+    </>
+  )
+}
