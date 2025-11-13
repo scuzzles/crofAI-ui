@@ -42,7 +42,7 @@ const plans = [
                 <a
                   class="plan"
                   href="/plan-api/free"
-                  onclick="if(!confirm('Are you sure?')){event.preventDefault()}"
+                  onclick={`if(!confirm('Remove all ${name} priviliges?')){event.preventDefault()}`}
                 >
                   <Layer />
                   <h3>
@@ -67,7 +67,7 @@ const plans = [
                   <a
                     class="plan"
                     href={`/plan-api/${planId}`}
-                    onclick="if(!confirm('Are you sure?')){event.preventDefault()}"
+                    onclick={`if(!confirm('Subscribe to ${name}?')){event.preventDefault()}`}
                   >
                     <Layer />
                     <h3>
