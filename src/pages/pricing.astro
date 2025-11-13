@@ -2,9 +2,7 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Layer from "../components/Layer.astro";
-import For from "../components/jinja/For.astro";
 import If from "../components/jinja/If.astro";
-import Model from "../components/pricing/Model.astro";
 import "../styles/base.css";
 import icon from "../lib/icon.svg?url";
 
@@ -95,19 +93,40 @@ const plans = [
           </tr>
         </thead>
         <tbody>
-          <For
-            items="models"
-            component={Model}
-            props={{
-              id: ".id",
-              quantization: ".quantization",
-              context_length: ".context_length",
-              max_completion_tokens: ".max_completion_tokens",
-              promptPricing: `.pricing["prompt"]`,
-              completionPricing: `.pricing["completion"]`,
-              speed: ".speed",
-            }}
-          />
+          <Fragment set:html={`{% for item in models %}<tr>
+  <td>
+    <h2 class="font-title-medium">
+      {{ item.id }}
+      <button
+        class="copy-button"
+        onclick="navigator.clipboard.writeText('{{ item.id }}')"
+        title="Copy model ID"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M9 18q-.825 0-1.412-.587T7 16V4q0-.825.588-1.412T9 2h9q.825 0 1.413.588T20 4v12q0 .825-.587 1.413T18 18zm0-2h9V4H9zm-4 6q-.825 0-1.412-.587T3 20V7q0-.425.288-.712T4 6t.713.288T5 7v13h10q.425 0 .713.288T16 21t-.288.713T15 22zm4-6V4z"
+          ></path>
+        </svg>
+      </button>
+    </h2>
+    <div class="chips">
+      <div class="chip font-label-medium">{{ item.quantization }}</div>
+      <div class="chip font-label-medium">
+        {% if item.max_completion_tokens != item.context_length %}
+          {{ (item.context_length / 1024) | int }}k context / {{ (item.max_completion_tokens / 1024) | int }}k output
+        {% else %}
+          {{ (item.context_length / 1024) | int }}k
+        {% endif %}
+      </div>
+    </div>
+  </td>
+  <td style="text-align: right">\${{ item.pricing["prompt"] }}</td>
+  <td style="text-align: right">\${{ item.pricing["completion"] }}</td>
+  <td style="text-align: right; {% set speed_val = item.speed %}{% set speed_percent = (((speed_val - 10) / (1000 - 10)) * 100) | int %}{% set speed_percent_clamped = [0, [speed_percent, 100] | min] | max %}color: color-mix(in oklab, oklch(0.8 0.3379 164.12) {{ speed_percent_clamped }}%, oklch(0.8 0.0664 0))">
+    {{ item.speed }} tps
+  </td>
+</tr>{% endfor %}`} />
         </tbody>
       </table>
     </main>
@@ -195,5 +214,32 @@ const plans = [
     &:last-child {
       padding-right: 1rem;
     }*/
+  }
+
+  .models-table h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+  }
+
+  .copy-button {
+    cursor: pointer;
+  }
+
+  .chips {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+  }
+
+  .chip {
+    display: flex;
+    height: 2rem;
+    align-items: center;
+    padding-inline: 0.5rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--m3-scheme-primary-container-subtle));
+    color: rgb(var(--m3-scheme-on-primary-container-subtle));
   }
 </style>
