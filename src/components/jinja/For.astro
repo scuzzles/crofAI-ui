@@ -394,7 +394,18 @@ Object.entries(propMapping).forEach(([propName, path]) => {
 const buildItemDev = (item: any) => {
   const props: Record<string, any> = {};
   Object.entries(propMapping).forEach(([propName, path]) => {
-    props[propName] = path.split(".").reduce((current, key) => current?.[key], item);
+    // Remove leading dot
+    let cleanPath = path.replace(/^\./, "");
+
+    // Handle bracket notation like pricing["prompt"]
+    const bracketMatch = cleanPath.match(/^([^[]+)\["([^"]+)"\]$/);
+    if (bracketMatch) {
+      props[propName] = item?.[bracketMatch[1]]?.[bracketMatch[2]];
+    } else {
+      // Handle dot notation
+      const keys = cleanPath.split(".").filter(k => k);
+      props[propName] = keys.reduce((current, key) => current?.[key], item);
+    }
   });
   return props;
 };
@@ -407,9 +418,9 @@ const buildItemDev = (item: any) => {
     })
   ) : (
     <>
-      <Fragment set:raw={`{% for item in ${items} %}`} />
+      <Fragment set:html={`{% for item in ${items} %}`} />
       <Component {...prodProps} />
-      <Fragment set:raw="{% endfor %}" />
+      <Fragment set:html="{% endfor %}" />
     </>
   )
 }
