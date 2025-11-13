@@ -3,7 +3,7 @@ export const pages = [
     href: "/playground",
     title: "Playground",
     icon: `<path d="M12 2Q12 12 22 12 12 12 12 22 12 12 2 12 12 12 12 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="rounded"/>`,
-    loggedInOnly: false,
+    loggedInOnly: true,
   },
   {
     href: "/docs",

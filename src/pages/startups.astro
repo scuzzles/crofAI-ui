@@ -1,0 +1,115 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/base.css";
+import icon from "../lib/icon.svg?url";
+import Layer from "../components/Layer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href={icon} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Startup Credits</title>
+  </head>
+  <body>
+    <Header />
+    <form method="POST" class="form-box">
+      <h1 class="font-headline-large">Tell us about your startup</h1>
+      <label class="half">
+        <p>Startup Name</p>
+        <input name="startup_name" placeholder="CrofAI" required />
+      </label>
+      <label class="half">
+        <p>Company Website</p>
+        <input type="url" name="website" placeholder="https://example.com" required />
+      </label>
+      <label>
+        <p>Contact Email</p>
+        <input type="email" name="contact_email" placeholder="you@company.com" required />
+      </label>
+      <label>
+        <p>What problem are you solving? Who are your customers?</p>
+        <textarea
+          name="description"
+          placeholder="Describe your product, target market, stage, and traction."
+          rows="4"
+          required></textarea>
+      </label>
+      <label>
+        <p>How will you use CrofAI?</p>
+        <textarea
+          name="use_case"
+          placeholder="Describe your project and how our AI services will help you achieve your goals."
+          rows="4"
+          required></textarea>
+      </label>
+
+      <button class="font-title-medium">
+        <Layer />
+        Apply for Credits
+      </button>
+    </form>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    > :not(.half) {
+      grid-column: span 2;
+    }
+
+    padding: 1rem;
+    border-radius: 1.5rem;
+    gap: 1rem;
+    background-color: rgb(var(--m3-scheme-surface-container));
+    margin: auto;
+  }
+  label {
+    display: grid;
+    position: relative;
+    > p {
+      position: absolute;
+      inset: 0.5rem 0.5rem auto 0.5rem;
+      pointer-events: none;
+      transition: all 100ms;
+    }
+    &:not(:focus-within) > p {
+      opacity: 0.5;
+    }
+    &:focus-within > p {
+      color: rgb(var(--m3-scheme-primary));
+    }
+    > input,
+    textarea {
+      padding: 2rem 0.5rem 0.5rem 0.5rem;
+      border-radius: 0.5rem;
+      resize: vertical;
+      box-shadow: inset 0 0 0 1px rgb(var(--m3-scheme-outline));
+      transition: box-shadow 100ms;
+      &:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 2px rgb(var(--m3-scheme-primary));
+      }
+    }
+  }
+  button {
+    display: flex;
+    height: 3rem;
+    border-radius: 1.5rem;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 -1rem -1rem -1rem;
+    background-color: rgb(var(--m3-scheme-primary));
+    color: rgb(var(--m3-scheme-on-primary));
+    cursor: pointer;
+    position: relative;
+  }
+</style>

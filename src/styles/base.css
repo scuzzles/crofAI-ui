@@ -85,17 +85,17 @@ body {
   letter-spacing: 0;
   font-weight: 400;
 }
-.font-title-medium {
-  font-size: 1rem;
-  line-height: 1.5;
-  letter-spacing: 0;
-  font-weight: 500;
-}
 .font-headline-small {
   font-size: 1.5rem;
   line-height: 1.333;
   letter-spacing: 0;
   font-weight: 400;
+}
+.font-title-medium {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: 500;
 }
 .font-label-medium {
   font-size: 0.75rem;
