@@ -1,0 +1,94 @@
+---
+import { pages } from "../lib/pages";
+import Layer from "./Layer.astro";
+---
+
+<div class="nav-button">
+  <a class="font-headline-small" href={pages[0].href}>
+    <Layer />
+    Open {pages[0].title.toLowerCase()}
+  </a>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24"
+      ><path
+        fill="currentColor"
+        d="M12 14.975q-.2 0-.375-.062T11.3 14.7l-4.6-4.6q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l3.9 3.9l3.9-3.9q.275-.275.7-.275t.7.275t.275.7t-.275.7l-4.6 4.6q-.15.15-.325.213t-.375.062"
+      ></path></svg
+    >
+  </div>
+  <div class="menu">
+    {
+      pages.slice(1).map(({ href, title }) => (
+        <a class="font-title-medium" href={href}>
+          <Layer />
+          {title}
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .nav-button {
+    display: flex;
+    height: 6rem;
+    gap: 2px;
+    position: relative;
+    align-self: start;
+
+    > :nth-child(1),
+    > :nth-child(2) {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      background-color: rgb(var(--m3-scheme-primary-container));
+      color: rgb(var(--m3-scheme-on-primary-container));
+      border-radius: 3rem;
+    }
+    > :nth-child(1) {
+      padding-inline: 3rem;
+      border-start-end-radius: 0.5rem;
+      border-end-end-radius: 0.5rem;
+    }
+    > :nth-child(2) {
+      padding-inline: 1.8125rem;
+      border-start-start-radius: 0.5rem;
+      border-end-start-radius: 0.5rem;
+    }
+    svg {
+      transition: rotate 100ms;
+    }
+    &:hover svg {
+      rotate: 180deg;
+    }
+    &:not(:hover) > .menu {
+      visibility: hidden;
+      opacity: 0;
+    }
+    > .menu {
+      display: flex;
+      flex-direction: column;
+
+      position: absolute;
+      inset: 100% 0 auto 0;
+
+      padding-top: 0.5rem;
+      gap: 0.25rem;
+      transition: opacity 200ms;
+
+      > a {
+        display: flex;
+        height: 3rem;
+        align-items: center;
+        margin-left: 1rem;
+        padding-inline-start: 2rem;
+        padding-inline-end: 1rem;
+        position: relative;
+
+        background-color: rgb(var(--m3-scheme-surface-container));
+        border-radius: 1rem;
+      }
+    }
+  }
+</style>

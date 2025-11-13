@@ -1,0 +1,48 @@
+---
+import Footer from "../components/Footer.astro";
+import NavButton from "../components/NavButton.astro";
+import "../styles/base.css";
+import icon from "../lib/icon.svg?url";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href={icon} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CrofAI: Affordable AI at Scale</title>
+  </head>
+  <body>
+    <main>
+      <h1 class="font-display-large">
+        CrofAI: the<br /><em>cheapest</em> inference around
+      </h1>
+      <p>So cheap you might actually turn a profit :)</p>
+      <NavButton />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+    margin-inline: 10dvw;
+    margin-block: auto;
+  }
+  main .font-display-large {
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  main em {
+    font-weight: 1000;
+    font-style: normal;
+    color: rgb(var(--m3-scheme-primary));
+  }
+  main p {
+    color: rgb(var(--m3-scheme-on-surface-variant));
+    margin-bottom: 2rem;
+  }
+</style>

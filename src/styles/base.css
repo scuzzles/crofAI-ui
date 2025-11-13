@@ -1,0 +1,154 @@
+@import "@unocss/reset/tailwind-v4.css";
+:root,
+::backdrop {
+  --m3-scheme-background: 25 4 40;
+  --m3-scheme-on-background: 245 222 255;
+  --m3-scheme-surface: 25 4 40;
+  --m3-scheme-surface-dim: 25 4 40;
+  --m3-scheme-surface-bright: 61 29 84;
+  --m3-scheme-surface-container-lowest: 0 0 0;
+  --m3-scheme-surface-container-low: 31 7 48;
+  --m3-scheme-surface-container: 39 13 57;
+  --m3-scheme-surface-container-high: 46 18 66;
+  --m3-scheme-surface-container-highest: 54 23 75;
+  --m3-scheme-on-surface: 245 222 255;
+  --m3-scheme-on-surface-variant: 189 161 205;
+  --m3-scheme-outline: 133 108 149;
+  --m3-scheme-outline-variant: 86 63 101;
+  --m3-scheme-inverse-surface: 255 247 253;
+  --m3-scheme-inverse-on-surface: 100 76 115;
+  --m3-scheme-primary: 194 155 255;
+  --m3-scheme-primary-dim: 142 80 237;
+  --m3-scheme-on-primary: 64 0 133;
+  --m3-scheme-primary-container: 183 138 255;
+  --m3-scheme-on-primary-container: 49 0 104;
+  --m3-scheme-primary-fixed: 183 138 255;
+  --m3-scheme-primary-fixed-dim: 172 119 255;
+  --m3-scheme-on-primary-fixed: 0 0 0;
+  --m3-scheme-on-primary-fixed-variant: 61 0 127;
+  --m3-scheme-inverse-primary: 120 53 214;
+  --m3-scheme-secondary: 149 146 255;
+  --m3-scheme-secondary-dim: 149 146 255;
+  --m3-scheme-on-secondary: 19 0 118;
+  --m3-scheme-secondary-container: 61 55 160;
+  --m3-scheme-on-secondary-container: 206 203 255;
+  --m3-scheme-secondary-fixed: 208 205 255;
+  --m3-scheme-secondary-fixed-dim: 192 189 255;
+  --m3-scheme-on-secondary-fixed: 41 32 141;
+  --m3-scheme-on-secondary-fixed-variant: 71 66 170;
+  --m3-scheme-tertiary: 255 147 170;
+  --m3-scheme-tertiary-dim: 252 126 155;
+  --m3-scheme-on-tertiary: 104 7 43;
+  --m3-scheme-tertiary-container: 252 126 155;
+  --m3-scheme-on-tertiary-container: 86 0 33;
+  --m3-scheme-tertiary-fixed: 255 143 167;
+  --m3-scheme-tertiary-fixed-dim: 248 124 153;
+  --m3-scheme-on-tertiary-fixed: 56 0 19;
+  --m3-scheme-on-tertiary-fixed-variant: 113 17 49;
+  --m3-scheme-error: 255 110 132;
+  --m3-scheme-error-dim: 215 51 87;
+  --m3-scheme-on-error: 73 0 19;
+  --m3-scheme-error-container: 167 1 56;
+  --m3-scheme-on-error-container: 255 178 185;
+  --m3-scheme-shadow: 0 0 0;
+  --m3-scheme-scrim: 0 0 0;
+  --m3-scheme-on-on-primary: 194 155 255;
+  --m3-scheme-primary-container-subtle: 61 0 127;
+  --m3-scheme-on-primary-container-subtle: 191 152 255;
+  --m3-scheme-secondary-container-subtle: 32 20 133;
+  --m3-scheme-on-secondary-container-subtle: 164 161 255;
+  --m3-scheme-tertiary-container-subtle: 94 0 37;
+  --m3-scheme-on-tertiary-container-subtle: 255 133 161;
+  --m3-scheme-error-container-subtle: 95 0 28;
+  --m3-scheme-on-error-container-subtle: 255 135 150;
+}
+:root {
+  color-scheme: dark;
+  background-color: rgb(var(--m3-scheme-background));
+  color: rgb(var(--m3-scheme-on-background));
+  accent-color: rgb(var(--m3-scheme-primary));
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.font-display-large {
+  font-size: 3.563rem;
+  line-height: 1.123;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.font-headline-large {
+  font-size: 2rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.font-title-medium {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.font-headline-small {
+  font-size: 1.5rem;
+  line-height: 1.333;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.font-label-medium {
+  font-size: 0.75rem;
+  line-height: 1.333;
+  letter-spacing: 0.031rem;
+  font-weight: 500;
+}
+::selection {
+  background-color: rgb(var(--m3-scheme-primary-container-subtle));
+  color: rgb(var(--m3-scheme-on-primary-container-subtle));
+}
+
+header {
+  display: grid;
+}
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+
+  > * {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    > .content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      height: 2.5rem;
+      padding-inline: 1rem;
+      border-radius: 2rem;
+      color: rgb(var(--m3-scheme-on-surface-variant));
+    }
+    &.selected > .content {
+      background-color: rgb(var(--m3-scheme-secondary-container));
+      color: rgb(var(--m3-scheme-on-secondary-container));
+    }
+  }
+}
+footer {
+  display: flex;
+  justify-content: center;
+  color: rgb(var(--m3-scheme-on-surface-variant));
+
+  > * {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    padding-inline: 1rem;
+    gap: 0.5rem;
+    transition: color 200ms;
+    &:hover {
+      color: rgb(var(--m3-scheme-secondary));
+    }
+  }
+}

@@ -1,0 +1,135 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Layer from "../components/Layer.astro";
+import "../styles/base.css";
+import icon from "../lib/icon.svg?url";
+import { loggedIn } from "../lib/state";
+
+const plan = "{{ plan }}" as string;
+const plans = [
+  {
+    name: "Hobby",
+    price: "$5/month",
+    description: "250 daily requests for all models",
+    action: !loggedIn ? "Sign in" : plan == "hobby" ? "Unsubscribe" : "Purchase",
+    href: !loggedIn ? "/signin" : plan == "hobby" ? "/plan-api/free" : "/plan-api/hobby",
+  },
+  {
+    name: "Pro",
+    price: "$10/month",
+    description: "1000 daily requests for all models, plus priority support",
+    action: !loggedIn ? "Sign in" : plan == "pro" ? "Unsubscribe" : "Purchase",
+    href: !loggedIn ? "/signin" : plan == "pro" ? "/plan-api/free" : "/plan-api/pro",
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href={icon} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pricing</title>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h2 class="font-headline-large">With plans, never worry about prices per token</h2>
+      <div class="plans">
+        <!--
+        <button class="plan">
+          <Layer />
+          <h3>Hobby • <span class="price">$5/month</span></h3>
+          <p>250 daily requests for all models</p>
+          <div class="fake-button">Purchase</div>
+        </button>-->
+        {
+          plans.map(({ name, price, description, action, href }) => {
+            const btnClass = action == "Unsubscribe" ? "fake-button error" : "fake-button";
+            const onclick =
+              action == "Sign in"
+                ? undefined
+                : `if(!confirm("Are you sure?")){event.preventDefault()}`;
+            return (
+              <a class="plan" href={href} onclick={onclick}>
+                <Layer />
+                <h3>
+                  {name} • <span class="price">{price}</span>
+                </h3>
+                <p>{description}</p>
+                <div class={btnClass}>{action}</div>
+              </a>
+            );
+          })
+        }
+      </div>
+      <h2 class="font-headline-large">Models</h2>
+    </main>
+
+    <div style="flex-grow:1"></div>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+
+    align-self: center;
+    width: 100%;
+    max-width: 50rem;
+
+    > * {
+      margin-top: 1em;
+    }
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .plan {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    position: relative;
+
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+    background-color: rgb(var(--m3-scheme-surface-container));
+    cursor: pointer;
+
+    > h3 {
+      font-weight: bold;
+    }
+    .price {
+      color: rgb(var(--m3-scheme-primary));
+    }
+    > p {
+      margin-bottom: 0.5rem;
+    }
+    > .fake-button {
+      display: flex;
+      align-items: center;
+      align-self: end;
+      height: 3rem;
+      border-radius: 1.5rem;
+
+      padding-inline: 1rem;
+
+      background-color: rgb(var(--m3-scheme-primary));
+      color: rgb(var(--m3-scheme-on-primary));
+      &.error {
+        background-color: rgb(var(--m3-scheme-error));
+        color: rgb(var(--m3-scheme-on-error));
+      }
+
+      margin-top: auto;
+      margin-right: -0.5rem;
+      margin-bottom: -0.5rem;
+    }
+  }
+</style>
