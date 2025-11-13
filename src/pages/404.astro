@@ -1,0 +1,41 @@
+---
+import "../styles/base.css";
+import icon from "../lib/icon.svg?url";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href={icon} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404</title>
+  </head>
+  <body>
+    <pre>██╗  ██╗ ██████╗ ██╗  ██╗
+██║  ██║██╔═████╗██║  ██║
+███████║██║██╔██║███████║
+╚════██║████╔╝██║╚════██║
+     ██║╚██████╔╝     ██║
+     ╚═╝ ╚═════╝      ╚═╝</pre>
+    <a href="/">Home</a>
+  </body>
+</html>
+
+<style>
+  body {
+    justify-content: center;
+    gap: 1rem;
+  }
+  pre {
+    align-self: center;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding-inline: 1rem;
+    color: rgb(var(--m3-scheme-primary));
+  }
+</style>
