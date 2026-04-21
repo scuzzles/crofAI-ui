@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" href="https://files.nahcrof.com/file/crofai-black.png" />
+    <title>CrofAI — Playground</title>
+    <link rel="stylesheet" href="/ui/crofui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.4.0/showdown.min.js"></script>
+    <style>
+        :root {
+            --bg: #000;
+            --surface: #0c0c0c;
+            --surface-2: #141414;
+            --border: #232323;
+            --text: #888;
+            --bright: #fff;
+            --dim: #444;
+            --accent: #9b30ff;
+            --user-bg: #161616;
+            --radius: 14px;
+            --sidebar-w: 290px;
+            --topbar-h: 52px;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f7f7f8;
+            --surface-2: #ededef;
+            --border: #e4e4e7;
+            --text: #555;
+            --bright: #111;
+            --dim: #aaa;
+            --accent: #7c3aed;
+            --user-bg: #f0f0f2;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--bright);
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Topbar ─────────────────────────────────────────────────── */
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--topbar-h);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 84px;
+            gap: 10px;
+            z-index: 200;
+        }
+
+        .topbar::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 85px;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .topbar::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 85px;
+            height: 35px;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            pointer-events: none;
+        }
+
+        .model-select {
+            flex: 1;
+            max-width: 300px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--bright);
+            border-radius: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            padding: 6px 28px 6px 12px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px 6px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .model-select:hover, .model-select:focus { border-color: var(--dim); }
+        .model-select option { background: var(--surface-2); }
+        .model-select optgroup { background: var(--surface-2); color: var(--text); font-size: 0.75rem; }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-pill {
+            font-size: 0.72rem;
+            color: var(--text);
+            font-family: monospace;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 8px;
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+        .icon-btn:hover { color: var(--bright); border-color: var(--dim); }
+        .icon-btn svg { pointer-events: none; }
+
+        /* ── Main layout ─────────────────────────────────────────────── */
+        .layout {
+            position: fixed;
+            top: var(--topbar-h);
+            bottom: 0; left: 0; right: 0;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── Chat pane ───────────────────────────────────────────────── */
+        .chat-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .messages-wrap {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 28px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            scroll-behavior: auto;
+        }
+
+        .messages-wrap::-webkit-scrollbar { width: 4px; }
+        .messages-wrap::-webkit-scrollbar-track { background: transparent; }
+        .messages-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .empty-state {
+            margin: auto;
+            text-align: center;
+            color: var(--dim);
+            padding: 40px 20px;
+        }
+        .empty-state h2 {
+            font-size: 1.4rem;
+            color: var(--text);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .empty-state p { font-size: 0.85rem; line-height: 1.6; }
+
+        /* Messages */
+        .msg { display: flex; flex-direction: column; gap: 6px; }
+
+        .msg-meta {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--dim);
+            padding: 0 4px;
+        }
+        .msg.user .msg-meta { text-align: right; color: var(--text); }
+
+        .msg-bubble {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            max-width: 78%;
+            word-break: break-word;
+        }
+
+        .msg.user { align-items: flex-end; }
+        .msg.user .msg-bubble {
+            background: var(--user-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius) var(--radius) 4px var(--radius);
+            padding: 11px 15px;
+            color: var(--bright);
+            white-space: pre-wrap;
+        }
+
+        .msg.assistant { align-items: flex-start; }
+        .msg.assistant .msg-bubble {
+            background: transparent;
+            color: var(--bright);
+            padding: 4px 0;
+            max-width: 100%;
+        }
+
+        /* Reasoning block inside AI bubble */
+        .reasoning-block { margin-bottom: 14px; font-size: 0.82rem; }
+        .reasoning-toggle {
+            cursor: pointer;
+            color: var(--bright-text);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+        }
+        .reasoning-toggle::before { content: "▶"; font-size: 0.6rem; transition: transform 0.2s; }
+        .reasoning-toggle.open::before { transform: rotate(90deg); }
+        .reasoning-text {
+            margin-top: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .reasoning-text.hidden { display: none; }
+
+        /* Markdown in AI responses */
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
+            color: var(--bright);
+            margin: 16px 0 8px;
+            font-weight: 600;
+        }
+        .msg-bubble h1 { font-size: 1.2rem; }
+        .msg-bubble h2 { font-size: 1.05rem; }
+        .msg-bubble h3 { font-size: 0.95rem; }
+        .msg-bubble p { margin-bottom: 10px; }
+        .msg-bubble p:last-child { margin-bottom: 0; }
+        .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 10px; }
+        .msg-bubble li { margin-bottom: 4px; }
+        .msg-bubble code {
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.82rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 5px;
+            color: #c8a9f5;
+        }
+        .msg-bubble pre {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .msg-bubble pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--bright);
+            font-size: 0.82rem;
+        }
+        .msg-bubble blockquote {
+            border-left: 3px solid var(--border);
+            padding-left: 12px;
+            color: var(--text);
+            margin: 8px 0;
+        }
+        .msg-bubble a { color: var(--accent); text-decoration: none; }
+        .msg-bubble a:hover { text-decoration: underline; }
+        .msg-bubble table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 0.85rem; }
+        .msg-bubble th, .msg-bubble td { border: 1px solid var(--border); padding: 7px 10px; text-align: left; }
+        .msg-bubble th { background: var(--surface); color: var(--bright); }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 4px 4px;
+        }
+        .typing-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--text);
+            animation: bounce 1.2s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+        /* ── Input area ──────────────────────────────────────────────── */
+        .input-wrap {
+            padding: 14px 20px 16px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 10px 10px 16px;
+            transition: border-color 0.2s;
+        }
+        .input-box:focus-within { border-color: var(--dim); }
+
+        #user-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--bright);
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: none;
+            min-height: 22px;
+            max-height: 130px;
+            line-height: 1.55;
+            overflow-y: auto;
+        }
+        #user-input::placeholder { color: var(--dim); }
+
+        .send-btn {
+            background: var(--bright);
+            border: none;
+            border-radius: 9px;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.15s, opacity 0.15s;
+            color: #000;
+        }
+        .send-btn:hover { background: #ddd; }
+        .send-btn:disabled { opacity: 0.25; cursor: default; }
+
+        .input-hint {
+            margin-top: 7px;
+            font-size: 0.7rem;
+            color: var(--dim);
+            text-align: right;
+            padding-right: 4px;
+        }
+
+        /* ── Settings sidebar (desktop) ──────────────────────────────── */
+        .settings-sidebar {
+            width: var(--sidebar-w);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 18px;
+            gap: 22px;
+            background: var(--bg);
+            flex-shrink: 0;
+        }
+        .settings-sidebar::-webkit-scrollbar { width: 4px; }
+        .settings-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .setting-section { display: flex; flex-direction: column; gap: 10px; }
+        .setting-section + .setting-section { border-top: 1px solid var(--border); padding-top: 20px; }
+
+        .setting-heading {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--text);
+        }
+
+        .setting-row { display: flex; flex-direction: column; gap: 6px; }
+
+        .setting-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text);
+        }
+        .setting-val {
+            font-variant-numeric: tabular-nums;
+            color: var(--bright);
+            font-size: 0.78rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 13px; height: 13px;
+            background: var(--bright);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .s-select {
+            width: 100%;
+            background: var(--surface);
+            color: var(--bright);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+        .s-select option { background: var(--surface-2); }
+        .s-select:focus { border-color: var(--dim); }
+
+        .toggle-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+
+        .tog { display: none; }
+        .tog-track {
+            width: 36px; height: 20px;
+            background: var(--border);
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .tog-knob {
+            width: 14px; height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px; left: 3px;
+            transition: transform 0.2s;
+        }
+        .tog:checked + .tog-track { background: var(--bright); }
+        .tog:checked + .tog-track .tog-knob { transform: translateX(16px); background: var(--surface); }
+
+        .system-textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--bright);
+            font-size: 0.82rem;
+            font-family: inherit;
+            padding: 9px 11px;
+            resize: vertical;
+            min-height: 72px;
+            outline: none;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+        .system-textarea:focus { border-color: var(--dim); }
+        .system-textarea::placeholder { color: var(--dim); }
+
+        /* Clear btn */
+        .clear-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.15s;
+            width: 100%;
+            text-align: center;
+        }
+        .clear-btn:hover { color: var(--bright); border-color: var(--dim); }
+
+        /* reasoning rows — hidden by default, JS shows them */
+        .reasoning-effort-row  { display: none; }
+        .reasoning-enabled-row { display: none; }
+
+        /* ── Mobile sheet ────────────────────────────────────────────── */
+        .mobile-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 300;
+            backdrop-filter: blur(2px);
+        }
+        .mobile-sheet-overlay.open { display: block; }
+
+        .mobile-sheet {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            padding: 20px 20px 36px;
+            z-index: 301;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 75dvh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mobile-sheet.open { transform: translateY(0); }
+
+        .sheet-handle {
+            width: 36px; height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 4px;
+        }
+
+        .sheet-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--bright);
+            margin-bottom: -8px;
+        }
+
+        /* ── Responsive ──────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .settings-sidebar { display: none; }
+            .topbar { padding-left: 80px; }
+            .model-select { max-width: none; flex: 1; }
+            .stat-pill { display: none; }
+            .messages-wrap { padding: 16px 14px 8px; gap: 18px; }
+            .msg.user .msg-bubble { max-width: 86%; }
+            .input-wrap { padding: 10px 12px 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+            .input-hint { display: none; }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-sheet-overlay { display: none !important; }
+            .mobile-settings-btn { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .desktop-settings-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hamburger — position:fixed from crofui.css, identical to all other pages -->
+<div class="hamburger"><div></div><div></div><div></div></div>
+
+<!-- Topbar -->
+<div class="topbar">
+    <select class="model-select" id="model-select" onchange="onModelChange(this.value)">
+        {% if dedicated_deployments %}
+        <optgroup label="Dedicated">
+            {% for model_name, info in dedicated_deployments.items() %}
+            <option value="{{ model_name }}:dedicated">{{ model_name }} (Dedicated)</option>
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Shared">
+        {% endif %}
+        {% for model in models %}
+        <option value="{{ model['id'] }}">{{ model['id'] }}</option>
+        {% endfor %}
+        {% if dedicated_deployments %}
+        </optgroup>
+        {% endif %}
+    </select>
+
+    <div class="topbar-right">
+        <span class="stat-pill" id="speed-pill">— t/s</span>
+        <span class="stat-pill" id="ttft-pill">TTFT —</span>
+
+        <!-- Desktop: settings sidebar toggle -->
+        <button class="icon-btn desktop-settings-btn" id="settings-toggle-btn" title="Settings" onclick="toggleSidebar()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </button>
+
+        <!-- Mobile: settings sheet -->
+        <button class="icon-btn mobile-settings-btn" title="Settings" onclick="openSheet()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Nav sidebar (crofui) -->
+<div id="sidebar" class="sidebar">
+    <ul>
+        <li><a style="color:var(--bright-text);" href="/">Playground</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/dedicated">Dedicated</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/settings">Settings</a></li>
+        {% if admin %}<li><a href="/admin">Admin</a></li>{% endif %}
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+<div class="overlay" id="nav-overlay"></div>
+
+<!-- Layout -->
+<div class="layout">
+
+    <!-- Chat pane -->
+    <div class="chat-pane">
+        <div class="messages-wrap" id="messages-wrap">
+            <div class="empty-state" id="empty-state">
+                <h2>CrofAI Playground</h2>
+                <p>Select a model, type a message, and press Enter.</p>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-wrap">
+            <div class="input-box">
+                <textarea id="user-input" rows="1" placeholder="Message…" autocomplete="off" spellcheck="true"></textarea>
+                <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send (Enter)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-hint">Enter to send &nbsp;·&nbsp; Shift+Enter for newline</div>
+        </div>
+    </div>
+
+    <!-- Settings sidebar (desktop only) -->
+    <div class="settings-sidebar" id="settings-sidebar">
+
+        <div class="setting-section">
+            <div class="setting-heading">System Prompt</div>
+            <div class="setting-row">
+                <textarea class="system-textarea" id="system-prompt" placeholder="You are a helpful assistant.">You are a helpful assistant.</textarea>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-heading">Parameters</div>
+
+            <div class="setting-row">
+                <div class="setting-label-row">
+                    <span>Temperature</span>
+                    <span class="setting-val" id="temp-val">0.7</span>
+                </div>
+                <input type="range" min="0" max="1" step="0.05" value="0.7" id="temp-range"
+                    oninput="document.getElementById('temp-val').textContent = parseFloat(this.value).toFixed(2)">
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-label-row">
+                    <span>Top P</span>
+                    <span class="setting-val" id="topp-val">1.00</span>
+                </div>
+                <input type="range" min="0" max="1" step="0.05" value="1" id="topp-range"
+                    oninput="document.getElementById('topp-val').textContent = parseFloat(this.value).toFixed(2)">
+            </div>
+        </div>
+
+        <div class="setting-section" id="reasoning-section" style="display:none;">
+            <div class="setting-heading">Reasoning</div>
+
+            <div class="toggle-setting reasoning-enabled-row" id="reasoning-enabled-row">
+                <span>Enable Reasoning</span>
+                <label>
+                    <input type="checkbox" class="tog" id="reasoning-enabled" checked onchange="onReasoningToggle(this.checked)">
+                    <div class="tog-track"><div class="tog-knob"></div></div>
+                </label>
+            </div>
+
+            <div class="setting-row reasoning-effort-row" id="reasoning-effort-row">
+                <div class="setting-label-row" style="margin-bottom:6px;">
+                    <span style="font-size:0.82rem;color:var(--text);">Effort Level</span>
+                </div>
+                <select class="s-select" id="reasoning-effort">
+                    <option value="none">None</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high" selected>High</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <div class="setting-heading">Advanced</div>
+
+            <div class="toggle-setting">
+                <span>Auto-scroll</span>
+                <label>
+                    <input type="checkbox" class="tog" id="autoscroll-toggle" checked>
+                    <div class="tog-track"><div class="tog-knob"></div></div>
+                </label>
+            </div>
+
+            <div class="toggle-setting">
+                <span>Allow fallback servers</span>
+                <label>
+                    <input type="checkbox" class="tog" id="fallback-toggle" checked>
+                    <div class="tog-track"><div class="tog-knob"></div></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <button class="clear-btn" onclick="clearConversation()">Clear conversation</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mobile settings sheet -->
+<div class="mobile-sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+<div class="mobile-sheet" id="mobile-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Settings</div>
+
+    <div class="setting-row">
+        <div class="setting-label-row" style="margin-bottom:6px;">
+            <span style="font-size:0.82rem;color:var(--text);">System Prompt</span>
+        </div>
+        <textarea class="system-textarea" id="system-prompt-mobile" placeholder="You are a helpful assistant." style="min-height:60px;">You are a helpful assistant.</textarea>
+    </div>
+
+    <div class="setting-row">
+        <div class="setting-label-row">
+            <span style="font-size:0.82rem;color:var(--text);">Temperature</span>
+            <span class="setting-val" id="temp-val-m">0.7</span>
+        </div>
+        <input type="range" min="0" max="1" step="0.05" value="0.7" id="temp-range-m"
+            oninput="document.getElementById('temp-val-m').textContent = parseFloat(this.value).toFixed(2)">
+    </div>
+
+    <div class="setting-row">
+        <div class="setting-label-row">
+            <span style="font-size:0.82rem;color:var(--text);">Top P</span>
+            <span class="setting-val" id="topp-val-m">1.00</span>
+        </div>
+        <input type="range" min="0" max="1" step="0.05" value="1" id="topp-range-m"
+            oninput="document.getElementById('topp-val-m').textContent = parseFloat(this.value).toFixed(2)">
+    </div>
+
+    <!-- Enable toggle (mobile) — shown for both reasoning types -->
+    <div class="toggle-setting reasoning-enabled-row" id="reasoning-enabled-row-m" style="display:none;">
+        <span style="font-size:0.82rem;color:var(--text);">Enable Reasoning</span>
+        <label>
+            <input type="checkbox" class="tog" id="reasoning-enabled-m" checked onchange="onReasoningToggleM(this.checked)">
+            <div class="tog-track"><div class="tog-knob"></div></div>
+        </label>
+    </div>
+
+    <!-- Effort dropdown (mobile) — only for reasoningEffort models when enabled -->
+    <div class="setting-row reasoning-effort-row" id="reasoning-effort-row-m" style="display:none;">
+        <div class="setting-label-row" style="margin-bottom:6px;">
+            <span style="font-size:0.82rem;color:var(--text);">Effort Level</span>
+        </div>
+        <select class="s-select" id="reasoning-effort-m">
+            <option value="none">None</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high" selected>High</option>
+        </select>
+    </div>
+
+    <div class="toggle-setting">
+        <span style="font-size:0.82rem;color:var(--text);">Auto-scroll</span>
+        <label>
+            <input type="checkbox" class="tog" id="autoscroll-toggle-m" checked>
+            <div class="tog-track"><div class="tog-knob"></div></div>
+        </label>
+    </div>
+
+    <div class="toggle-setting">
+        <span style="font-size:0.82rem;color:var(--text);">Allow fallback servers</span>
+        <label>
+            <input type="checkbox" class="tog" id="fallback-toggle-m" checked>
+            <div class="tog-track"><div class="tog-knob"></div></div>
+        </label>
+    </div>
+
+    <button class="clear-btn" onclick="clearConversation(); closeSheet();">Clear conversation</button>
+</div>
+
+<script src="/ui/crofui.js"></script>
+<script>
+const conv = new showdown.Converter({ tables: true, strikethrough: true, ghCodeBlocks: true, simpleLineBreaks: false });
+
+// ── Auth token ────────────────────────────────────────────────────────────
+const token = { val: "" };
+fetch("/u_v2/get_my_token")
+    .then(r => {
+        if (!r.ok) throw new Error(`Token fetch failed: HTTP ${r.status}`);
+        return r.json();
+    })
+    .then(j => { token.val = j.key; })
+    .catch(e => { console.error("Failed to load auth token:", e); });
+
+// ── Conversation state ───────────────────────────────────────────────────
+let history = []; // [{role, content}]
+let isGenerating = false;
+let modelCapabilities = {};
+
+// ── Scroll helper — throttled to one rAF per frame ──────────────────────
+let scrollRAF = null;
+function scrollToBottom() {
+    // Check auto-scroll setting
+    const mobile = window.innerWidth <= 768;
+    const autoScroll = (mobile
+        ? document.getElementById('autoscroll-toggle-m')
+        : document.getElementById('autoscroll-toggle')
+    ).checked;
+    if (!autoScroll) return;
+
+    if (scrollRAF) return; // already queued
+    scrollRAF = requestAnimationFrame(() => {
+        const wrap = document.getElementById('messages-wrap');
+        wrap.scrollTop = wrap.scrollHeight;
+        scrollRAF = null;
+    });
+}
+
+// ── Nav hamburger (crofui) ───────────────────────────────────────────────
+const navHamburger = document.querySelector('.hamburger');
+const navSidebar   = document.querySelector('#sidebar');
+const navOverlay   = document.querySelector('#nav-overlay');
+navHamburger.addEventListener('click', () => {
+    [navHamburger, navSidebar, navOverlay].forEach(el => el.classList.toggle('active'));
+});
+navOverlay.addEventListener('click', () => {
+    [navHamburger, navSidebar, navOverlay].forEach(el => el.classList.remove('active'));
+});
+
+// ── Settings sidebar toggle (desktop) ───────────────────────────────────
+let sidebarOpen = true;
+function toggleSidebar() {
+    const s = document.getElementById('settings-sidebar');
+    sidebarOpen = !sidebarOpen;
+    s.style.display = sidebarOpen ? '' : 'none';
+}
+
+// ── Mobile sheet ─────────────────────────────────────────────────────────
+function openSheet() {
+    document.getElementById('sheet-overlay').classList.add('open');
+    document.getElementById('mobile-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeSheet() {
+    document.getElementById('sheet-overlay').classList.remove('open');
+    document.getElementById('mobile-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// ── Model capabilities ───────────────────────────────────────────────────
+async function loadCapabilities() {
+    try {
+        const res = await fetch("/v1/models");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        json.data.forEach(m => {
+            modelCapabilities[m.id] = {
+                reasoningEffort: !!(m.reasoning_effort),
+                customReasoning: !!(m.custom_reasoning)
+            };
+        });
+        updateReasoningUI(document.getElementById('model-select').value);
+    } catch(e) { console.warn("Model capabilities unavailable:", e); }
+}
+
+let currentModelUsesEffort = false;
+
+function updateReasoningUI(modelId) {
+    const base = modelId.split(':')[0];
+    const caps = modelCapabilities[base] || { reasoningEffort: false, customReasoning: false };
+
+    const section      = document.getElementById('reasoning-section');
+    const enabledRow   = document.getElementById('reasoning-enabled-row');
+    const effortRow    = document.getElementById('reasoning-effort-row');
+    const enabledRowM  = document.getElementById('reasoning-enabled-row-m');
+    const effortRowM   = document.getElementById('reasoning-effort-row-m');
+
+    if (!caps.reasoningEffort && !caps.customReasoning) {
+        currentModelUsesEffort = false;
+        section.style.display     = 'none';
+        enabledRow.style.display  = enabledRowM.style.display = 'none';
+        effortRow.style.display   = effortRowM.style.display  = 'none';
+        return;
+    }
+
+    currentModelUsesEffort = caps.reasoningEffort;
+    section.style.display = 'flex';
+
+    if (caps.reasoningEffort) {
+        // Models with effort levels: always show the effort dropdown.
+        // If they also support toggling (customReasoning), show the enable toggle too.
+        enabledRow.style.display  = caps.customReasoning ? 'flex' : 'none';
+        enabledRowM.style.display = caps.customReasoning ? 'flex' : 'none';
+        effortRow.style.display   = 'flex';
+        effortRowM.style.display  = 'flex';
+    } else {
+        // customReasoning only: just the on/off toggle, no effort dropdown
+        enabledRow.style.display  = 'flex';
+        enabledRowM.style.display = 'flex';
+        effortRow.style.display   = 'none';
+        effortRowM.style.display  = 'none';
+    }
+}
+
+function onReasoningToggle(checked) {
+    // When both caps exist, toggling off hides the effort dropdown
+    const modelId = document.getElementById('model-select').value;
+    const caps = modelCapabilities[modelId.split(':')[0]] || {};
+    if (caps.reasoningEffort && caps.customReasoning) {
+        document.getElementById('reasoning-effort-row').style.display = checked ? 'flex' : 'none';
+    }
+}
+
+function onReasoningToggleM(checked) {
+    const modelId = document.getElementById('model-select').value;
+    const caps = modelCapabilities[modelId.split(':')[0]] || {};
+    if (caps.reasoningEffort && caps.customReasoning) {
+        document.getElementById('reasoning-effort-row-m').style.display = checked ? 'flex' : 'none';
+    }
+}
+
+function onModelChange(val) { updateReasoningUI(val); }
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
+
+function getSystemPrompt() {
+    return isMobile()
+        ? document.getElementById('system-prompt-mobile').value.trim()
+        : document.getElementById('system-prompt').value.trim();
+}
+
+function getParams() {
+    const mobile = isMobile();
+    return {
+        temperature: parseFloat((mobile ? document.getElementById('temp-range-m') : document.getElementById('temp-range')).value),
+        top_p:       parseFloat((mobile ? document.getElementById('topp-range-m') : document.getElementById('topp-range')).value),
+        fallback:    (mobile ? document.getElementById('fallback-toggle-m') : document.getElementById('fallback-toggle')).checked,
+        effort:      (mobile ? document.getElementById('reasoning-effort-m') : document.getElementById('reasoning-effort')).value,
+        reasoning:   (mobile ? document.getElementById('reasoning-enabled-m') : document.getElementById('reasoning-enabled')).checked,
+    };
+}
+
+// ── Error display helpers ─────────────────────────────────────────────────
+function escHtml(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+// For SSE error chunks: dump the entire raw JSON red + monospace
+function formatSSEErrorHTML(rawJson) {
+    let pretty;
+    try { pretty = JSON.stringify(JSON.parse(rawJson), null, 2); } catch(_) { pretty = rawJson; }
+    return `<pre style="color:#f87171;font-family:'SF Mono','Fira Code',monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml(pretty)}</pre>`;
+}
+
+// For non-SSE errors (network failures, fetch errors, etc.)
+function formatErrorHTML(message) {
+    return `<span style="color:#f87171;font-size:0.88rem;">${escHtml(message)}</span>`;
+}
+
+// ── Conversation UI ───────────────────────────────────────────────────────
+function clearConversation() {
+    history = [];
+    const wrap = document.getElementById('messages-wrap');
+    wrap.innerHTML = `<div class="empty-state" id="empty-state">
+        <h2>CrofAI Playground</h2>
+        <p>Select a model, type a message, and press Enter.</p>
+    </div>`;
+}
+
+function appendUserBubble(text) {
+    const wrap = document.getElementById('messages-wrap');
+    const empty = document.getElementById('empty-state');
+    if (empty) empty.remove();
+
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    div.innerHTML = `<div class="msg-meta">You</div><div class="msg-bubble">${escaped}</div>`;
+    wrap.appendChild(div);
+    scrollToBottom();
+    return div;
+}
+
+function appendAssistantBubble() {
+    const wrap = document.getElementById('messages-wrap');
+    const div = document.createElement('div');
+    div.className = 'msg assistant';
+    // Create bubble element directly — no id needed, we return a reference
+    const meta = document.createElement('div');
+    meta.className = 'msg-meta';
+    meta.textContent = 'CrofAI';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = `<div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    </div>`;
+
+    div.appendChild(meta);
+    div.appendChild(bubble);
+    wrap.appendChild(div);
+    scrollToBottom();
+    return bubble; // return the bubble element directly
+}
+
+// ── Send message ──────────────────────────────────────────────────────────
+async function sendMessage() {
+    if (isGenerating) return;
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    isGenerating = true;
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('speed-pill').textContent = '— t/s';
+    document.getElementById('ttft-pill').textContent = 'TTFT —';
+
+    // Build messages for API
+    const sys = getSystemPrompt();
+    const apiMessages = [];
+    if (sys) apiMessages.push({ role: "system", content: sys });
+    history.forEach(m => apiMessages.push(m));
+    apiMessages.push({ role: "user", content: text });
+
+    // Show user bubble and add to history
+    appendUserBubble(text);
+    history.push({ role: "user", content: text });
+
+    // appendAssistantBubble now returns the bubble element directly (no stale ID)
+    const bubbleEl = appendAssistantBubble();
+
+    const modelId = document.getElementById('model-select').value;
+    const params = getParams();
+    const caps = modelCapabilities[modelId.split(':')[0]] || {};
+
+    let requestModel = modelId;
+    if (!params.fallback) requestModel += ':consistent';
+
+    const body = {
+        model: requestModel,
+        messages: apiMessages,
+        stream: true,
+        temperature: params.temperature,
+        top_p: params.top_p
+    };
+
+    // Reasoning parameters — each model type uses its native API format:
+    //
+    //   reasoningEffort + customReasoning:
+    //     Toggle ON  → reasoning_effort = user's choice (low/medium/high)
+    //     Toggle OFF → reasoning = { enabled: false }
+    //
+    //   reasoningEffort only (always-on reasoning):
+    //     Effort = none → omit reasoning_effort entirely (let server default to no reasoning)
+    //     Effort = low/medium/high → reasoning_effort = chosen level
+    //
+    //   customReasoning only (on/off toggle, no effort levels):
+    //     Toggle ON  → reasoning = { enabled: true }
+    //     Toggle OFF → reasoning = { enabled: false }
+    //
+    if (caps.reasoningEffort && caps.customReasoning) {
+        if (params.reasoning) {
+            body.reasoning_effort = params.effort;
+        } else {
+            body.reasoning = { enabled: false };
+        }
+    } else if (caps.reasoningEffort) {
+        if (params.effort !== 'none') {
+            body.reasoning_effort = params.effort;
+        }
+    } else if (caps.customReasoning) {
+        body.reasoning = { enabled: params.reasoning };
+    }
+
+    let reasoningText = '';
+    let fullContent = '';
+    let start = performance.now();
+    let ttftDone = false;
+
+    try {
+        // Check for missing auth token
+        if (!token.val) {
+            throw new Error("Authentication token not loaded. Try refreshing the page.");
+        }
+
+        const res = await fetch("/v2/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token.val
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+            // Read the raw error body and display it directly
+            let rawBody = '';
+            try {
+                rawBody = await res.text();
+            } catch (_) {}
+
+            let html = '';
+            if (rawBody) {
+                // Try to pretty-print if it's JSON, otherwise show raw
+                let display;
+                try { display = JSON.stringify(JSON.parse(rawBody), null, 2); } catch(_) {
+                    // Strip HTML tags if the server returned an HTML error page
+                    display = rawBody.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 1000);
+                }
+                html = `<pre style="color:#f87171;font-family:'SF Mono','Fira Code',monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml('HTTP ' + res.status + '\n\n' + display)}</pre>`;
+            } else {
+                html = formatErrorHTML(`HTTP ${res.status}`);
+            }
+            bubbleEl.innerHTML = html;
+            history.pop();
+            isGenerating = false;
+            document.getElementById('send-btn').disabled = false;
+            scrollToBottom();
+            return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        bubbleEl.innerHTML = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            // Keep the last incomplete line in the buffer
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                // Handle SSE error events (some servers send "event: error" lines)
+                if (line.startsWith('event: error')) continue; // the data line follows
+
+                if (!line.startsWith('data: ')) continue;
+                const raw = line.slice(6).trim();
+                if (raw === '[DONE]') break;
+                try {
+                    const parsed = JSON.parse(raw);
+
+                    // Check for error objects in SSE data (backend sends errors as chunks)
+                    if (parsed.error) {
+                        let html = '';
+                        if (reasoningText) {
+                            html += `<div class="reasoning-block"><button class="reasoning-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('hidden')">Thinking</button><div class="reasoning-text hidden">${escHtml(reasoningText)}</div></div>`;
+                        }
+                        if (fullContent) {
+                            html += conv.makeHtml(fullContent);
+                        }
+                        html += formatSSEErrorHTML(raw);
+                        bubbleEl.innerHTML = html;
+                        if (fullContent) {
+                            history.push({ role: "assistant", content: fullContent });
+                        } else {
+                            history.pop();
+                        }
+                        isGenerating = false;
+                        document.getElementById('send-btn').disabled = false;
+                        scrollToBottom();
+                        return;
+                    }
+
+                    if (!ttftDone) {
+                        document.getElementById('ttft-pill').textContent = `TTFT ${(performance.now()-start).toFixed(0)}ms`;
+                        ttftDone = true;
+                    }
+                    const delta = parsed.choices?.[0]?.delta;
+                    if (!delta) continue;
+
+                    // Check for a finish_reason that signals an abnormal stop
+                    const finish = parsed.choices?.[0]?.finish_reason;
+                    if (finish && finish !== 'stop' && finish !== 'length' && finish !== null) {
+                        fullContent += `\n\n[Generation stopped: ${finish}]`;
+                    }
+
+                    if (delta.reasoning_content) reasoningText += delta.reasoning_content;
+                    else if (delta.content)       fullContent   += delta.content;
+
+                    // Live render
+                    let html = '';
+                    if (reasoningText) {
+                        html += `<div class="reasoning-block"><button class="reasoning-toggle open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('hidden')">Thinking</button><div class="reasoning-text">${reasoningText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`;
+                    }
+                    html += `<span style="white-space:pre-wrap">${fullContent.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+                    bubbleEl.innerHTML = html;
+
+                    if (parsed.usage?.tokens_per_second)
+                        document.getElementById('speed-pill').textContent = parsed.usage.tokens_per_second + ' t/s';
+
+                    scrollToBottom();
+                } catch(parseErr) {
+                    // If this was a JSON parse failure, it's just a malformed SSE line — skip it.
+                    // But if it's a re-thrown real error, propagate it.
+                    if (parseErr instanceof SyntaxError) {
+                        // Attempt to surface non-JSON error text from the SSE stream
+                        // (some backends send plain text errors after "data: ")
+                        if (raw && !raw.startsWith('{') && !raw.startsWith('[') && raw.length > 2) {
+                            let html = '';
+                            if (fullContent) {
+                                html += conv.makeHtml(fullContent) + '<br>';
+                            }
+                            html += formatErrorHTML('Stream error: ' + raw.substring(0, 500));
+                            bubbleEl.innerHTML = html;
+                            if (fullContent) {
+                                history.push({ role: "assistant", content: fullContent });
+                            } else {
+                                history.pop();
+                            }
+                            isGenerating = false;
+                            document.getElementById('send-btn').disabled = false;
+                            scrollToBottom();
+                            return;
+                        }
+                        continue; // truly just a malformed keep-alive or partial chunk
+                    }
+                    throw parseErr; // re-throw unexpected errors
+                }
+            }
+        }
+
+        // If stream completed but produced no content, show a notice
+        if (!fullContent && !reasoningText) {
+            bubbleEl.innerHTML = `<span style="color:#fbbf24;font-size:0.88rem;">Empty response — the model returned no content.</span>`;
+            history.pop();
+            isGenerating = false;
+            document.getElementById('send-btn').disabled = false;
+            scrollToBottom();
+            return;
+        }
+
+        // Final render with markdown
+        let finalHtml = '';
+        if (reasoningText) {
+            finalHtml += `<div class="reasoning-block"><button class="reasoning-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('hidden')">Thinking</button><div class="reasoning-text hidden">${reasoningText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`;
+        }
+        finalHtml += conv.makeHtml(fullContent);
+        bubbleEl.innerHTML = finalHtml;
+
+        history.push({ role: "assistant", content: fullContent });
+
+    } catch (err) {
+        // Distinguish network errors from other errors
+        let errorMessage = err.message;
+        if (err.name === 'TypeError' && errorMessage.includes('fetch')) {
+            errorMessage = 'Network error — could not reach the server. Check your connection and try again.';
+        } else if (err.name === 'TypeError' && (errorMessage.includes('read') || errorMessage.includes('body'))) {
+            // Stream read error — connection dropped mid-response
+            let html = '';
+            if (reasoningText) {
+                html += `<div class="reasoning-block"><button class="reasoning-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('hidden')">Thinking</button><div class="reasoning-text hidden">${reasoningText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`;
+            }
+            if (fullContent) {
+                html += conv.makeHtml(fullContent) + '<br>';
+            }
+            html += formatErrorHTML('Connection lost during streaming: ' + errorMessage);
+            bubbleEl.innerHTML = html;
+            if (fullContent) {
+                history.push({ role: "assistant", content: fullContent });
+            } else {
+                history.pop();
+            }
+            isGenerating = false;
+            document.getElementById('send-btn').disabled = false;
+            scrollToBottom();
+            return;
+        }
+
+        // Show any partial content that was generated before the error
+        let html = '';
+        if (reasoningText) {
+            html += `<div class="reasoning-block"><button class="reasoning-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('hidden')">Thinking</button><div class="reasoning-text hidden">${reasoningText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`;
+        }
+        if (fullContent) {
+            html += conv.makeHtml(fullContent) + '<br>';
+        }
+        html += formatErrorHTML(errorMessage);
+        bubbleEl.innerHTML = html;
+
+        // Only keep the user message in history if no assistant content was generated
+        if (fullContent) {
+            history.push({ role: "assistant", content: fullContent });
+        } else {
+            history.pop();
+        }
+    }
+
+    isGenerating = false;
+    document.getElementById('send-btn').disabled = false;
+    scrollToBottom();
+}
+
+// ── Auto-resize textarea ─────────────────────────────────────────────────
+const inputEl = document.getElementById('user-input');
+inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 130) + 'px';
+});
+
+inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// ── Global Ctrl+Enter ─────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+loadCapabilities();
+</script>
+</body>
+</html>

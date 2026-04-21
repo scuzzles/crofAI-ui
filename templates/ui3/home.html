@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://files.nahcrof.com/file/crofaicolor.png" />
+    <meta name="description" content="CrofAI — powerful models, crazy cheap pricing. Access the best OSS LLMs through an OpenAI-compatible API." />
+    <title>CrofAI — Powerful Models. Crazy Cheap Pricing.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Geist:wght@400;500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/ui/crofui.css">
+
+    <style>
+        :root {
+            --bg: #0A0A0A;
+            --surface: #111111;
+            --border: #1E1E1E;
+            --primary-text: #F0EDE8;
+            --secondary-text: #6B6B6B;
+            --accent: #7C3AED;
+            --accent-light: #A855F7;
+            --accent-dark: #6D28D9;
+            --accent-alt: #FF4E4E;
+            --code-bg: #0F0F0F;
+            --nav-bg: rgba(10, 10, 10, 0.82);
+            --code-shadow: rgba(0, 0, 0, 0.4);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --accent-glass-bg: rgba(124, 58, 237, 0.05);
+            --accent-glass-strong: rgba(124, 58, 237, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f7f7f8;
+            --border: #e5e5e7;
+            --primary-text: #111111;
+            --secondary-text: #555555;
+            --code-bg: #f4f4f5;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --code-shadow: rgba(0, 0, 0, 0.08);
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --accent-glass-bg: rgba(124, 58, 237, 0.05);
+            --accent-glass-strong: rgba(124, 58, 237, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--primary-text);
+            font-family: Geist, -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        button { background: none; border: none; cursor: pointer; font-family: inherit; color: inherit; }
+        pre, code { font-family: 'JetBrains Mono', 'DM Mono', monospace; }
+        section { width: 100%; }
+
+        .page {
+            background: var(--bg);
+            color: var(--primary-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Animated grid background */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 64px 64px;
+            background-position: center center;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Nav (matches /docs styling) */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .nav-logo-link { display: inline-flex; align-items: center; }
+        .nav-logo-img { height: 28px; width: auto; opacity: 0.95; }
+
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--secondary-text);
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--accent-light); }
+        .nav-cta {
+            background: var(--accent);
+            color: var(--palette-bg-1);
+            padding: 0.5rem 1.25rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .nav-cta:hover { background: var(--primary-text); color: var(--palette-bg-1); }
+        .nav-cta svg { width: 16px; height: 16px; }
+
+        /* Hero */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 480px;
+            gap: 4rem;
+            padding: 6rem 4rem 6rem 4rem;
+            min-height: 90vh;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            will-change: transform;
+        }
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5.5rem;
+            line-height: 0.9;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+        }
+        .hero-title .line { overflow: hidden; display: block; }
+        .hero-title .reveal-text {
+            display: block;
+            transform: translateY(110%);
+            animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .hero-title .reveal-text.delay { animation-delay: 0.15s; }
+        @keyframes reveal-up { to { transform: translateY(0); } }
+        .hero-title-highlight { color: var(--accent); display: inline-block; }
+
+        .hero-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 1rem;
+            color: var(--secondary-text);
+            max-width: 500px;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fade-in 1s ease 0.8s forwards;
+        }
+        @keyframes fade-in { to { opacity: 1; } }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: rise-in 0.6s ease 1s forwards;
+        }
+        @keyframes rise-in { to { opacity: 1; transform: translateY(0); } }
+
+        .hero-cta, .hero-cta-outline {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+        .hero-cta { background: var(--accent); color: var(--palette-bg-1); }
+        .hero-cta:hover { transform: scale(1.05); }
+        .hero-cta:active { transform: scale(0.95); }
+        .hero-cta svg { margin-left: 8px; width: 18px; height: 18px; }
+        .hero-cta-outline {
+            background: transparent;
+            color: var(--primary-text);
+            border: 1px solid var(--border);
+        }
+        .hero-cta-outline:hover {
+            background: var(--surface);
+            border-color: var(--secondary-text);
+            transform: scale(1.05);
+        }
+        .hero-cta-outline:active { transform: scale(0.95); }
+
+        /* Code preview (right side of hero) */
+        .hero-code {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+        }
+        .code-preview {
+            position: relative;
+            width: 480px;
+            height: 480px;
+            background: var(--palette-bg-5);
+            border: 1px solid var(--palette-bg-7);
+            box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.4);
+            transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+            transition: transform 0.5s ease;
+            animation: code-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
+        }
+        @keyframes code-slide-in {
+            from { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateX(80px); opacity: 0; }
+        }
+        /* Once the entry animation has played, strip it so hover cycles don't re-trigger its delay (which would flash opacity 0) */
+        .code-preview.entered { animation: none; }
+        .code-preview.floating {
+            animation: code-float 5s ease-in-out infinite, code-glow 3s ease-in-out infinite;
+        }
+        @keyframes code-float {
+            0%, 100% { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(0); opacity: 1; }
+            50%      { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(-8px); opacity: 1; }
+        }
+        @keyframes code-glow {
+            0%, 100% { box-shadow: -20px 20px 60px rgba(0,0,0,0.4), 0 0 0 rgba(124,58,237,0); }
+            50%      { box-shadow: -20px 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(124,58,237,0.15); }
+        }
+        .code-preview:hover {
+            transform: perspective(1200px) rotateY(-3deg) rotateX(1deg) !important;
+            animation: none !important;
+            opacity: 1 !important;
+        }
+
+        .window-chrome {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--palette-bg-5);
+            border-bottom: 1px solid #2A2A2A;
+        }
+        .window-dots { display: flex; gap: 0.4rem; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #FF5F56; }
+        .dot-yellow { background: #FFBD2E; }
+        .dot-green { background: #27C93F; }
+        .window-title {
+            margin-left: 0.5rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            color: #6B6B6B;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem 1rem;
+            background: var(--palette-bg-5);
+            border-bottom: 1px solid #2A2A2A;
+        }
+        .tab {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            background: transparent;
+            color: #6B6B6B;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: #A1A1AA; }
+        .tab.active { background: var(--accent-glass-strong); color: var(--accent-light); }
+        .code-content {
+            padding: 24px;
+            background: var(--palette-bg-5);
+            height: calc(100% - 80px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+        .code-block {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #E0E0E0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+        .cursor {
+            display: inline-block;
+            width: 6px;
+            height: 1.1em;
+            background: var(--accent-light);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 0.5s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Section scaffolding */
+        .section-header {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--secondary-text);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Reveal-on-scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-x-left { transform: translateX(-50px); }
+        .reveal-x-left.visible { transform: translateX(0); }
+        .reveal-scale { transform: scale(0.95); opacity: 0; }
+        .reveal-scale.visible { transform: scale(1); opacity: 1; }
+
+        /* Features */
+        .features {
+            padding: 8rem 4rem;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .features-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            color: var(--primary-text);
+            margin: 0 0 4rem 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .chroma-grid {
+            position: relative;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .chroma-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: var(--palette-bg-4);
+            min-height: 200px;
+            padding: 2rem 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+        }
+        .chroma-card.visible { opacity: 1; transform: translateY(0); }
+        .chroma-card::before {
+            content: "";
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at var(--mouse-x) var(--mouse-y),
+                rgba(124, 58, 237, 0.12), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        .chroma-card:hover { border-color: rgba(168, 85, 247, 0.3); }
+        .chroma-card:hover::before { opacity: 1; }
+
+        .chroma-icon {
+            position: relative;
+            z-index: 2;
+            width: 64px; height: 64px;
+            margin-bottom: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .chroma-card:hover .chroma-icon {
+            transform: translateY(-4px);
+            filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.6)) drop-shadow(0 0 20px rgba(124, 58, 237, 0.3));
+        }
+        .chroma-icon svg { width: 64px; height: 64px; }
+        .chroma-icon svg path,
+        .chroma-icon svg circle { stroke: white; transition: stroke 0.3s ease; }
+        .chroma-card:hover .chroma-icon svg path,
+        .chroma-card:hover .chroma-icon svg circle { stroke: var(--accent-light); }
+
+        .chroma-name {
+            position: relative;
+            z-index: 2;
+            font-family: 'DM Mono', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            color: #A1A1AA;
+            text-align: center;
+            transition: color 0.3s ease;
+            font-size: 0.875rem;
+        }
+        .chroma-card:hover .chroma-name { color: var(--palette-text-strong); }
+
+        /* Integration */
+        .integration {
+            padding: 8rem 4rem;
+            background: var(--code-bg);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .integration-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            color: var(--primary-text);
+            text-transform: uppercase;
+        }
+        .integration-title .accent { color: var(--accent-light); }
+        .integration-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 1rem;
+            color: var(--secondary-text);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+        .integration-code-wrapper {
+            background: var(--palette-bg-1);
+            border: 1px solid var(--border);
+            position: relative;
+            min-width: 0; /* allow shrinking inside grid tracks */
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: var(--palette-bg-5);
+            border: 1px solid var(--border);
+            color: var(--secondary-text);
+            padding: 0.5rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { color: var(--accent-light); border-color: var(--accent-light); }
+        .copy-btn svg { width: 16px; height: 16px; }
+        .integration-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--primary-text);
+            line-height: 1.6;
+            padding: 2rem;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 8rem 4rem;
+            background: var(--bg);
+            position: relative;
+            z-index: 1;
+        }
+        .pricing-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            color: var(--primary-text);
+            margin: 0 0 4rem 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: var(--surface);
+            border: 2px solid transparent;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            gap: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.5s ease;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        .pricing-card.visible { opacity: 1; transform: translateY(0); }
+        .pricing-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.15), inset 0 0 15px rgba(124, 58, 237, 0.05);
+            transform: translateY(-10px);
+        }
+        .pricing-card.popular {
+            border-color: var(--accent);
+            background: var(--accent-glass-bg);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.15);
+        }
+        .popular-badge {
+            position: absolute;
+            top: -0.5rem; right: 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.625rem;
+            font-weight: 500;
+            background: var(--accent);
+            color: var(--palette-text-strong);
+            padding: 0.25rem 0.5rem;
+            text-transform: uppercase;
+            border-radius: 9999px;
+        }
+        .pricing-plan {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-text);
+        }
+        .pricing-price {
+            font-family: 'Inter', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-text);
+            line-height: 1;
+        }
+        .pricing-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: #A1A1AA;
+        }
+        .pricing-requests {
+            font-family: Geist, sans-serif;
+            font-size: 0.875rem;
+            color: var(--primary-text);
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .pricing-features {
+            list-style: none;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .pricing-feature {
+            font-family: Geist, sans-serif;
+            font-size: 0.875rem;
+            color: var(--primary-text);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            line-height: 1.4;
+        }
+        .feature-check {
+            color: var(--accent);
+            flex-shrink: 0;
+            width: 16px; height: 16px;
+            margin-top: 0.15rem;
+        }
+        .pricing-cta {
+            background: transparent;
+            color: var(--primary-text);
+            border: 1px solid var(--border);
+            padding: 0.875rem 1rem;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: auto;
+            border-radius: 9999px;
+            display: block;
+        }
+        .pricing-card.popular .pricing-cta {
+            background: var(--accent);
+            color: var(--palette-text-strong);
+            border-color: var(--accent);
+        }
+        .pricing-cta:hover {
+            border-color: var(--accent);
+            color: var(--accent-light);
+            transform: scale(1.03);
+        }
+        .pricing-card.popular .pricing-cta:hover { color: var(--palette-text-strong); opacity: 0.9; }
+
+        /* Models table */
+        .models {
+            padding: 8rem 4rem;
+            background: var(--code-bg);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .models-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            color: var(--primary-text);
+            margin: 0 0 1rem 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .models-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 1rem;
+            color: var(--secondary-text);
+            margin-bottom: 4rem;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            background: var(--palette-bg-1);
+        }
+        .models-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+        .models-table th {
+            background: var(--surface);
+            color: var(--secondary-text);
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+        .models-table td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary-text);
+        }
+        .models-table tr:last-child td { border-bottom: none; }
+        .models-table tr:hover { background: var(--palette-bg-5); }
+        .model-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .model-name { font-weight: 700; color: var(--accent-light); }
+        .model-tag {
+            background: rgba(255, 78, 78, 0.1);
+            color: var(--accent-alt);
+            padding: 0.2rem 0.5rem;
+            font-size: 0.65rem;
+            border: 1px solid var(--accent-alt);
+            text-transform: uppercase;
+        }
+        .model-tag.vision {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-light);
+            border-color: var(--accent-light);
+        }
+        .table-price { color: #fff; }
+        .table-speed { color: var(--secondary-text); }
+
+        /* Footer CTA */
+        .footer-cta {
+            background: var(--accent);
+            padding: 8rem 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-cta-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            line-height: 0.9;
+            color: var(--palette-bg-1);
+            text-transform: uppercase;
+        }
+        .footer-cta-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 1rem;
+            margin: 1.5rem 0 3rem 0;
+            color: var(--palette-bg-1);
+            opacity: 0.8;
+        }
+        .footer-cta-btn {
+            background: var(--palette-bg-1);
+            color: var(--accent);
+            padding: 1.25rem 3rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        .footer-cta-btn:hover {
+            background: #FFFFFF;
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+        .footer-cta-btn svg { width: 18px; height: 18px; }
+
+        /* Footer */
+        .footer {
+            background: var(--palette-bg-1);
+            color: var(--secondary-text);
+            padding: 2rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .footer-copy { color: rgba(255,255,255,0.3); }
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            color: var(--secondary-text);
+            transition: color 0.2s;
+        }
+        .footer-link:hover { color: var(--primary-text); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 4rem 2rem 4rem;
+                gap: 3rem;
+            }
+            .hero-title { font-size: 4rem; }
+            .hero-code { justify-content: center; padding-right: 0; }
+            .code-preview { width: 100%; max-width: 480px; }
+            .chroma-grid { grid-template-columns: repeat(2, 1fr); }
+            .integration { grid-template-columns: 1fr; padding: 6rem 2rem; }
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+            .features, .pricing, .models { padding: 6rem 2rem; }
+            .footer-cta { padding: 6rem 2rem; }
+            .footer-cta-title { font-size: 4.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav { padding: 1rem; }
+            /* Small screens: logo + Get Started only, drop the middle links */
+            .nav-links { display: none; }
+            .nav-cta { padding: 0.5rem 1rem; }
+
+            .hero { padding: 3rem 1.25rem 3rem; gap: 2.5rem; }
+            .hero-title { font-size: 2.75rem; }
+            .hero-sub { font-size: 0.9rem; }
+            .hero-code { padding-right: 0; }
+            .code-preview {
+                height: 420px;
+                transform: perspective(1200px) rotateY(-4deg) rotateX(1deg);
+            }
+            @keyframes code-slide-in {
+                from { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateX(40px); opacity: 0; }
+            }
+            @keyframes code-float {
+                0%, 100% { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateY(0); opacity: 1; }
+                50%      { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateY(-6px); opacity: 1; }
+            }
+            .code-preview:hover {
+                transform: perspective(1200px) rotateY(-2deg) rotateX(0.5deg) !important;
+            }
+
+            .chroma-grid, .pricing-grid { grid-template-columns: 1fr; }
+
+            .integration { padding: 5rem 1.25rem; gap: 2rem; }
+            .integration > * { min-width: 0; }
+            .integration-title { font-size: 2.25rem; line-height: 1.05; }
+            .integration-sub { font-size: 0.9rem; }
+            .integration-code {
+                padding: 1.25rem 1rem;
+                font-size: 0.78rem;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+            .copy-btn { top: 0.5rem; right: 0.5rem; padding: 0.35rem; }
+
+            .features, .pricing, .models { padding: 5rem 1.25rem; }
+            .features-title, .pricing-title, .models-title { font-size: 2.75rem; }
+
+            .footer-cta { padding: 5rem 1.25rem; }
+            .footer-cta-title { font-size: 3rem; }
+            .footer-cta-sub { font-size: 0.9rem; }
+            .footer { padding: 2rem 1.25rem; flex-direction: column; text-align: center; gap: 1.25rem; }
+            .footer-links { justify-content: center; gap: 1rem 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="grid-bg"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <a href="/" class="nav-logo-link">
+            <img class="nav-logo-img" src="https://files.nahcrof.com/file/crofai-black.png" alt="CrofAI" />
+        </a>
+        <div class="nav-links">
+            <a href="/pricing" class="nav-link">Pricing</a>
+            <a href="/docs" class="nav-link">Docs</a>
+            <a href="/signin" class="nav-link">Sign In</a>
+        </div>
+        <a href="/signin" class="nav-cta">
+            Get Started
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="line"><span class="reveal-text">Powerful Models.</span></span>
+                <span class="line"><span class="reveal-text hero-title-highlight delay">Crazy Cheap Pricing.</span></span>
+            </h1>
+            <p class="hero-sub">Access to the best OSS models for the cheapest prices on the market</p>
+            <div class="hero-buttons">
+                <a href="/signin" class="hero-cta">
+                    Get Started
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+                <a href="/pricing" class="hero-cta-outline">View Pricing</a>
+            </div>
+        </div>
+
+        <div class="hero-code">
+            <div class="code-preview" id="heroCodePreview">
+                <div class="window-chrome">
+                    <div class="window-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="window-title">Terminal</span>
+                </div>
+                <div class="tab-bar">
+                    <button class="tab active" data-tab="python">Python</button>
+                    <button class="tab" data-tab="javascript">JavaScript</button>
+                </div>
+                <div class="code-content">
+                    <pre class="code-block"><code id="typedCode"></code><span class="cursor"></span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features reveal" id="features">
+        <span class="section-header">// PLATFORM</span>
+        <h2 class="features-title">Everything you need to ship</h2>
+        <div class="chroma-grid" id="chromaGrid">
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M36 4L16 32H28L24 60L44 32H32L36 4Z" stroke="white" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"/><path d="M20 20L24 28" stroke="white" stroke-width="1.5" stroke-linecap="square"/><path d="M44 20L40 28" stroke="white" stroke-width="1.5" stroke-linecap="square"/></svg>
+                </div>
+                <h3 class="chroma-name">Low Latency</h3>
+            </article>
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M24 20C24 16.6863 26.6863 14 30 14H34C37.3137 14 40 16.6863 40 20V22C40 22.5523 40.4477 23 41 23C41.5523 23 42 22.5523 42 22V20C42 15.5817 38.4183 12 34 12H30C25.5817 12 22 15.5817 22 20V22C22 22.5523 22.4477 23 23 23C23.5523 23 24 22.5523 24 22V20Z" stroke="white" stroke-width="1.5"/><path d="M24 44C24 40.6863 26.6863 38 30 38H34C37.3137 38 40 40.6863 40 44V46C40 46.5523 40.4477 47 41 47C41.5523 47 42 46.5523 42 46V44C42 39.5817 38.4183 36 34 36H30C25.5817 36 22 39.5817 22 44V46C22 46.5523 22.4477 47 23 47C23.5523 47 24 46.5523 24 46V44Z" stroke="white" stroke-width="1.5"/><path d="M32 28V32" stroke="white" stroke-width="1.5"/><circle cx="34" cy="32" r="2" stroke="white" stroke-width="1.5"/><circle cx="30" cy="32" r="2" stroke="white" stroke-width="1.5"/></svg>
+                </div>
+                <h3 class="chroma-name">Easy Integration</h3>
+            </article>
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="14" stroke="white" stroke-width="1.5"/><path d="M32 22V20M32 44V42M22 32H20M44 32H42M26 26L24 24M38 38L36 36M38 26L36 24M26 38L24 36" stroke="white" stroke-width="1.5" stroke-linecap="square"/></svg>
+                </div>
+                <h3 class="chroma-name">Cost Effective</h3>
+            </article>
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 12L18 18V32C18 42 24 50 32 54C40 50 46 42 46 32V18L32 12Z" stroke="white" stroke-width="1.5"/><path d="M28 32C28 30.8954 28.8954 30 30 30H34C35.1046 30 36 30.8954 36 32V36C36 37.1046 35.1046 38 34 38H30C28.8954 38 28 37.1046 28 36V32Z" stroke="white" stroke-width="1.5"/><path d="M32 24V28" stroke="white" stroke-width="1.5"/></svg>
+                </div>
+                <h3 class="chroma-name">Secure</h3>
+            </article>
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 12C32 12 40 20 40 32C40 38 38 42 38 42" stroke="white" stroke-width="1.5"/><path d="M32 12C32 12 24 20 24 32C24 38 26 42 26 42" stroke="white" stroke-width="1.5"/><path d="M32 12V42" stroke="white" stroke-width="1.5"/><path d="M28 42H36" stroke="white" stroke-width="1.5"/><path d="M28 50L26 54M36 50L38 54M32 46L32 50" stroke="white" stroke-width="1.5"/><path d="M24 28C22 26 20 24 20 24M40 28C42 26 44 24 44 24" stroke="white" stroke-width="1.5"/></svg>
+                </div>
+                <h3 class="chroma-name">Fast Deployment</h3>
+            </article>
+            <article class="chroma-card">
+                <div class="chroma-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M16 48V36M28 48V28M40 48V20M52 48V12" stroke="white" stroke-width="1.5"/><path d="M16 36L28 28L40 20L52 12" stroke="white" stroke-width="1.5"/><path d="M14 50H54" stroke="white" stroke-width="1.5"/></svg>
+                </div>
+                <h3 class="chroma-name">Analytics</h3>
+            </article>
+        </div>
+    </section>
+
+    <!-- Integration -->
+    <section class="integration" id="integration">
+        <div class="reveal reveal-x-left">
+            <h2 class="integration-title"><span class="accent">Minutes</span> to your first call</h2>
+            <p class="integration-sub">Stop wrestling with complex SDKs. Just copy, paste, and start shipping.</p>
+        </div>
+        <div class="reveal reveal-scale">
+            <div class="integration-code-wrapper">
+                <button class="copy-btn" id="copyBtn" aria-label="Copy code">
+                    <svg id="copyIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <svg id="checkIcon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+<pre class="integration-code" id="curlSnippet">curl -X POST https://crof.ai/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "MODEL-FROM-LIST",
+    "messages": [{"role": "user","content": "Hello World"}]
+  }'</pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing reveal" id="pricing">
+        <span class="section-header">// PLANS</span>
+        <h2 class="pricing-title">Simple, predictable pricing</h2>
+        <div class="pricing-grid" id="pricingGrid">
+            <div class="pricing-card">
+                <h3 class="pricing-plan">Free</h3>
+                <p class="pricing-price">$0</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">Pay only for usage</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> No recurring monthly charge</li>
+                </ul>
+                <a href="/signin" class="pricing-cta">Switch to Free</a>
+            </div>
+            <div class="pricing-card">
+                <h3 class="pricing-plan">Hobby</h3>
+                <p class="pricing-price">$5</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">500 daily requests</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Access to all models</li>
+                </ul>
+                <a href="/pricing" class="pricing-cta">Get Hobby</a>
+            </div>
+            <div class="pricing-card popular">
+                <span class="popular-badge">Most Popular</span>
+                <h3 class="pricing-plan">Pro</h3>
+                <p class="pricing-price">$10</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">1,000 daily requests</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> All Hobby benefits</li>
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Priority support</li>
+                </ul>
+                <a href="/pricing" class="pricing-cta">Get Pro</a>
+            </div>
+            <div class="pricing-card">
+                <h3 class="pricing-plan">Intermediate</h3>
+                <p class="pricing-price">$20</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">2,500 daily requests</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> All Pro benefits</li>
+                </ul>
+                <a href="/pricing" class="pricing-cta">Get Intermediate</a>
+            </div>
+            <div class="pricing-card">
+                <h3 class="pricing-plan">Scale</h3>
+                <p class="pricing-price">$50</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">7,500 daily requests</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> All Intermediate benefits</li>
+                </ul>
+                <a href="/pricing" class="pricing-cta">Get Scale</a>
+            </div>
+            <div class="pricing-card">
+                <h3 class="pricing-plan">Max</h3>
+                <p class="pricing-price">$100</p>
+                <p class="pricing-sub">/month</p>
+                <p class="pricing-requests">15,000 daily requests</p>
+                <ul class="pricing-features">
+                    <li class="pricing-feature"><svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> All Scale benefits</li>
+                </ul>
+                <a href="/pricing" class="pricing-cta">Get Max</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="footer-cta" id="footercta">
+        <div class="reveal reveal-scale">
+            <h2 class="footer-cta-title">Ready to build?</h2>
+            <p class="footer-cta-sub">Free account. First call in minutes. No credit card required.</p>
+            <a href="/signin" class="footer-cta-btn">
+                Get Started
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-copy">&copy; 2025 Nahcrof LLC</p>
+        <div class="footer-links">
+            <a href="/pricing" class="footer-link">Pricing</a>
+            <a href="/docs" class="footer-link">Docs</a>
+            <a href="/privacy" class="footer-link">Privacy</a>
+            <a href="/tos" class="footer-link">ToS</a>
+            <a href="https://status.nahcrof.com" class="footer-link">Status</a>
+            <a href="https://discord.gg/e8UeP7YdJW" class="footer-link">Discord</a>
+            <a href="/startups" class="footer-link">Startups</a>
+            <a href="/enterprise_login" class="footer-link">Enterprise</a>
+            <a href="mailto:nahcrof@gmail.com" class="footer-link">Contact</a>
+            <a href="https://nahcrof.com" class="footer-link">Nahcrof</a>
+        </div>
+    </footer>
+</div>
+
+<script src="/ui/crofui.js"></script>
+<script>
+(function () {
+    /* ── Reveal-on-scroll ────────────────────────────────── */
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                revealObserver.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    /* ── ChromaGrid: staggered reveal + mouse follow ────── */
+    const cards = document.querySelectorAll('.chroma-card');
+    const cardObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                const i = Array.from(cards).indexOf(e.target);
+                setTimeout(() => e.target.classList.add('visible'), i * 100);
+                cardObserver.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    cards.forEach(c => {
+        cardObserver.observe(c);
+        c.addEventListener('mousemove', (ev) => {
+            const r = c.getBoundingClientRect();
+            c.style.setProperty('--mouse-x', (ev.clientX - r.left) + 'px');
+            c.style.setProperty('--mouse-y', (ev.clientY - r.top) + 'px');
+        });
+    });
+
+    /* ── Pricing: staggered reveal ───────────────────────── */
+    const priceCards = document.querySelectorAll('.pricing-card');
+    const priceObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                const i = Array.from(priceCards).indexOf(e.target);
+                setTimeout(() => e.target.classList.add('visible'), i * 100);
+                priceObserver.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    priceCards.forEach(c => priceObserver.observe(c));
+
+    /* ── Hero parallax ───────────────────────────────────── */
+    const heroContent = document.querySelector('.hero-content');
+    const hero = document.querySelector('.hero');
+    if (heroContent && hero) {
+        window.addEventListener('scroll', () => {
+            const rect = hero.getBoundingClientRect();
+            const heroHeight = hero.offsetHeight;
+            const progress = Math.min(Math.max(-rect.top / heroHeight, 0), 1);
+            heroContent.style.transform = 'translateY(' + (progress * 50) + '%)';
+        }, { passive: true });
+    }
+
+    /* ── Typewriter ──────────────────────────────────────── */
+    const snippets = {
+        python: 'from openai import OpenAI\n\nclient = OpenAI(\n    base_url="https://crof.ai/v1",\n    api_key="api-key-here"\n)\nresponse = client.chat.completions.create(\n    model="MODEL-FROM-LIST",\n    messages=[\n        {"role": "user", "content": "Hello!"}\n    ]\n)\nprint(response.choices[0].message.content)',
+        javascript: "import { OpenAI } from 'openai';\n\nconst client = new OpenAI({\n    baseURL: \"https://crof.ai/v1\",\n    apiKey: \"api-key-here\"\n});\n\nconst response = await client.chat.completions.create({\n    model: \"MODEL-FROM-LIST\",\n    messages: [\n        { role: \"user\", content: \"Hello!\" }\n    ]\n});\nconsole.log(response.choices[0].message.content);"
+    };
+
+    const typedEl = document.getElementById('typedCode');
+    const tabs = document.querySelectorAll('.tab');
+    const previewEl = document.getElementById('heroCodePreview');
+    let typingTimer = null;
+    let currentLang = 'python';
+
+    /* Strip the entry animation once it completes so hover cycles
+       never restart it (restart would flash opacity 0 during the
+       animation's 0.3s start delay). */
+    previewEl.addEventListener('animationend', function onEntry(e) {
+        if (e.animationName === 'code-slide-in') {
+            previewEl.classList.add('entered');
+            previewEl.removeEventListener('animationend', onEntry);
+        }
+    });
+
+    function typeCode(lang) {
+        if (typingTimer) { clearInterval(typingTimer); typingTimer = null; }
+        typedEl.textContent = '';
+        previewEl.classList.remove('floating');
+        const chars = snippets[lang].split('');
+        let i = 0;
+        typingTimer = setInterval(() => {
+            if (i < chars.length) {
+                typedEl.textContent += chars[i++];
+            } else {
+                clearInterval(typingTimer);
+                typingTimer = null;
+                previewEl.classList.add('floating');
+            }
+        }, 18);
+    }
+
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            const lang = t.dataset.tab;
+            if (lang === currentLang) return;
+            currentLang = lang;
+            tabs.forEach(x => x.classList.toggle('active', x === t));
+            typeCode(lang);
+        });
+    });
+
+    typeCode('python');
+
+    /* ── Copy button ─────────────────────────────────────── */
+    const copyBtn = document.getElementById('copyBtn');
+    const copyIcon = document.getElementById('copyIcon');
+    const checkIcon = document.getElementById('checkIcon');
+    const snippet = document.getElementById('curlSnippet');
+    if (copyBtn && snippet) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(snippet.textContent);
+                copyIcon.style.display = 'none';
+                checkIcon.style.display = 'block';
+                setTimeout(() => {
+                    copyIcon.style.display = 'block';
+                    checkIcon.style.display = 'none';
+                }, 2000);
+            } catch (_) {}
+        });
+    }
+})();
+</script>
+</body>
+</html>

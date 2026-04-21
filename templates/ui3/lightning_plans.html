@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofai-black.png"
+        />
+        <meta
+            name="description"
+            content="Simple and transparent subscription plans for CrofAI"
+        />
+        <title>CrofAI - Subscription Plans</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+
+        <style>
+            /* Base styles matched from pricing.html */
+            body {
+                padding-bottom: 100px;
+            }
+
+            header {
+                margin-top: 25px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex: 0 0 auto;
+                margin-bottom: 100px;
+            }
+
+            .page-title {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                color: var(--text);
+            }
+
+            .page-subtitle {
+                text-align: center;
+                color: var(--muted-text, #8a8a8a);
+                margin-bottom: 50px;
+                font-size: 1.1rem;
+            }
+
+            .plans {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            .plan-box {
+                width: 350px;
+                font-size: 1.1rem;
+                border: 1px solid var(--border);
+                border-radius: 15px;
+                background: var(--dark-background);
+                padding: 25px;
+                transition: 0.3s ease;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .plan-box:hover {
+                background: var(--background);
+                transform: translateY(-5px);
+            }
+
+            .plan-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: bold;
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+
+            .pretty {
+                color: var(--bright-text);
+                background: linear-gradient(90deg, #9b30ff, #4169e1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-weight: 800;
+            }
+
+            .plan-features {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 30px 0;
+                flex-grow: 1;
+            }
+
+            .plan-features li {
+                margin-bottom: 12px;
+                color: var(--text);
+                display: flex;
+                align-items: center;
+            }
+
+            .plan-features li::before {
+                content: "-";
+                margin-right: 10px;
+                color: #4ade80;
+                font-weight: bold;
+            }
+
+            /* Modal Styles */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal {
+                background: var(--dark-background);
+                border: 1px solid var(--border);
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 450px;
+                width: 90%;
+                text-align: center;
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 25px;
+            }
+
+            .btn-cancel {
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--text);
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            @media (max-width: 768px) {
+                .plan-box {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+
+
+
+        <br><br><br><br>
+
+        <h1 class="page-title">Choose your plan</h1>
+        <p class="page-subtitle">Scalable compute for every stage of your project</p>
+
+        <div class="plans">
+            <!-- Free Plan -->
+            <div class="plan-box">
+                <div class="plan-header">
+		    Lightning 1	
+                    <div class="pretty">$50<span style="font-size: 0.9rem; -webkit-text-fill-color: var(--muted-text);">/mo</span></div>
+                </div>
+                <ul class="plan-features">
+                    <li>3,000 covered requests (including lightning models)</li>
+                    <li>Priority support</li>
+                </ul>
+                <button style="width: auto;" class="btn-white" onclick="showPlanModal('lightning1', 50)">Current Plan</button>
+            </div>
+
+            
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div class="modal-overlay" id="confirmModal">
+            <div class="modal">
+                <h2 id="modalTitle">Confirm Upgrade</h2>
+                <p id="modalMessage"></p>
+                <div class="modal-buttons">
+                    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button id="confirmBtn" class="btn-white" onclick="confirmPlanChange()" style="width: auto;">Confirm Purchase</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="/ui/crofui.js"></script>
+        <script>
+            let selectedPlan = null;
+
+            function showPlanModal(plan, price) {
+                selectedPlan = plan;
+                const modal = document.getElementById("confirmModal");
+                const title = document.getElementById("modalTitle");
+                const message = document.getElementById("modalMessage");
+
+                if (plan === 'free') {
+                    title.textContent = "Switch to Pay-as-you-go";
+                    message.textContent = "This will immediately remove your current subscription benefits at the end of the billing cycle. Are you sure?";
+                } else {
+                    title.textContent = "Confirm Subscription";
+                    message.textContent = `The ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan subscription fee of $${price}/month will be deducted from your account credits. Proceed?`;
+                }
+
+                modal.classList.add("active");
+            }
+
+            function closeModal() {
+                document.getElementById("confirmModal").classList.remove("active");
+                selectedPlan = null;
+            }
+
+            function confirmPlanChange() {
+                if (selectedPlan) {
+                    window.location.href = `/plan-api/${selectedPlan}`;
+                }
+            }
+
+            // Close on outside click
+            window.onclick = function(event) {
+                const modal = document.getElementById("confirmModal");
+                if (event.target == modal) closeModal();
+            }
+        </script>
+    </body>
+</html>

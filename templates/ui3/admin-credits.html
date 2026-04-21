@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofaicolor.png"
+        />
+        <meta
+            name="description"
+            content="CrofAI Admin - Grant credits to users"
+        />
+        <title>CrofAI - Admin Credits</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+
+        <style>
+            .logo {
+                height: 50px;
+                width: auto;
+            }
+
+            #nav-header {
+                display: flex;
+                justify-content: flex-end;
+                width: 70vw;
+            }
+
+            header {
+                margin-top: 25px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex: 0 0 auto;
+                margin-bottom: 100px;
+            }
+
+            header nav {
+                margin-left: auto;
+                float: right;
+                margin-top: 10px;
+                display: flex;
+            }
+
+            header .link {
+                margin-left: 20px;
+                color: var(--link-text);
+                border: 1px solid transparent;
+                width: auto;
+                height: 17px;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 14px;
+                text-decoration: none;
+                transition: 0.3s ease;
+            }
+            header .link:hover {
+                background: var(--hover-background);
+                color: var(--text);
+            }
+
+            header .btn {
+                margin-left: 20px;
+                margin-top: -5px;
+            }
+
+            .hero {
+                margin-top: 18vh;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+                font-size: 2.4rem;
+                color: var(--text);
+                display: flex;
+                justify-content: center;
+            }
+
+            .hero h2 {
+                color: #808080;
+                font-weight: normal;
+                margin-top: 8px;
+                font-size: 1.05rem;
+            }
+
+	    btn-purple: {width: auto;}
+
+            /*.admin-badge {
+                display: inline-block;
+		background: #181122;
+                color: white;
+                border-radius: 12px;
+		border: 1px solid #261f3a;
+		height: 30px;
+		margin-top: 5px;
+                font-size: 0.75rem;
+                margin-left: 12px;
+            }*/
+
+	     .admin-badge {
+		padding-left: 8px;
+		padding-right: 8px;
+		padding-top: 8px;
+		margin-left: 12px;
+		background: #181122;
+		height: 25px;
+		margin-top: 10px;
+		font-size: 0.75rem;
+		border: 1px solid #261f3a;
+		border-radius: 12px;
+		color: var(--text);
+		text-decoration: none;
+		transition: 0.3s ease;
+	    }
+
+	    [data-theme="light"] .admin-badge {
+		background: #f3eefc;
+		border-color: #d9cff3;
+	    }
+
+            .form-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            .form-box {
+                width: 600px;
+                max-width: 90%;
+                padding: 40px;
+                border-radius: 12px;
+                background-color: transparent;
+                border: 1px solid var(--border);
+                margin-top: 6vh;
+            }
+
+            .form-box h3 {
+                margin-top: 0;
+                margin-bottom: 22px;
+                text-align: left;
+                color: var(--text);
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 6px;
+                color: var(--muted-text, #808080);
+                font-size: 0.95rem;
+            }
+
+            input.input,
+            textarea.input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+	    .btn {
+		width: auto;	
+	    }
+
+            .helper-text {
+                font-size: 0.85rem;
+                color: #999;
+                margin-top: 4px;
+            }
+
+            .actions {
+                margin-top: 24px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .btn-secondary {
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--text);
+                padding: 10px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 0.95rem;
+                transition: 0.3s ease;
+            }
+
+            .btn-secondary:hover {
+                background: var(--hover-background);
+            }
+
+            .footer {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 10vh;
+            }
+
+            .footer-element {
+                margin-left: 20px;
+            }
+
+            .footer-element a {
+                text-decoration: none;
+                color: var(--text);
+            }
+
+            .footer-element a:hover {
+                text-decoration: underline;
+                color: var(--bright-text);
+            }
+
+            .success-message {
+                display: none;
+                padding: 16px;
+                background: #d4edda;
+                border: 1px solid #c3e6cb;
+                color: #155724;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div id="nav-header">
+                <a href="/"><img class="logo" src="https://files.nahcrof.com/file/crofai-black.png"></a>
+                <nav>
+                    <a id="pricing" class="link" href="/admin">Admin</a>
+                    <a id="docs" class="link" href="/docs">Documentation</a>
+                    <a class="btn" href="/signout">Sign Out</a>
+                </nav>    
+            </div>
+        </header>
+
+        <div class="hero">
+            <h1>
+                Grant User Credits
+                <span class="admin-badge">ADMIN</span>
+            </h1>
+            <h2>Add credits to a user account</h2>
+        </div>
+
+        <div class="form-wrapper">
+            <form action="" method="POST" class="form-box">
+                <h3>Credit Assignment</h3>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input
+                        class="input"
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter username"
+                        required
+                    />
+                    <div class="helper-text">The user who will receive the credits</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="credits">Credit Amount</label>
+                    <input
+                        class="input"
+                        type="number"
+                        id="credits"
+                        name="credits"
+                        placeholder="10"
+                        step="1"
+                        required
+                    />
+                    <div class="helper-text">Number of credits to grant</div>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn" onclick="window.location.href='/'">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn">
+                        Grant Credits
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <div class="footer-element">
+                <a href="/admin">Admin Dashboard</a>
+            </div>
+            <div class="footer-element">
+                <a href="/docs">Documentation</a>
+            </div>
+            <div class="footer-element">
+                <a href="/privacy">Privacy</a>
+            </div>
+            <div class="footer-element">
+                <a href="/cdn-cgi/l/email-protection#c5aba4ada6b7aaa385a2a8a4aca9eba6aaa8">Contact</a>
+            </div>
+            <br /><br /><br />
+        </div>
+
+        <script
+            data-cfasync="false"
+            src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+        ></script>
+        <script src="/ui/crofui.js"></script>
+
+	<script>
+	    const window_width = window.innerWidth;
+	    if (window_width < 551) {
+		document.getElementById("pricing").remove();
+		document.getElementById("docs").remove();
+	    }
+	</script>
+
+	{% if message %}
+	    <script>
+		createToast("{{message}}");
+	    </script>
+	{% endif %}
+
+    </body>
+</html>

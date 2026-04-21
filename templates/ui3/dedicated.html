@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://files.nahcrof.com/file/crofai-black.png" />
+    <meta name="description" content="Dedicated model deployments on CrofAI" />
+    <title>CrofAI - Dedicated</title>
+    <link rel="stylesheet" href="/ui/crofui.css" />
+    <script src="https://files.nahcrof.com/file/styl.js"></script>
+
+    <style>
+        .page-container {
+            margin: 40px auto 80px auto;
+            width: 90%;
+            max-width: 860px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            color: var(--bright-text);
+        }
+
+        .page-subtitle {
+            color: var(--link-text);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        /* Deployment cards */
+        .deployment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .deployment-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 22px;
+            background: var(--dark-background);
+            transition: background 0.2s ease;
+        }
+
+        .deployment-card:hover {
+            background: var(--hover-background);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-model-name {
+            font-size: 1.05rem;
+            color: var(--bright-text);
+            font-weight: 600;
+        }
+
+        .model-id-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .model-id-text {
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: var(--link-text);
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+            user-select: all;
+        }
+
+        .model-id-text:hover {
+            border-color: #9b30ff;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--link-text);
+            font-size: 0.78rem;
+            padding: 3px 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            border-color: #9b30ff;
+            color: var(--bright-text);
+        }
+
+        .card-divider {
+            border-top: 1px solid var(--border);
+            margin: 14px 0;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .setting-label {
+            color: var(--link-text);
+            font-size: 0.9rem;
+        }
+
+        .setting-label strong {
+            color: var(--text);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .toggle-opt {
+            padding: 5px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--background);
+            color: var(--link-text);
+            font-size: 0.83rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-opt.active {
+            border-color: #9b30ff;
+            color: var(--bright-text);
+            background: rgba(155, 48, 255, 0.1);
+        }
+
+        .toggle-opt:hover:not(.active) {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            color: var(--link-text);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2.8rem;
+            margin-bottom: 14px;
+            opacity: 0.5;
+        }
+
+        .empty-state .empty-title {
+            font-size: 1.15rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .empty-state .empty-desc {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto 24px;
+        }
+
+        /* Add modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--dark-background, #111);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 30px;
+            width: 90%;
+            max-width: 480px;
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            color: var(--bright-text);
+            margin-bottom: 6px;
+        }
+
+        .modal-desc {
+            color: var(--link-text);
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+            line-height: 1.55;
+        }
+
+        .model-option {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .model-option:hover {
+            border-color: #9b30ff;
+            background: rgba(155,48,255,0.06);
+        }
+
+        .model-option.selected {
+            border-color: #9b30ff;
+            background: rgba(155,48,255,0.1);
+        }
+
+        .model-option-name {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .model-option-id {
+            font-family: monospace;
+            font-size: 0.78rem;
+            color: var(--link-text);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .modal-actions .btn,
+        .modal-actions .btn-purple {
+            width: auto;
+            padding: 9px 20px;
+        }
+
+        .success-banner {
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            background: rgba(74, 222, 128, 0.07);
+            color: #4ade80;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 600px) {
+            .card-top { flex-direction: column; align-items: flex-start; }
+            .setting-row { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hamburger"><div></div><div></div><div></div></div>
+
+<div id="sidebar" class="sidebar">
+    <ul>
+        <li><a href="/">Playground</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a style="color: var(--bright-text);" href="/dedicated">Dedicated</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+
+<div class="overlay"></div>
+<br><br><br><br><br><br>
+
+<div class="page-container">
+
+    {% if success %}
+    <div class="success-banner">
+        Your subscription was successful! Your deployment will appear below once it is activated.
+    </div>
+    {% endif %}
+
+    <div class="page-header">
+        <div>
+            <div class="page-title">Dedicated Deployments</div>
+            <div class="page-subtitle">Your private, always-on model endpoints</div>
+        </div>
+        <button class="btn-purple" onclick="openAddModal()" style="margin-right: 0px; width: auto; padding: 9px 18px;">+ Add Deployment</button>
+    </div>
+
+    {% if deployments %}
+    <div class="deployment-list">
+        {% for model_name, dep_data in deployments.items() %}
+        <div class="deployment-card" id="card-{{ model_name | replace('.', '_') | replace('-', '_') }}">
+            <div class="card-top">
+                <div>
+                    <div class="card-model-name">{{ model_name }}</div>
+                    <div class="model-id-row">
+                        <span class="model-id-text" id="mid-{{ loop.index }}" title="Click to select">{{ model_name }}:dedicated</span>
+                        <button class="copy-btn" onclick="copyModelId('{{ model_name }}:dedicated', this)">Copy</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="setting-row">
+                <div class="setting-label">
+                    <strong>Under Load</strong> — what to do when the server can't keep up
+                </div>
+                <div class="toggle-group" id="toggle-{{ loop.index }}">
+                    <button
+                        class="toggle-opt {% if dep_data.under_load == 'rate_limit' %}active{% endif %}"
+                        onclick="setUnderLoad('{{ model_name }}', 'rate_limit', {{ loop.index }})"
+                    >Rate Limit (429)</button>
+                    <button
+                        class="toggle-opt {% if dep_data.under_load == 'queue' %}active{% endif %}"
+                        onclick="setUnderLoad('{{ model_name }}', 'queue', {{ loop.index }})"
+                    >Queue</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">☁</div>
+        <div class="empty-title">No Dedicated Endpoints Yet</div>
+        <div class="empty-desc">
+            Add a dedicated deployment to get a private, always-on endpoint for a model.
+        </div>
+        <button class="btn-purple" onclick="openAddModal()" style="width: auto; padding: 10px 22px;">+ Add Deployment</button>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Add Deployment Modal -->
+<div class="modal-overlay" id="add-modal">
+    <div class="modal">
+        <div class="modal-title">Add Dedicated Deployment</div>
+        <div class="modal-desc">Select a model to deploy. You'll be taken to checkout to start your monthly subscription.</div>
+
+        <div id="model-options">
+            {% for opt in deployment_options %}
+            {% set info = dedicated_options.get(opt, {}) %}
+            <div
+                class="model-option"
+                id="opt-{{ loop.index }}"
+                onclick="selectModel('{{ opt }}', {{ loop.index }})"
+            >
+                <div>
+                    <div class="model-option-name">{{ opt }}{% if info.quant %} <span style="font-size:0.75rem;color:var(--link-text);font-weight:400;">{{ info.quant }}</span>{% endif %}</div>
+                    <div class="model-option-id">{{ opt }}:dedicated</div>
+                </div>
+                {% if info.cost %}
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="color:var(--bright-text);font-size:0.95rem;font-weight:600;">${{ info.cost }}<span style="font-size:0.75rem;font-weight:400;color:var(--link-text);">/day</span></div>
+                </div>
+                {% else %}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4;flex-shrink:0;">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="closeAddModal()" style="width: auto; padding: 9px 20px;">Cancel</button>
+            <button class="btn-purple" id="checkout-btn" onclick="goToCheckout()" disabled style="width: auto; padding: 9px 20px; opacity: 0.5; pointer-events: none;">Subscribe</button>
+        </div>
+    </div>
+</div>
+
+<script src="/ui/crofui.js"></script>
+<script>
+    // Hamburger nav
+    document.addEventListener("DOMContentLoaded", function () {
+        const hamburger = document.querySelector(".hamburger");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.querySelector(".overlay");
+
+        hamburger.addEventListener("click", function () {
+            hamburger.classList.toggle("active");
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", function () {
+            hamburger.classList.remove("active");
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    });
+
+    // Modal
+    let selectedModel = null;
+
+    function openAddModal() {
+        document.getElementById("add-modal").classList.add("active");
+    }
+
+    function closeAddModal() {
+        document.getElementById("add-modal").classList.remove("active");
+        // Reset selection
+        if (selectedModel) {
+            document.querySelectorAll(".model-option").forEach(el => el.classList.remove("selected"));
+            selectedModel = null;
+            const btn = document.getElementById("checkout-btn");
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.pointerEvents = "none";
+        }
+    }
+
+    function selectModel(model, idx) {
+        document.querySelectorAll(".model-option").forEach(el => el.classList.remove("selected"));
+        document.getElementById("opt-" + idx).classList.add("selected");
+        selectedModel = model;
+        const btn = document.getElementById("checkout-btn");
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.pointerEvents = "auto";
+    }
+
+    function goToCheckout() {
+        if (!selectedModel) return;
+        window.location.href = "/dedicated-api/checkout/" + encodeURIComponent(selectedModel);
+    }
+
+    // Copy model ID
+    function copyModelId(modelId, btn) {
+        navigator.clipboard.writeText(modelId).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = orig; }, 1800);
+        }).catch(() => {
+            createToast("Failed to copy");
+        });
+    }
+
+    // Under load toggle
+    async function setUnderLoad(model, value, idx) {
+        try {
+            const res = await fetch("/dedicated-api/update-setting", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ model, under_load: value })
+            });
+            const data = await res.json();
+            if (data.success) {
+                const group = document.getElementById("toggle-" + idx);
+                group.querySelectorAll(".toggle-opt").forEach(btn => btn.classList.remove("active"));
+                const target = value === "rate_limit" ? group.children[0] : group.children[1];
+                target.classList.add("active");
+                createToast("Setting updated");
+            } else {
+                createToast(data.error || "Failed to update setting");
+            }
+        } catch (e) {
+            createToast("Network error");
+        }
+    }
+
+    // Show error toast if redirected with an error
+    const params = new URLSearchParams(window.location.search);
+    const errParam = params.get("error");
+    if (errParam === "no_email") {
+        createToast("Please add a billing email in Settings before purchasing a deployment.");
+    } else if (errParam === "checkout_failed") {
+        createToast("Failed to create checkout. Please try again.");
+    } else if (errParam === "invalid_model") {
+        createToast("Invalid model selection.");
+    } else if (errParam) {
+        createToast(errParam);
+    }
+</script>
+
+</body>
+</html>

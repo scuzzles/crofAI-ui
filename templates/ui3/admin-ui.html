@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="https://files.nahcrof.com/file/crofaicolor.png" />
+        <title>CrofAI - Admin Dashboard</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+        <style>
+            :root {
+                --border: #2e2e2e;
+                --bg: #000000;
+                --panel: #0a0a0a;
+                --text: #a0a0a0;
+                --bright: #ffffff;
+                --bright-text: #b19cd9;
+            }
+
+            [data-theme="light"] {
+                --border: #e4e4e7;
+                --bg: #ffffff;
+                --panel: #f7f7f8;
+                --text: #555555;
+                --bright: #111111;
+                --bright-text: #7c3aed;
+            }
+            body {
+                margin: 0;
+                background-color: var(--bg);
+                color: var(--text);
+                font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            }
+            header {
+                margin-top: 25px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 80px;
+            }
+            #nav-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 70vw;
+            }
+            .logo { height: 50px; width: auto; }
+            nav { 
+                 display: flex; 
+                 align-items: center; 
+                 gap: 15px; 
+             }
+            .link {
+                color: var(--text);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 8px 14px;
+                border-radius: 12px;
+                transition: 0.3s ease;
+            }
+            .link:hover {
+                background: var(--palette-bg-5);
+                color: var(--bright-text);
+            }
+            .btn {
+                width: auto !important;
+                min-width: 100px;
+                padding: 8px 20px;
+                text-decoration: none;
+                font-size: 0.9rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                margin: 0;
+            }
+            .hero {
+                text-align: center;
+                margin-bottom: 60px;
+            }
+            .hero h1 {
+                font-size: 2.4rem;
+                color: var(--bright);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+            }
+            .admin-badge {
+                padding: 4px 10px;
+                background: #181122;
+                border: 1px solid #261f3a;
+                border-radius: 12px;
+                color: var(--bright-text);
+                font-size: 0.75rem;
+                font-weight: bold;
+            }
+            .dashboard-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+            .dashboard-container {
+                width: 1000px;
+                max-width: 90%;
+            }
+            .action-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+            }
+            .action-card {
+                padding: 30px;
+                border-radius: 12px;
+                background-color: var(--panel);
+                border: 1px solid var(--border);
+                text-align: center;
+                transition: 0.3s ease;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center; 
+            }
+            .action-card:hover {
+                border-color: var(--bright-text);
+                transform: translateY(-4px);
+                background: rgba(177, 156, 217, 0.03);
+            }
+            .action-card h3 {
+                margin: 15px 0 8px 0;
+                color: var(--bright);
+                font-size: 1.1rem;
+            }
+            .action-card p {
+                color: #666;
+                font-size: 0.85rem;
+                margin-bottom: 25px;
+                line-height: 1.4;
+                min-height: 40px; 
+            }
+            .action-card .icon {
+                font-size: 2.5rem;
+            }
+            .btn-card {
+                margin-top: auto; 
+                width: 100%;
+                max-width: 180px;
+                background: var(--bright);
+                color: #000;
+                padding: 10px 0;
+                border-radius: 6px;
+                font-weight: 600;
+                text-decoration: none;
+                font-size: 0.9rem;
+                display: block;
+            }
+            .footer {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 15vh;
+                padding-bottom: 50px;
+                gap: 30px;
+            }
+            .footer-element a { text-decoration: none; color: var(--text); font-size: 0.9rem; }
+            .footer-element a:hover { color: var(--bright-text); }
+            @media (max-width: 768px) {
+                #nav-header { width: 90vw; }
+                .link { display: none; }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div id="nav-header">
+                <a href="/"><img class="logo" src="https://files.nahcrof.com/file/crofai-black.png"></a>
+                <nav>
+                    <a class="link" href="/admin">Admin</a>
+                    <a class="link" href="/docs">Docs</a>
+                    <a class="btn" href="/signout">Sign Out</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="hero">
+            <h1>Admin Dashboard <span class="admin-badge">ADMIN</span></h1>
+            <h2 style="color: #666; font-weight: 400; margin-top: 10px;">Central command for CrofAI operations</h2>
+        </div>
+
+        <div class="dashboard-wrapper">
+            <div class="dashboard-container">
+                <div class="action-cards">
+                    <div class="action-card" onclick="window.location.href='/usage'">
+                        <div class="icon">📊</div>
+                        <h3>Usage Analytics</h3>
+                        <p>Monitor platform traffic and request metrics.</p>
+                        <span class="btn-card">View Stats</span>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/give_credits'">
+                        <div class="icon">💳</div>
+                        <h3>Grant Credits</h3>
+                        <p>Manually adjust user balances and quotas.</p>
+                        <span class="btn-card">Open Credits</span>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/admin-become-user'">
+                        <div class="icon">👤</div>
+                        <h3>Become User</h3>
+                        <p>Sign in as a different user to troubleshoot accounts.</p>
+                        <span class="btn-card">Switch User</span>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/admin-pager'">
+                        <div class="icon">📟</div>
+                        <h3>Pager Logs</h3>
+                        <p>View incident reports and system alerts.</p>
+                        <span class="btn-card" style="background: var(--bright-text);">View Pager</span>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/tokens'">
+                        <div class="icon">📟</div>
+                        <h3>Token Counter</h3>
+                        <p>Tokenizer</p>
+                        <span class="btn-card">Tokenizer</span>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/money'">
+                        <div class="icon">💸</div>
+                        <h3>Price Calculator</h3>
+                        <p>Estimate costs and configure pricing tiers.</p>
+                        <span class="btn-card">Open Money</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-element"><a href="/pricing">Pricing</a></div>
+            <div class="footer-element"><a href="/docs">Docs</a></div>
+            <div class="footer-element"><a href="/privacy">Privacy</a></div>
+            <div class="footer-element"><a href="mailto:support@nahcrof.com">Contact</a></div>
+        </div>
+
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+        <script src="/ui/crofui.js"></script>
+    </body>
+</html>

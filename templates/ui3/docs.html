@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://files.nahcrof.com/file/crofaicolor.png" />
+    <title>CrofAI — Documentation</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Geist:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/ui/crofui.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.4.0/showdown.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #09090B;
+            --surface: #111111;
+            --border: #1E1E1E;
+            --primary-text: #F0EDE8;
+            --secondary-text: #6B6B6B;
+            --accent: #7C3AED;
+            --accent-light: #A855F7;
+            --code-bg: #0F0F0F;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f7f7f8;
+            --border: #e5e5e7;
+            --primary-text: #111111;
+            --secondary-text: #555555;
+            --accent: #7C3AED;
+            --accent-light: #7C3AED;
+            --code-bg: #f4f4f5;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--primary-text);
+            font-family: Geist, -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        a { color: inherit; text-decoration: none; }
+        button { background: none; border: none; cursor: pointer; font-family: inherit; color: inherit; }
+
+        /* Animated grid bg */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 64px 64px;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 10, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+        .nav-logo-img { height: 28px; width: auto; opacity: 0.95; display: block; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--secondary-text);
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--accent-light); }
+        .nav-cta {
+            background: var(--accent);
+            color: #0A0A0A;
+            padding: 0.5rem 1.25rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .nav-cta:hover { background: var(--primary-text); }
+
+        /* Scroll progress */
+        .progress-bar {
+            position: fixed;
+            top: 0; right: 0;
+            width: 2px;
+            height: 0%;
+            background: linear-gradient(180deg, var(--accent-light), var(--accent));
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+            z-index: 1000;
+            transition: height 0.04s linear;
+        }
+
+        /* Layout */
+        .docs-container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar */
+        .docs-toc {
+            width: 260px;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        /* No top nav (signed-in): sidebar sticks to the very top */
+        body.no-top-nav .docs-toc { top: 0; height: 100vh; }
+        body.no-top-nav .content { padding-top: 5rem; }
+        .docs-toc-heading {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary-text);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+        .docs-toc-subheading {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--secondary-text);
+            letter-spacing: 0.05em;
+            margin: 1.5rem 0 0.75rem 0;
+            font-weight: 500;
+        }
+        .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
+        .toc-list a {
+            display: block;
+            font-family: Geist, sans-serif;
+            font-size: 0.87rem;
+            color: var(--secondary-text);
+            padding: 0.35rem 0.75rem;
+            border-left: 1px solid transparent;
+            line-height: 1.4;
+            transition: color 0.18s, border-left-color 0.18s, background 0.18s;
+        }
+        .toc-list a:hover {
+            color: var(--accent-light);
+            border-left-color: var(--accent);
+        }
+        .toc-list a.active {
+            color: var(--accent-light);
+            border-left-color: var(--accent-light);
+            background: rgba(124, 58, 237, 0.06);
+        }
+        .toc-list .toc-h1 a { color: var(--primary-text); font-weight: 500; }
+        .toc-list .toc-h2 a { padding-left: 1.25rem; }
+        .toc-list .toc-h3 a { padding-left: 2rem; font-size: 0.82rem; }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 4rem 4rem 8rem;
+            max-width: 1000px;
+            min-width: 0;
+        }
+
+        .content-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4.5rem;
+            margin: 0 0 0.75rem 0;
+            line-height: 1;
+            color: var(--primary-text);
+            letter-spacing: 0.01em;
+        }
+        .page-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.05rem;
+            color: var(--secondary-text);
+        }
+        .copy-page-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--primary-text);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .copy-page-btn:hover {
+            background: var(--accent);
+            color: #0A0A0A;
+            border-color: var(--accent);
+        }
+        .copy-page-btn svg { width: 14px; height: 14px; }
+
+        /* Loading / error */
+        .loading-state, .error-state {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--secondary-text);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            padding: 3rem 0;
+        }
+        .error-state { display: none; color: var(--accent-light); }
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Rendered markdown body */
+        #doc-body { font-family: Geist, sans-serif; }
+        #doc-body > :first-child { margin-top: 0; }
+
+        #doc-body h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--primary-text);
+            margin: 4rem 0 1.5rem 0;
+            line-height: 1;
+            letter-spacing: 0.01em;
+        }
+        #doc-body h1:first-child { display: none; } /* markdown title dup */
+        #doc-body h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.25rem;
+            color: var(--primary-text);
+            margin: 3.5rem 0 1.25rem 0;
+            line-height: 1.1;
+            letter-spacing: 0.01em;
+        }
+        #doc-body h3 {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--primary-text);
+            margin: 2.5rem 0 1rem 0;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            text-transform: none;
+            font-weight: 500;
+        }
+        #doc-body h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--primary-text);
+            margin: 2rem 0 0.75rem 0;
+        }
+        #doc-body p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--secondary-text);
+            margin: 0 0 1.25rem 0;
+        }
+        #doc-body a {
+            color: var(--accent-light);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            transition: color 0.15s, border-color 0.15s;
+        }
+        #doc-body a:hover {
+            color: #C4B5FD;
+            border-bottom-color: var(--accent-light);
+        }
+        #doc-body ul, #doc-body ol {
+            margin: 0 0 1.5rem 1.25rem;
+            color: var(--secondary-text);
+        }
+        #doc-body li { margin-bottom: 0.4rem; line-height: 1.6; }
+        #doc-body ul { list-style: none; padding-left: 0; margin-left: 0; }
+        #doc-body ul li {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        #doc-body ul li::before {
+            content: "/>";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+            top: 0.1rem;
+        }
+        #doc-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        /* Inline code */
+        #doc-body p code,
+        #doc-body li code,
+        #doc-body h1 code,
+        #doc-body h2 code,
+        #doc-body h3 code,
+        #doc-body h4 code {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.45rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.87em;
+            color: var(--accent-light);
+            border-radius: 3px;
+        }
+
+        /* Code blocks */
+        .code-wrapper {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            margin: 0 0 2rem 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .code-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: #151515;
+            border-bottom: 1px solid var(--border);
+        }
+        .code-lang-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .copy-btn {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--secondary-text);
+            padding: 0.25rem 0.6rem;
+            text-transform: uppercase;
+            transition: color 0.2s, background 0.2s;
+            border-radius: 2px;
+        }
+        .copy-btn:hover { color: var(--accent-light); background: rgba(168, 85, 247, 0.08); }
+        .copy-btn.ok { color: #A7F3D0; }
+
+        #doc-body pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--primary-text);
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+            line-height: 1.6;
+            background: var(--code-bg);
+        }
+        #doc-body pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        /* Tables */
+        #doc-body .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 0 0 2rem 0;
+        }
+        #doc-body table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+        }
+        #doc-body th {
+            background: var(--surface);
+            color: var(--secondary-text);
+            padding: 1rem;
+            text-align: left;
+            text-transform: uppercase;
+            font-weight: 400;
+            border-bottom: 1px solid var(--border);
+        }
+        #doc-body td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary-text);
+        }
+        #doc-body tr:last-child td { border-bottom: none; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .docs-container { flex-direction: column; }
+            .docs-toc {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1.5rem;
+            }
+            .content { padding: 3rem 1.5rem 5rem; }
+            .page-title { font-size: 3.25rem; }
+            .content-header { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 768px) {
+            .nav { padding: 1rem; }
+            /* Small screens: logo + Get Started only, drop the middle links */
+            .nav-links { display: none; }
+            .nav-cta { padding: 0.5rem 1rem; }
+        }
+        @media (max-width: 640px) {
+            .page-title { font-size: 2.5rem; }
+            #doc-body h2 { font-size: 1.75rem; }
+            #doc-body pre { font-size: 0.78rem; padding: 1rem; }
+        }
+    </style>
+</head>
+<body class="{% if signed_in %}no-top-nav{% endif %}">
+
+<div class="grid-bg"></div>
+<div class="progress-bar" id="progress-bar"></div>
+
+{% if signed_in %}
+<!-- Signed-in hamburger sidebar (matches the rest of the app) -->
+<div class="hamburger"><div></div><div></div><div></div></div>
+<div id="sidebar" class="sidebar">
+    <ul>
+        <li><a href="/">Playground</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/dedicated">Dedicated</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a style="color: var(--bright-text);" href="/docs">Documentation</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+<div class="overlay" id="overlay"></div>
+{% endif %}
+
+{% if not signed_in %}
+<!-- Public nav (signed-out only; signed-in users navigate via the hamburger) -->
+<nav class="nav">
+    <a href="/" class="nav-logo-link">
+        <img class="nav-logo-img" src="https://files.nahcrof.com/file/crofai-black.png" alt="CrofAI" />
+    </a>
+    <div class="nav-links">
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/docs" class="nav-link" style="color: var(--accent-light);">Docs</a>
+        <a href="/signin" class="nav-link">Sign In</a>
+    </div>
+    <a href="/signin" class="nav-cta">
+        Get Started
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+    </a>
+</nav>
+{% endif %}
+
+<div class="docs-container">
+
+    <!-- TOC sidebar -->
+    <aside class="docs-toc" aria-label="Table of contents">
+        <div class="docs-toc-heading">Documentation</div>
+        <div class="docs-toc-subheading">On this page</div>
+        <ul class="toc-list" id="toc-list"></ul>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+        <div class="content-header">
+            <div>
+                <h1 class="page-title">API Documentation</h1>
+                <p class="page-sub">Integrate CrofAI into your applications.</p>
+            </div>
+            <button class="copy-page-btn" id="copy-page-btn" aria-label="Copy page URL">
+                <svg id="copy-page-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <svg id="copy-page-check" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span id="copy-page-label">Copy URL</span>
+            </button>
+        </div>
+
+        <div class="loading-state" id="doc-loading">
+            <div class="spinner"></div>
+            Loading documentation…
+        </div>
+        <div class="error-state" id="doc-error">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor"><path d="M7.5 1a6.5 6.5 0 100 13A6.5 6.5 0 007.5 1zm0 3a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 017.5 4zm0 7.25a.875.875 0 110-1.75.875.875 0 010 1.75z"/></svg>
+            Failed to load <code>/docs.md</code> — check that the file is accessible.
+        </div>
+        <article id="doc-body"></article>
+    </main>
+</div>
+
+<script src="/ui/crofui.js"></script>
+<script>
+{% if signed_in %}
+    /* Hamburger nav (signed-in only) */
+    (function () {
+        const ham = document.querySelector('.hamburger');
+        const sb  = document.querySelector('#sidebar');
+        const ov  = document.querySelector('#overlay');
+        if (!ham || !sb || !ov) return;
+        ham.addEventListener('click', () => {
+            [ham, sb, ov].forEach(el => el.classList.toggle('active'));
+        });
+        ov.addEventListener('click', () => {
+            [ham, sb, ov].forEach(el => el.classList.remove('active'));
+        });
+    })();
+{% endif %}
+
+    /* Scroll progress */
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+        document.getElementById('progress-bar').style.height = pct + '%';
+    }, { passive: true });
+
+    /* Copy page URL */
+    const copyPageBtn = document.getElementById('copy-page-btn');
+    const copyPageIcon = document.getElementById('copy-page-icon');
+    const copyPageCheck = document.getElementById('copy-page-check');
+    const copyPageLabel = document.getElementById('copy-page-label');
+    copyPageBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            copyPageIcon.style.display = 'none';
+            copyPageCheck.style.display = 'block';
+            copyPageLabel.textContent = 'Copied!';
+            setTimeout(() => {
+                copyPageIcon.style.display = 'block';
+                copyPageCheck.style.display = 'none';
+                copyPageLabel.textContent = 'Copy URL';
+            }, 2000);
+        } catch (_) {}
+    });
+
+    /* Showdown */
+    const conv = new showdown.Converter({
+        tables: true, strikethrough: true,
+        ghCodeBlocks: true, tasklists: true,
+        simpleLineBreaks: false, headerLevelStart: 1
+    });
+
+    function slugify(str) {
+        return str.replace(/<[^>]+>/g, '')
+                  .toLowerCase().trim()
+                  .replace(/[^\w\s-]/g, '')
+                  .replace(/\s+/g, '-');
+    }
+
+    async function loadDocs() {
+        try {
+            const r = await fetch('/docs.md');
+            if (!r.ok) throw new Error();
+            render(await r.text());
+        } catch {
+            document.getElementById('doc-loading').style.display = 'none';
+            document.getElementById('doc-error').style.display = 'flex';
+        }
+    }
+
+    function render(md) {
+        const body = document.getElementById('doc-body');
+        document.getElementById('doc-loading').style.display = 'none';
+        body.innerHTML = conv.makeHtml(md);
+
+        body.querySelectorAll('h1,h2,h3,h4').forEach(h => {
+            if (!h.id) h.id = slugify(h.textContent);
+        });
+
+        body.querySelectorAll('table').forEach(t => {
+            const w = document.createElement('div');
+            w.className = 'table-wrap';
+            t.replaceWith(w);
+            w.appendChild(t);
+        });
+
+        body.querySelectorAll('pre').forEach(pre => {
+            const code = pre.querySelector('code');
+            const lang = (code?.className?.match(/language-(\w+)/) || [])[1] || '';
+            const plainText = code ? code.innerText.trim() : pre.innerText.trim();
+            if (lang && code) hljs.highlightElement(code);
+
+            const wrap = document.createElement('div');
+            wrap.className = 'code-wrapper';
+
+            const bar = document.createElement('div');
+            bar.className = 'code-bar';
+            const tag = document.createElement('span');
+            tag.className = 'code-lang-tag';
+            tag.textContent = lang || 'code';
+            bar.appendChild(tag);
+
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(plainText).then(() => {
+                    btn.textContent = 'Copied';
+                    btn.classList.add('ok');
+                    setTimeout(() => {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('ok');
+                    }, 2000);
+                });
+            });
+            bar.appendChild(btn);
+
+            pre.replaceWith(wrap);
+            wrap.appendChild(bar);
+            wrap.appendChild(pre);
+        });
+
+        buildTOC(body);
+        scrollSpy();
+    }
+
+    function buildTOC(body) {
+        const list = document.getElementById('toc-list');
+        list.innerHTML = '';
+        body.querySelectorAll('h1,h2,h3').forEach((h, i) => {
+            if (i === 0 && h.tagName === 'H1') return; // skip page title dup
+            const li = document.createElement('li');
+            li.className = 'toc-' + h.tagName.toLowerCase();
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.dataset.id = h.id;
+            a.textContent = h.textContent;
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
+            });
+            li.appendChild(a);
+            list.appendChild(li);
+        });
+    }
+
+    function scrollSpy() {
+        const heads = [...document.querySelectorAll('#doc-body h1,#doc-body h2,#doc-body h3')];
+        const links = [...document.querySelectorAll('#toc-list a')];
+        if (!heads.length) return;
+
+        /* On mobile the TOC is part of page flow, not a sticky sidebar — calling
+           scrollIntoView on a TOC link there would yank the whole window back up. */
+        const tocIsSticky = () => window.matchMedia('(min-width: 1025px)').matches;
+
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                links.forEach(a => a.classList.remove('active'));
+                const hit = links.find(a => a.dataset.id === e.target.id);
+                if (!hit) return;
+                hit.classList.add('active');
+                if (tocIsSticky()) {
+                    /* Scroll only inside the sidebar, not the window, so we never
+                       steal scroll from the user on desktop either. */
+                    const toc = document.querySelector('.docs-toc');
+                    if (toc) {
+                        const linkTop = hit.offsetTop;
+                        const linkBottom = linkTop + hit.offsetHeight;
+                        if (linkTop < toc.scrollTop) {
+                            toc.scrollTop = linkTop;
+                        } else if (linkBottom > toc.scrollTop + toc.clientHeight) {
+                            toc.scrollTop = linkBottom - toc.clientHeight;
+                        }
+                    }
+                }
+            });
+        }, { rootMargin: '0px 0px -60% 0px', threshold: 0 });
+
+        heads.forEach(h => io.observe(h));
+    }
+
+    loadDocs();
+</script>
+</body>
+</html>

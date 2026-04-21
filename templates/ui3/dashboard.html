@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme|default("dark") }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://files.nahcrof.com/file/crofai-black.png" />
+    <meta name="description" content="The cheapest inference provider for large models" />
+    <title>CrofAI - Dashboard</title>
+    <link rel="stylesheet" href="/ui/crofui.css">
+
+    <style>
+        /* Playground color theme */
+        :root {
+            --border: #232323;
+            --background: rgba(255,255,255,0.04);
+            --dark-background: var(--palette-bg-2);
+            --hover-background: var(--palette-bg-3);
+            --link-text: #666;
+            --bright-text: #a678e8;
+        }
+
+        [data-theme="light"] {
+            --border: #e4e4e7;
+            --background: rgba(0, 0, 0, 0.04);
+            --link-text: #666;
+            --bright-text: #7c3aed;
+        }
+        .logo { height: 50px; width: auto; }
+        header { margin-top: 25px; margin-left: 15vw; display: flex; flex: 0 0 auto; margin-bottom: 125px; }
+        header nav { margin-left: auto; margin-right: 25%; margin-top: 10px; display: flex; }
+        header .link { margin-left: 20px; color: var(--link-text); border: 1px solid transparent; width: auto; height: 17px; padding: 7px 10px; border-radius: 14px; text-decoration: none; transition: 0.3s ease; }
+        header .link:hover { background: var(--hover-background); color: var(--text); }
+
+        /* Stats */
+        .top-stats { width: 100%; display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; }
+        .stat-box { width: 35%; border-radius: 12px; border: 1px solid var(--border); padding: 30px; transition: 0.3s ease; }
+        .stat-box:hover { background: var(--dark-background); }
+        pretty { color: var(--bright-text); font-size: 1.5rem; }
+
+        .stat-label { display: flex; align-items: center; gap: 6px; }
+
+        @media (max-width: 600px) { .top-stats .stat-box { width: 90%; } }
+
+        /* Usage section */
+        .usage-header-container { display: flex; align-items: center; margin-left: 15%; gap: 20px; }
+        .usage-header { font-size: 2rem; color: var(--bright-text); }
+        .nav-btn { background: var(--dark-background); border: 1px solid var(--border); color: var(--text); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: inherit; }
+        .nav-btn:hover { background: var(--hover-background); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* API keys */
+        .token-section { margin: auto; width: 70%; border-radius: 12px; padding: 30px; border: 1px solid var(--border); }
+        .token-section .header-text { font-size: 1.5rem; margin-bottom: 8px; }
+        .description { color: var(--bright-text); margin-bottom: 20px; font-size: 0.9rem; }
+
+        .api-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: opacity 0.3s; }
+        .api-details { display: flex; flex-direction: column; }
+        .api-name { font-weight: 600; color: var(--bright-text); }
+        .api-hidden-val { font-family: monospace; font-size: 0.8rem; color: #666; margin-top: 4px; }
+
+        .api-actions { display: flex; gap: 15px; align-items: center; }
+        .delete-icon { color: #ff4d4d; cursor: pointer; transition: 0.2s; opacity: 0.7; }
+        .delete-icon:hover { opacity: 1; transform: scale(1.1); }
+
+        .btn { width: auto; }
+        .btn-white { cursor: pointer; border-radius: 8px; padding: 10px 20px; transition: 0.3s; width: auto; border: 1px solid var(--border); background: var(--dark-background); color: var(--text); font-family: inherit; }
+        .btn-white:hover { background: var(--hover-background); }
+        .btn-upgrade { background: linear-gradient(90deg, #9B30FF, #4169E1); color: white; border: none; font-weight: bold; }
+
+        #new_token_display { margin-top: 15px; padding: 12px; border: 1px dashed #9B30FF; border-radius: 8px; background: rgba(155,48,255,0.05); display: none; }
+
+        svg { cursor: pointer; transition: 0.2s; vertical-align: middle; }
+        svg:hover { color: #9B30FF; }
+    </style>
+</head>
+<body>
+
+    <div class="hamburger"><div></div><div></div><div></div></div>
+
+    <div id="sidebar" class="sidebar">
+        <ul>
+            <li><a href="/">Playground</a></li>
+            <li><a style="color: var(--bright-text);" href="/dashboard">Dashboard</a></li>
+            <li><a href="/dedicated">Dedicated</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/docs">Documentation</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="overlay"></div>
+    <br><br><br><br><br>
+
+    <div class="top-stats">
+        <div class="stat-box">Total Requests: <br><pretty>{{free_requests}}</pretty></div>
+        <div class="stat-box">Available Credits: <br><pretty id="credits">-.---</pretty></div>
+        {% if usable_requests != None %}
+        <div class="stat-box">Usable Requests <br><pretty id="usable_requests">{{usable_requests}}/{{requests_plan}}</pretty></div>
+        <div class="stat-box">Resets In <br><pretty id="reset-timer">--:--:--</pretty></div>
+        {% endif %}
+    </div>
+
+    <br><br><br><br>
+
+    <div class="usage-header-container">
+        <button class="nav-btn" onclick="changeMonth(-1)">←</button>
+        <div class="usage-header" id="display-month">Monthly Usage ({{month}})</div>
+        <button class="nav-btn" id="next-btn" onclick="changeMonth(1)" disabled>→</button>
+    </div>
+
+    <br>
+    <div class="total_tokens_chart">
+        <canvas class="chart" id="total-tokens"></canvas>
+    </div>
+
+    <br><br><br><br>
+
+    <div class="token-section">
+        {% if api_tokens is defined %}
+            <div class="header-text">API Keys</div>
+            <div class="description">Tokens used for authenticating your API requests.</div>
+            
+            <div id="api-list">
+                {% for token, name in api_tokens.items() %}
+                <div class="api-card" id="card-{{ token }}">
+                    <div class="api-details">
+                        <span class="api-name">{{ name }}</span>
+                        <span class="api-hidden-val">••••••••••••{{ token[-4:] }}</span>
+                    </div>
+                    <div class="api-actions">
+                        <svg onclick="copy_text('{{ token }}')" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                        </svg>
+                        <svg onclick="delete_token('{{ token }}', '{{ name }}')" class="delete-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button class="btn-white" style="width: auto;" onclick="create_v2_token()">+ Create New Key</button>
+            <div id="new_token_display"></div>
+
+        {% else %}
+            <div class="header-text">API Token</div>
+            <div class="description">You are on the old API key system. Switch to allow multiple named keys.</div>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="btn-white" style="width: auto;" onclick="generate_legacy_token()">Generate Token</button>
+                <button class="btn-white btn-upgrade" style="width: auto;" onclick="location.href='/upgrade-api-system'">Switch to New Keys</button>
+            </div>
+            <div id="legacy_token_display" style="margin-top: 15px;"></div>
+        {% endif %}
+    </div>
+
+    <br><br><br><br>
+
+    <script src="/ui/crofui.js"></script>
+    <script src="https://files.nahcrof.com/file/styl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // API Management Logic
+        async function create_v2_token() {
+            const keyName = prompt("Enter a name for your new API key:");
+            if (!keyName) return;
+
+            try {
+                const response = await fetch("/u_v2/create_api_token", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: keyName })
+                });
+                const json = await response.json();
+                
+                if (json.token) {
+                    const display = document.getElementById('new_token_display');
+                    display.style.display = 'block';
+                    display.innerHTML = `
+                        <div style="font-size: 0.85rem; color: #9B30FF; margin-bottom: 5px;"><strong>${keyName}</strong> created:</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--palette-bg-0); padding: 8px; border-radius: 5px;">
+                            <code style="word-break: break-all; color: #fff;">${json.token}</code>
+                            <svg onclick="copy_text('${json.token}')" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>
+                        </div>
+                        <p style="font-size: 0.7rem; margin-top: 8px; color: #888;">Copy this token now; it won't be shown again.</p>
+                    `;
+                }
+            } catch (e) { displayError("Failed to create token."); }
+        }
+
+        async function delete_token(token, name) {
+            if (!confirm(`Delete key "${name}"? Applications using this key will stop working.`)) return;
+
+            try {
+                const response = await fetch(`/u_v2/delete_api_token/${token}`, { method: "DELETE" });
+                if (response.ok) {
+                    const card = document.getElementById(`card-${token}`);
+                    if (card) {
+                        card.style.opacity = '0';
+                        setTimeout(() => card.remove(), 300);
+                    }
+                    createToast(`Key "${name}" deleted.`);
+                } else {
+                    const err = await response.json();
+                    createToast(err.error || "Failed to delete.");
+                }
+            } catch (e) { createToast("Network error."); }
+        }
+
+        function generate_legacy_token() {
+            styLget("/user_api_create-token").then(json => {
+                const target = document.getElementById("legacy_token_display");
+                target.style.cssText = "padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--palette-overlay-1);";
+                target.innerHTML = `<code>${json.token}</code> <svg onclick="copy_text('${json.token}')" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>`;
+            });
+        }
+
+        function copy_text(text) {
+            navigator.clipboard.writeText(text);
+            createToast("Copied!");
+        }
+
+        function displayError(msg) { createToast(msg); }
+
+        // Chart & Data Logic
+        const now = new Date();
+        let viewYear = now.getFullYear();
+        let viewMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+        let total_tokens_chart;
+
+        function getCredits() {
+            styLget("/user-api/credits").then(json => { document.getElementById("credits").innerHTML = json; });
+            styLget("/u_v2/get_usable_requests").then(json => {
+                const usable = parseInt(json, 10);
+                const usableEl = document.getElementById("usable_requests");
+                if (usableEl) usableEl.innerHTML = usable + "/{{requests_plan}}";
+            });
+        }
+
+        function updateUsage() {
+            let endpoint = (viewYear === currentYear && viewMonth === currentMonth) 
+                ? "/user-api/usage" 
+                : `/monthly-usage-api/${viewYear}/${viewMonth}`;
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById("display-month").innerText = `Monthly Usage (${monthNames[viewMonth-1]} ${viewYear})`;
+            document.getElementById("next-btn").disabled = (viewYear === currentYear && viewMonth === currentMonth);
+
+            styLget(endpoint).then(json => {
+                let model_list = [], tokens_list = [];
+                let entries = Object.entries(json).sort((a, b) => (b[1].total_tokens || 0) - (a[1].total_tokens || 0));
+                entries.forEach(([model, data]) => {
+                    model_list.push(model);
+                    tokens_list.push(data.total_tokens);
+                });
+
+                if (total_tokens_chart) total_tokens_chart.destroy();
+                total_tokens_chart = new Chart(document.getElementById('total-tokens'), {
+                    type: 'bar',
+                    data: {
+                        labels: model_list,
+                        datasets: [{
+                            label: 'Total Tokens',
+                            data: tokens_list,
+                            backgroundColor: "rgba(155, 48, 255, 0.4)",
+                            borderColor: "rgba(155, 48, 255, 1)",
+                            borderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ' ' + ctx.parsed.y.toLocaleString() + ' tokens'
+                                }
+                            }
+                        },
+                        scales: { y: { beginAtZero: true, grid: { color: "#292929" } }, x: { grid: { color: "#292929" } } }
+                    }
+                });
+                total_tokens_chart.canvas.parentNode.style.cssText = "background: var(--palette-bg-2); padding: 20px; border-radius: 15px; width: 90%; max-width: 675px; margin: auto; border: 1px solid var(--border);";
+            });
+        }
+
+        function changeMonth(step) {
+            viewMonth += step;
+            if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+            else if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+            updateUsage();
+        }
+
+        function updateResetTimer() {
+            const now = new Date();
+            const cst = new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+            const midnight = new Date(cst);
+            midnight.setHours(24, 0, 0, 0);
+            const diff = Math.floor((midnight - cst) / 1000);
+            const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+            const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+            const s = String(diff % 60).padStart(2, '0');
+            const el = document.getElementById('reset-timer');
+            if (el) el.textContent = `${h}:${m}:${s}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getCredits();
+            setInterval(getCredits, 10000);
+            updateUsage();
+            updateResetTimer();
+            setInterval(updateResetTimer, 1000);
+
+            const hamburger = document.querySelector('.hamburger');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+
+            hamburger.addEventListener('click', () => {
+                [hamburger, sidebar, overlay].forEach(el => el.classList.toggle('active'));
+            });
+
+            overlay.addEventListener('click', () => {
+                [hamburger, sidebar, overlay].forEach(el => el.classList.remove('active'));
+            });
+        });
+    </script>
+</body>
+</html>
