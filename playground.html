@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofai-black.png"
+        />
+        <meta
+            name="description"
+            content="The cheapest inference provider for large models"
+        />
+        <title>CrofAI - Playground</title>
+	<link rel="stylesheet" href="/ui/crofui.css">
+	<script src="https://files.nahcrof.com/file/styl.js"></script>
+
+	<style>
+	    .logo {
+		height: 50px;
+		width: auto;
+	    }
+
+	    header {
+		margin-top: 25px;
+		/*margin-left: 15vw;*/
+		margin-left: 15vw;
+		display: flex;
+		flex: 0 0 auto;
+		margin-bottom: 125px;
+	    }
+
+	    header nav {
+		margin-left: auto;
+		margin-right: 25%;
+		margin-top: 10px;
+		display: flex;
+	    }
+
+	    header .link {
+		margin-left: 20px;
+		color: var(--link-text);
+		border: 1px solid transparent;
+		width: auto;
+		height: 17px;
+		padding-top: 7px;
+		padding-bottom: 7px;
+		padding-left: 10px;
+		padding-right: 10px;
+		border-radius: 14px;
+		text-decoration: none;
+		transition: 0.3s ease;
+	    }
+	    header .link:hover{
+		background: var(--hover-background);
+		color: var(--text);
+	    }
+
+	    header .btn{
+		margin-left: 20px;
+		margin-top: -5px;
+	    }
+
+	    .hero{
+		margin-top: 35vh;
+		text-align: center;
+	    }
+
+	    .hero h1{
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		font-size: 3rem;
+		color: #808080;
+		display: flex;
+		justify-content: center;
+	    }
+
+	    .hero h1 .pretty{
+		margin-right: 0.5rem;
+		font-weight: bold;
+		background: linear-gradient(90deg, #9B30FF, #4169E1);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	    }
+	    .form-wrapper {
+		display: flex;
+		justify-content: center;
+	    }
+
+	    .speed-fast {
+		color: #4ade80;
+	    }
+	    
+	    .speed-medium {
+		color: #fbbf24;
+	    }
+
+	    .speed-slow {
+		color: #f87171;
+	    }
+
+	    .price-box {
+		margin-top: 30px;
+		padding: 20px;
+		border: 1px solid var(--border);
+		width: 90%;
+		max-width: 950px;
+		border-radius: 12px;
+		margin: auto;
+		transition: 0.3s ease;
+	    }
+
+	    .price-box:hover{
+		background: var(--dark-background);
+	    }
+	    
+	    .stats {
+		margin-top: 15px;
+		display: flex;
+	    }
+
+	    .stats .stat{
+		margin-left: 15px;
+		padding: 5px;
+		border: 1px solid var(--background);
+		background-color: var(--background);
+		border-radius: 9px;
+
+	    }
+
+	    .model_name svg {
+		margin-left: 5px;	
+	    }
+
+	    .model_name svg:hover {
+		cursor: pointer;
+	    }
+
+	    .speed {
+		text-align: center;
+		color: var(--bright-text);
+	    }
+
+	    .model-select {
+		background: var(--background);
+		padding: 6px;
+		background-color: var(--background);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		position: fixed;
+		top: 24px;
+		right: 24px;
+	    }
+
+	    option {
+		background-color: var(--background);
+	    }
+
+	    textarea {
+		background-color: var(--background);
+		border: 2px solid var(--border);
+		padding: 15px;
+		border-radius: 12px;
+		color: var(--text);
+		width: 68%;
+		font-size: 1rem;
+		min-width: 250px;
+		height: 90vh;
+		max-height: 300px;
+	    }
+
+	    .container {
+		border: 1px solid: white;
+		display: flex;
+		justify-content: center;
+	    }
+	    
+	    .preferences {
+		margin-top: 5px;
+		margin-left: 15%;
+		display: flex;
+		justify-content: left;
+	    }
+
+	    .preference1 {
+		margin-left: auto;
+		margin-right: 18%;
+	    }
+
+	    .response{
+		width: 70%;
+		margin: auto;
+		font-family: arial;
+
+		white-space: pre-wrap; /* css-3 */
+		white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+		white-space: -pre-wrap; /* Opera 4-6 */
+		white-space: -o-pre-wrap; /* Opera 7 */
+		word-wrap: break-word; /* Internet Explorer 5.5+ */
+	    }
+
+	    .slider {
+		-webkit-appearance: none;
+		outline: none;
+		appearance: none;
+		background: var(--background);
+		border-radius: 8px;
+		accent-color: var(--text);
+		border-color: var(--border);
+	    }
+
+	    /* normal browsers */
+	    input[type="range"]::-ms-fill-lower {
+		background-color: var(--text); 
+	    }
+	    input[type="range"]::-ms-fill-upper {  
+		background-color: var(--background);
+	    }
+
+	    /* dillusion (firefox) */
+	    input[type="range"]::-moz-range-progress {
+		background-color: var(--text); 
+	    }
+	    input[type="range"]::-moz-range-track {  
+		background-color: var(--background);
+	    }
+
+	    v{
+		color: var(--bright-text);
+	    }
+
+	    .buttons {
+		display: flex;	
+	    }
+
+	</style>
+
+
+    </head>
+    <body>
+
+	
+	<div class="hamburger">
+	    <div></div>
+	    <div></div>
+	    <div></div>
+	</div>
+
+	<div id="sidebar" class="sidebar">
+	    <ul>
+		<li><a style="color: var(--bright-text);" href="/">Playground</a></li>
+		<li><a href="/dashboard">Dashboard</a></li>
+		<li><a href="/pricing">Pricing</a></li>
+		<li><a href="/docs">Documentation</a></li>
+		<li><a href="/settings">Settings</a></li>
+		{% if admin %}
+		<li><a href="/admin">Admin</a></li>
+		{% endif %}
+		<li><a href="/logout">Logout</a></li>
+	    </ul>
+	</div>
+
+	<div class="overlay"></div>
+	<br>
+	<br>
+	<br>
+	<div class="speed" id="speed">--- t/s</div>
+	<br><br><br><br><br><br><br><br><br>
+	<!-- PAGE STARTS HERE -->
+	<select name="model-select" id="model-select" class="model-select" style="background: var(--background);">
+	    {% for model in models %}
+		<option value="{{model['id']}}" style="background: #252525;">{{model['id']}}</option>
+	    {% endfor %}
+	</select>
+	<div class="container">
+	<textarea id="prompt-box"></textarea>
+	</div>
+	<div class="buttons">
+	    <div class="preferences">
+		<div class="preference">Temperature: <v id="temp">0.7</v><br>
+		    <div class="slidecontainer">
+			<input type="range" min="0" max="1" value="0.7" step="0.1" class="slider" id="myRange">
+		    </div>
+		</div>	
+		<button style="width: 125px; margin-left: 5px;" onclick="createToast('Generating response...'); generate();" class="btn">Send prompt</button>
+		
+		<!--div class="preference1">Max Length:<br>2048</div-->	
+	    </div>
+	</div>
+	<br><br><br><br>
+	<pre class="response" id="response"></pre>
+	<br><br><br><br>
+
+	<!-- PAGE ENDS HERE -->
+
+	<script src="/ui/crofui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.4.0/showdown.min.js"></script>
+	<script>
+	    var conv = new showdown.Converter();
+	    conv.setOption('literalMidWordUnderscores', true);
+            conv.setOption('strikethrough', true);
+            conv.setOption('tables', true);
+            conv.setOption('tasklists', true);
+            conv.setOption('simpleLineBreaks', true);
+            conv.setOption('openLinksInNewWindow', true);
+	    ACTIVE_MODEL = "{{models[0]['id']}}";
+	    TEMP_VALUE = 0.7;
+
+	    var slider = document.getElementById("myRange");
+	    var temperature_value = document.getElementById("temp");
+
+	    slider.oninput = function() {
+		temperature_value.innerHTML = this.value;
+		TEMP_VALUE = this.value; 
+	    }
+
+	    function escapeHTML(string) {
+		return String(string).replace(/[&<>"']/g, function(match) {
+		    return {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;'
+		    }[match];
+		});
+	    }
+
+	    function generate_token(){
+		console.log("AH");
+		styLget("/user_api_create-token").then(json => {
+		    console.log(json['token']);
+		    let token = json['token'];
+		    document.getElementById("new_token").style.padding = "6px";
+		    document.getElementById("new_token").style.width = "300px";
+		    document.getElementById("new_token").style.border = "1px solid var(--border)";
+		    document.getElementById("new_token").style.borderRadius = "10px";
+		    let svg_value = '<svg onclick="copy_text(\'' + token + '\')" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>'
+		    document.getElementById("new_token").innerHTML = "<token>" + token + "</token>" + svg_value;
+		});
+		
+	    }
+
+	    console.log("STARTING MODEL: " + ACTIVE_MODEL);
+	    const selectElement = document.getElementById('model-select');
+
+	    selectElement.addEventListener('change', function() {
+		const new_model = selectElement.value;
+		ACTIVE_MODEL = new_model;
+		console.log("new active model: " + ACTIVE_MODEL);
+	    });
+
+	    function replaceAll(str, find, replace) {
+		return str.replace(new RegExp(find, 'g'), replace);
+	    }
+
+	    function replaceFirst(str, find, replace) {
+		const i = str.indexOf(find);
+		if (i === -1) return str;
+		return str.slice(0, i) + replace + str.slice(i + find.length);
+	    }
+
+	    document.addEventListener('keydown', e => {
+		if ((e.ctrlKey || e.metaKey) && (e.key === 'Enter' || e.keyCode === 13)) {
+		    generate();
+		    createToast("Generating response...");
+		    e.preventDefault();
+		}
+	    });
+
+	    const generate = async () => {
+		document.getElementById("speed").innerHTML = "--- t/s";
+		responsebox = document.getElementById("response");
+		responsebox.innerHTML = "";
+		var prompt = document.getElementById("prompt-box").value;
+		console.log(prompt);
+		try {
+		    // Fetch the response from the OpenAI API with the signal from AbortController
+		    const response = await fetch("/v2/chat/completions", {
+			method: "POST",
+			headers: {
+			    "Content-Type": "application/json",
+			    Authorization: `Bearer `,
+			},
+			body: JSON.stringify({
+			    model: ACTIVE_MODEL,
+			    messages: [{ role: "user", content: prompt }],
+			    stream: true,
+			    temperature: 0.7,
+			}),
+		    });
+		    const reader = response.body.getReader();
+		    const decoder = new TextDecoder("utf-8");
+
+		    while (true) {
+			const { done, value } = await reader.read();
+			if (done) {
+			    break;
+			}
+			// Massage and parse the chunk of data
+			let returned = decoder.decode(value);
+			const chunks = returned.split("data: ");
+			let model_thinking = false;
+			chunks.forEach(chunk => {
+			    if (chunk != "[DONE]"){
+				try{
+				    chunk = JSON.parse(chunk);
+				    if (chunk.choices[0].delta.reasoning_content !== undefined) {
+					if (!model_thinking) {
+					    model_thinking = true;
+					}
+					responsebox.innerHTML += escapeHTML(chunk.choices[0].delta.reasoning_content);
+					console.log(chunk.choices[0].delta.reasoning_content);	
+				    }
+				    else if (chunk.choices[0].delta.content !== undefined){
+					if (model_thinking) {
+					    model_thinking = false;
+					    responsebox.innerHTML += "<br><br>";
+					}
+					responsebox.innerHTML += escapeHTML(chunk.choices[0].delta.content);
+				    }
+				    if (chunk.usage !== undefined) {
+					console.log(chunk);
+					let usage = chunk.usage;
+					document.getElementById("speed").innerHTML = usage.tokens_per_second + " t/s";
+				    }
+				    
+
+				} catch(error) {
+				    if (chunk.error){
+					if (chunk.error.code === 401){
+					    if (chunk.error.message !== "Not Enough Credits"){
+						console.log("user had no token, generating token...");
+						// generate_token();
+						console.log("token generated, retrying...");
+						// generate();
+					    } else {
+						createToast("Not enough credits for this model");
+					    }
+					} else {
+					    console.log(chunk);
+					    createToast("Error code: " + chunk.error.code);
+					}
+				    }
+				}
+			    }
+			});
+		    }
+		    let txt = responsebox.innerHTML;
+		    let showdown_conv = String(conv.makeHtml(txt));
+		    responsebox.innerHTML = showdown_conv;
+
+		} catch (error) {
+		    console.error("ruh roh!:", error);
+		}
+	    };
+
+	    document.addEventListener('DOMContentLoaded', function() {
+		const hamburger = document.querySelector('.hamburger');
+		const sidebar = document.querySelector('.sidebar');
+		const overlay = document.querySelector('.overlay');
+
+		hamburger.addEventListener('click', function() {
+		    hamburger.classList.toggle('active');
+		    sidebar.classList.toggle('active');
+		    overlay.classList.toggle('active');
+		});
+
+		overlay.addEventListener('click', function() {
+		    hamburger.classList.remove('active');
+		    sidebar.classList.remove('active');
+		    overlay.classList.remove('active');
+		});
+
+	    });
+
+	    function copy_text(text) {
+		navigator.clipboard.writeText(text);
+		createToast("Copied!");
+	    }
+	</script>
+	
+    </body>

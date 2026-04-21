@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofai-black.png"
+        />
+        <meta
+            name="description"
+            content="The cheapest inference provider for large models"
+        />
+        <title>CrofAI - Pricing</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+
+        <style>
+            .logo {
+                height: 50px;
+                width: auto;
+            }
+
+            #nav-header {
+                display: flex;
+                justify-content: flex-end;
+                width: 70vw;
+            }
+
+            header {
+                margin-top: 25px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex: 0 0 auto;
+                margin-bottom: 100px;
+            }
+
+            header nav {
+                margin-left: auto;
+                float: right;
+                margin-top: 10px;
+                display: flex;
+            }
+
+            header .link {
+                margin-left: 20px;
+                color: var(--link-text);
+                border: 1px solid transparent;
+                width: auto;
+                height: 17px;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 14px;
+                text-decoration: none;
+                transition: 0.3s ease;
+            }
+            header .link:hover {
+                background: var(--hover-background);
+                color: var(--text);
+            }
+
+            header .btn {
+                margin-left: 20px;
+                margin-top: -5px;
+            }
+
+            .hero {
+                margin-top: 35vh;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                    "Helvetica Neue", sans-serif;
+                font-size: 3rem;
+                color: #808080;
+                display: flex;
+                justify-content: center;
+            }
+
+            .hero h1 .pretty {
+                margin-right: 0.5rem;
+                font-weight: bold;
+                background: linear-gradient(90deg, #9b30ff, #4169e1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .form-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            .speed-fast {
+                color: #4ade80;
+            }
+
+            .speed-medium {
+                color: #fbbf24;
+            }
+
+            .speed-slow {
+                color: #f87171;
+            }
+
+	    .price-box-wrapper {
+		display: flex;
+		justify-content: center;
+	    }
+
+            .price-box {
+                padding: 20px;
+                border: 1px solid var(--border);
+                background: var(--dark-background);
+                width: 90%;
+                max-width: 950px;
+                border-radius: 12px;
+                margin: auto;
+                transition: 0.3s ease;
+                display: grid;
+                grid-template-columns: 1fr clamp(120px, 16vw, 160px)
+                    clamp(120px, 16vw, 160px) clamp(110px, 14vw, 140px);
+                align-items: center;
+                gap: 16px;
+            }
+
+            .price-box:hover {
+                background: var(--background);
+            }
+
+            .stats {
+                margin-top: 15px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .stats .stat {
+                margin-left: 15px;
+                padding: 5px;
+                border: 1px solid var(--background);
+                background-color: var(--background);
+                border-radius: 9px;
+            }
+
+            .model_name svg {
+                margin-left: 5px;
+            }
+
+            .model_name svg:hover {
+                cursor: pointer;
+            }
+
+            price {
+                color: #9e7ad6;
+            }
+
+            priceO {
+                color: var(--bright);
+            }
+
+            .pricing-header {
+                text-align: center;
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+
+            .price-list {
+                width: 90%;
+                max-width: 950px;
+                margin: 0 auto 60px;
+            }
+
+            /*.price-list .price-box-wrapper .price-box {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            .price-list .price-box-wrapper .price-box + .price-box-wrapper .price-box {
+                border-top: none;
+            }*/
+            
+
+            .row-left {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+            .row-left .model_name {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 600;
+            }
+            .bubbles {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 8px;
+            }
+            .bubble {
+                padding: 6px 10px;
+                border: 1px solid var(--border);
+                background: var(--background);
+                border-radius: 999px;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+
+            .col {
+                text-align: center;
+            }
+            .colhead {
+                color: var(--muted-text, #8a8a8a);
+                font-weight: 600;
+                text-align: center;
+            }
+
+	    .plans {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+	    }
+
+	    .plan-box {
+		width: 400px;
+		font-size: 1.2rem;
+		margin-right: 20px;
+		max-width: 90%;
+		border: 1px solid var(--border);
+		border-radius: 15px;
+		background: var(--dark-background);
+		padding: 15px;
+		transition: 0.3s ease;
+	    }
+
+	    .plan-box:hover{
+		background: var(--background);
+	    }
+
+	    .plan-header {
+		display: flex;
+		flex-wrap: wrap;
+	    }
+
+	    .pretty {
+		color: var(--bright-text);
+		margin-left: auto;
+	    }
+
+	    .plan-box .bubble {
+		margin-top: 15px;
+		width: 115px;
+	    }
+
+	    .btn-white {
+		margin-top: 20px;
+		width: auto;
+	    }
+
+	    .btn-white:hover {
+		background: transparent;
+	    }
+
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal {
+                background: var(--dark-background);
+                border: 1px solid var(--border);
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+            }
+
+            .modal h2 {
+                margin-top: 0;
+                margin-bottom: 20px;
+                color: var(--text);
+            }
+
+            .modal p {
+                margin-bottom: 30px;
+                color: var(--muted-text);
+                line-height: 1.5;
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+            }
+
+            .modal-buttons button {
+                padding: 10px 30px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                cursor: pointer;
+                transition: 0.3s ease;
+                font-size: 1rem;
+            }
+
+            .modal-buttons .btn-white {
+		width: auto;
+            }
+
+            .modal-buttons .btn-white:hover {
+                background: var(--background);
+            }
+
+            .modal-buttons .btn {
+		margin-bottom: -1px;
+		width: auto;
+            }
+
+            @media (max-width: 800px) {
+                .price-box {
+                    grid-template-columns: 1fr 120px 120px 110px;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .price-list {
+                    width: 100%;
+                    max-width: 950px;
+                    padding: 0 16px;
+                    box-sizing: border-box;
+                    margin: 0 auto 60px;
+                }
+
+                .price-header {
+                    display: none;
+                }
+
+                .price-header + .price-box {
+                    border-top-left-radius: 12px;
+                    border-top-right-radius: 12px;
+                }
+
+                .price-box {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                }
+                .col,
+                .colhead {
+                    text-align: left;
+                }
+
+                .col {
+                    display: flex;
+                    align-items: baseline;
+                    gap: 8px;
+                }
+
+                .col::before {
+                    content: attr(data-label);
+                    color: var(--muted-text, #8a8a8a);
+                    font-weight: 600;
+                    min-width: 7.5rem;
+                }
+
+                .col--in {
+                    order: 1;
+                }
+                .col--out {
+                    order: 2;
+                }
+                .col--speed {
+                    order: 3;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        {% if not loggedin %}
+        <header>
+            <div id="nav-header">
+                <a href="/"
+                    ><img
+                        class="logo"
+                        src="https://files.nahcrof.com/file/crofai-black.png"
+                /></a>
+                <nav>
+                    <a class="link" href="/pricing">Pricing</a>
+                    <a class="link" href="/docs">Documentation</a>
+                    <a class="btn" href="/signin">Sign In</a>
+                </nav>
+            </div>
+        </header>
+        {% elif loggedin %}
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <div id="sidebar" class="sidebar">
+            <ul>
+                <li><a href="/">Playground</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li>
+                    <a style="color: var(--bright-text)" href="/pricing"
+                        >Pricing</a
+                    >
+                </li>
+                <li><a href="/docs">Documentation</a></li>
+                <li><a href="/settings">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="overlay"></div>
+	<br><br><br><br><br><br><br><br><br>
+        {% endif %}
+
+        <!-- Confirmation Modal -->
+        <div class="modal-overlay" id="confirmModal">
+            <div class="modal">
+                <h2>Confirm Plan Change</h2>
+                <p id="modalMessage">
+                    The subscription fee will be deducted from your account
+                    credits. Are you sure you want to proceed with this plan
+                    purchase?
+                </p>
+                <div class="modal-buttons">
+                    <button class="btn" onclick="closeModal()">
+                        Cancel
+                    </button>
+                    <button id="purchase-plan" class="btn-white" onclick="confirmPlanChange()">
+			Yes, please
+                    </button>
+                </div>
+            </div>
+        </div>
+
+	<div class="plans">
+
+	    {% if plan == "free" %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Free/Pay-as-you-go
+		    <div class="pretty"><b>$0</b>/month</div>
+		</div><br>
+		- Pay only for usage<br>
+		- No recurring monthly charge
+	    </div>
+	    {% else %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Free/Pay-as-you-go
+		    <div class="pretty"><b>$0</b>/month</div>
+		</div><br>
+		- Pay only for usage<br>
+		- No recurring monthly charge<br><br>
+		<button class="btn-white" onclick="showPlanModal('free')">
+		    Switch back to Free
+                </button>
+	    </div>
+	    {% endif %}
+
+	    <!-- HOBBY TIER -->
+	    {% if plan != "hobby" %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Hobby
+		    <div class="pretty"><b>$5</b>/month</div>
+		</div><br>
+		- 250 daily requests<br>
+		- Access to all models<br><br>
+		{% if loggedin %}
+		<button class="btn-white" onclick="showPlanModal('hobby')">
+                    Purchase Hobby Plan
+                </button>
+		{% endif %}
+	    </div>
+	    {% else %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Hobby
+		    <div class="pretty"><b>$5</b>/month</div>
+		</div><br>
+		- 250 daily requests<br>
+		- Access to all models<br><br>
+		<div class="bubble">
+                    You have this plan
+                </div>
+	    </div>
+	    {% endif %}
+	    <!-- HOBBY TIER END -->
+
+	    <!-- PRO TIER -->
+	    {% if plan != "pro" %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Pro
+		    <div class="pretty"><b>$10</b>/month</div>
+		</div><br>
+		- All Hobby benefits<br>
+		- 1,000 daily requests<br>
+		- Priority Support<br>
+		{% if loggedin %}
+		<button class="btn-white" onclick="showPlanModal('pro')">
+                    Purchase Pro Plan
+                </button>
+		{% endif %}
+	    </div>
+	    {% else %}
+	    <div class="plan-box">
+		<div class="plan-header">
+		    Pro
+		    <div class="pretty"><b>$10</b>/month</div>
+		</div><br>
+		- All Hobby benefits<br>
+		- 1,000 daily requests<br>
+		- Priority Support<br>
+		<div class="bubble">
+                    You have this plan
+                </div>
+	    </div>
+	    {% endif%}
+	    <!-- PRO TIER END -->
+
+	</div><br><br>
+
+        <div class="pricing-header">Large Language Model (LLM) Pricing</div>
+
+        <div class="price-list">
+	    <div class="price-box-wrapper">
+		<div class="price-box price-header">
+		    <div class="row-left">
+			<div class="model_name">Model</div>
+			<div class="bubbles">
+			    <span class="bubble">Quantization</span>
+			    <span class="bubble">Context / Max output</span>
+			</div>
+		    </div>
+		    <div class="colhead">$ / M in</div>
+		    <div class="colhead">$ / M out</div>
+		    <div class="colhead">Speed</div>
+		</div>
+	    </div>
+
+            {% for model in models %}
+	    <div class="price-box-wrapper">
+		<div class="price-box">
+		    <div class="row-left">
+			<div class="model_name">
+			    {{ model['id'] }}
+			    <svg
+				onclick="copy_text('{{model['id']}}')"
+				xmlns="http://www.w3.org/2000/svg"
+				width="16"
+				height="16"
+				fill="currentColor"
+				class="bi bi-copy"
+				viewBox="0 0 16 16"
+			    >
+				<path
+				    fill-rule="evenodd"
+				    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+				/>
+			    </svg>
+			</div>
+			<div class="bubbles">
+			    <span class="bubble">{{ model['quantization'] }}</span>
+			    <span class="bubble"
+				>{{ model['context_length'] }} /
+				{{ model['max_completion_tokens'] }}</span
+			    >
+			</div>
+		    </div>
+		    <div class="col col--in" data-label="$ / M in">
+			<price>${{ model['pricing']['prompt'] }}</price>
+		    </div>
+		    <div class="col col--out" data-label="$ / M out">
+			<price>${{ model['pricing']['completion'] }}</price>
+		    </div>
+		    {% if model['speed'] > 99 %}
+		    <div class="col col--speed speed-fast" data-label="Speed">
+			~{{ model['speed'] }} t/s
+		    </div>
+		    {% elif model['speed'] > 30 %}
+		    <div class="col col--speed speed-medium" data-label="Speed">
+			~{{ model['speed'] }} t/s
+		    </div>
+		    {% else %}
+		    <div class="col col--speed speed-slow" data-label="Speed">
+			~{{ model['speed'] }} t/s
+		    </div>
+		    {% endif %}
+		</div>
+	    </div>
+            {% endfor %}
+        </div>
+
+        <script src="/ui/crofui.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const hamburger = document.querySelector(".hamburger");
+                const sidebar = document.querySelector(".sidebar");
+                const overlay = document.querySelector(".overlay");
+
+                if (hamburger) {
+                    hamburger.addEventListener("click", function () {
+                        hamburger.classList.toggle("active");
+                        sidebar.classList.toggle("active");
+                        overlay.classList.toggle("active");
+                    });
+                }
+
+                if (overlay) {
+                    overlay.addEventListener("click", function () {
+                        hamburger.classList.remove("active");
+                        sidebar.classList.remove("active");
+                        overlay.classList.remove("active");
+                    });
+                }
+            });
+
+            function copy_text(text) {
+                navigator.clipboard.writeText(text);
+                createToast("Copied!");
+            }
+
+            let selectedPlan = null;
+
+            function showPlanModal(plan) {
+                selectedPlan = plan;
+		if (plan != "free") {
+		    const modal = document.getElementById("confirmModal");
+		    const message = document.getElementById("modalMessage");
+		    
+		    const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+		    const planPrice = plan === "hobby" ? "$5" : "$10";
+		    
+		    message.textContent = `The ${planName} plan subscription fee of ${planPrice}/month will be deducted from your account credits. Are you sure you want to proceed with this plan change?`;
+		    modal.classList.add("active");
+		} else{
+		    const modal = document.getElementById("confirmModal");
+		    const message = document.getElementById("modalMessage");
+		    message.textContent = `This will immediately remove all privileges of your current plan. Are you sure you want to do this?`;
+		    modal.classList.add("active");
+		}
+                
+            }
+
+            function closeModal() {
+                const modal = document.getElementById("confirmModal");
+                modal.classList.remove("active");
+                selectedPlan = null;
+            }
+
+            function confirmPlanChange() {
+                if (selectedPlan) {
+                    window.location.href = `/plan-api/${selectedPlan}`;
+                }
+            }
+
+            // Close modal when clicking outside
+            document
+                .getElementById("confirmModal")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+        </script>
+    </body>
+</html>

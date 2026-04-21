@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofaicolor.png"
+        />
+        <meta
+            name="description"
+            content="Apply for CrofAI startup credits"
+        />
+        <title>CrofAI - Startup Credits</title>
+        <link rel="stylesheet" href="/ui/crofui.css" />
+
+        <style>
+            .logo {
+                height: 50px;
+                width: auto;
+            }
+
+            #nav-header {
+		display: flex;
+		justify-content: flex-end;
+		width: 70vw;
+	    }
+
+	    header {
+		margin-top: 25px;
+		/*margin-left: 15vw;*/
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		
+
+		flex: 0 0 auto;
+		margin-bottom: 100px;
+	    }
+
+	    header nav {
+		/*margin-left: auto;
+		margin-right: 25%;*/
+		margin-left: auto;
+		float: right;
+		margin-top: 10px;
+		display: flex;
+	    }
+
+            header .link {
+                margin-left: 20px;
+                color: var(--link-text);
+                border: 1px solid transparent;
+                width: auto;
+                height: 17px;
+                padding-top: 7px;
+                padding-bottom: 7px;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 14px;
+                text-decoration: none;
+                transition: 0.3s ease;
+            }
+            header .link:hover {
+                background: var(--hover-background);
+                color: var(--text);
+            }
+
+            header .btn {
+                margin-left: 20px;
+                margin-top: -5px;
+            }
+
+            .hero {
+                margin-top: 18vh;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                    "Helvetica Neue", sans-serif;
+                font-size: 2.4rem;
+                color: var(--text);
+                display: flex;
+                justify-content: center;
+            }
+
+            .hero h2 {
+                color: #808080;
+                font-weight: normal;
+                margin-top: 8px;
+                font-size: 1.05rem;
+            }
+
+            .form-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            .form-box {
+                width: 800px;
+                max-width: 90%;
+                padding: 40px;
+                border-radius: 12px;
+                background-color: transparent;
+                border: 1px solid var(--border);
+                margin-top: 6vh;
+            }
+
+            .form-box h3 {
+                margin-top: 0;
+                margin-bottom: 22px;
+                text-align: left;
+                color: var(--text);
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .grid .full {
+                grid-column: 1 / -1;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 6px;
+                color: var(--muted-text, #808080);
+                font-size: 0.95rem;
+            }
+
+            input.input,
+            textarea.input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            textarea.input {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+            .actions {
+                margin-top: 18px;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .footer {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 10vh;
+            }
+
+            .footer-element {
+                margin-left: 20px;
+            }
+
+            .footer-element a {
+                text-decoration: none;
+                color: var(--text);
+            }
+
+            .footer-element a:hover {
+                text-decoration: underline;
+                color: var(--bright-text);
+            }
+
+        </style>
+    </head>
+    <body>
+        <header>
+	    <div id="nav-header">
+		<a href="/"><img class="logo" src="https://files.nahcrof.com/file/crofai-black.png"></a>
+		<nav>
+		    <a class="link" href="/pricing">Pricing</a>
+		    <a class="link" href="/docs">Documentation</a>
+		    <a class="btn" href="/signin">Sign In</a>
+		</nav>    
+	    </div>
+	</header>
+
+        <div class="form-wrapper">
+            <form action="#" method="POST" class="form-box">
+                <h3>Tell us about your startup</h3>
+                <div class="grid">
+                    <div>
+                        <label for="startup_name">Startup Name</label>
+                        <input
+                            class="input"
+                            type="text"
+                            id="startup_name"
+                            name="startup_name"
+                            placeholder="CrofAI"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="website">Company Website</label>
+                        <input
+                            class="input"
+                            type="url"
+                            id="website"
+                            name="website"
+                            placeholder="https://example.com"
+                            required
+                        />
+                    </div>
+                    <div class="full">
+                        <label for="contact_email">Contact Email</label>
+                        <input
+                            class="input"
+                            type="email"
+                            id="contact_email"
+                            name="contact_email"
+                            placeholder="you@company.com"
+                            required
+                        />
+                    </div>
+                    <div class="full">
+                        <label for="description"
+                            >What problem are you solving? Who are your
+                            customers?</label
+                        >
+                        <textarea
+                            class="input"
+                            id="description"
+                            name="description"
+                            placeholder="Describe your product, target market, stage, and traction."
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="full">
+                        <label for="use_case">How will you use CrofAI?</label>
+                        <textarea
+                            class="input"
+                            id="use_case"
+                            name="use_case"
+                            placeholder="Describe your project and how our AI services will help you achieve your goals."
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" style="width: 200px;" class="btn">
+                        Apply for Credits
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <div class="footer-element">
+                <a href="/pricing">Pricing</a>
+            </div>
+            <div class="footer-element">
+                <a href="/docs">Documentation</a>
+            </div>
+            <div class="footer-element">
+                <a href="/privacy">Privacy</a>
+            </div>
+            <div class="footer-element">
+                <a
+                    href="/cdn-cgi/l/email-protection#c5aba4ada6b7aaa385a2a8a4aca9eba6aaa8"
+                    >Contact</a
+                >
+            </div>
+            <div class="footer-element">
+                <a href="/https://discord.gg/e8UeP7YdJW">Discord</a>
+            </div>
+            <div class="footer-element">
+                <a href="/startups">Startup?</a>
+            </div>
+            <br /><br /><br />
+        </div>
+
+        <script
+            data-cfasync="false"
+            src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+        ></script>
+        <script src="/ui/crofui.js"></script>
+    </body>
+</html>

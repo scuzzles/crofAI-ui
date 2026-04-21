@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="https://files.nahcrof.com/file/crofai-black.png"
+        />
+        <meta
+            name="description"
+            content="The cheapest inference provider for large models"
+        />
+        <title>CrofAI - Dashboard</title>
+	<link rel="stylesheet" href="/ui/crofui.css">
+
+	<style>
+	    .logo {
+		height: 50px;
+		width: auto;
+	    }
+
+	    header {
+		margin-top: 25px;
+		/*margin-left: 15vw;*/
+		margin-left: 15vw;
+		display: flex;
+		flex: 0 0 auto;
+		margin-bottom: 125px;
+	    }
+
+	    header nav {
+		margin-left: auto;
+		margin-right: 25%;
+		margin-top: 10px;
+		display: flex;
+	    }
+
+	    header .link {
+		margin-left: 20px;
+		color: var(--link-text);
+		border: 1px solid transparent;
+		width: auto;
+		height: 17px;
+		padding-top: 7px;
+		padding-bottom: 7px;
+		padding-left: 10px;
+		padding-right: 10px;
+		border-radius: 14px;
+		text-decoration: none;
+		transition: 0.3s ease;
+	    }
+	    header .link:hover{
+		background: var(--hover-background);
+		color: var(--text);
+	    }
+
+	    header .btn{
+		margin-left: 20px;
+		margin-top: -5px;
+	    }
+
+	    .hero{
+		margin-top: 35vh;
+		text-align: center;
+	    }
+
+	    .hero h1{
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		font-size: 3rem;
+		color: #808080;
+		display: flex;
+		justify-content: center;
+	    }
+
+	    .hero h1 .pretty{
+		margin-right: 0.5rem;
+		font-weight: bold;
+		background: linear-gradient(90deg, #9B30FF, #4169E1);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	    }
+	    .form-wrapper {
+		display: flex;
+		justify-content: center;
+	    }
+
+	    .speed-fast {
+		color: #4ade80;
+	    }
+	    
+	    .speed-medium {
+		color: #fbbf24;
+	    }
+
+	    .speed-slow {
+		color: #f87171;
+	    }
+
+	    .price-box {
+		margin-top: 30px;
+		padding: 20px;
+		border: 1px solid var(--border);
+		width: 90%;
+		max-width: 950px;
+		border-radius: 12px;
+		margin: auto;
+		transition: 0.3s ease;
+	    }
+
+	    .price-box:hover{
+		background: var(--dark-background);
+	    }
+	    
+	    .stats {
+		margin-top: 15px;
+		display: flex;
+	    }
+
+	    .stats .stat{
+		margin-left: 15px;
+		padding: 5px;
+		border: 1px solid var(--background);
+		background-color: var(--background);
+		border-radius: 9px;
+
+	    }
+
+	    .model_name svg {
+		margin-left: 5px;	
+	    }
+
+	    .model_name svg:hover {
+		cursor: pointer;
+	    }
+
+	    pretty {
+		color: var(--bright-text);
+		font-size: 1.5rem;
+	    }
+
+	    .stat-box {
+		width: auto;
+		border-radius: 12px;
+		border: 1px solid var(--border);
+		padding: 30px;
+		transition: 0.3s ease;
+	    }
+
+	    .stat-box:hover {
+		background: var(--dark-background);
+	    }
+
+	    .top-stats {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+	    }
+
+	    .top-stats .stat-box {
+		width: 35%;
+	    }
+
+	    .margin-left {
+		margin-left: 25px;
+	    }
+
+	    @media (max-width: 600px) {
+		.top-stats .stat-box {
+		    width: 90%;
+		}
+
+		.margin-left {
+		    margin-left: 0;
+		}
+	    }
+
+	    .total_tokens_chart {
+		margin: auto;
+	    }
+
+	    .chart {
+		width: 20%;
+	    }
+
+	    .usage-header {
+		margin-left: 15%;
+		font-size: 2rem;
+		color: var(--bright-text);
+	    }
+
+	    .token-section {
+		margin: auto;
+		width: 70%;
+		border-radius: 12px;
+		padding: 30px;
+		border: 1px solid var(--border);
+	    }
+
+	    .token-section .header-text {
+		font-size: 1.5rem;
+	    }
+
+	    .description {
+		color: var(--bright-text);
+	    }
+
+	    .token-section .btn-white {
+		width: 150px;
+		margin-top: 20px;
+	    }
+
+	    #new_token {
+		margin-top: 10px;
+	    }
+
+	    svg {
+		margin-left: 10px;
+	    }
+
+	    svg:hover{
+		cursor: pointer;
+	    }
+
+	</style>
+
+    </head>
+    <body>
+
+    
+	<div class="hamburger">
+	    <div></div>
+	    <div></div>
+	    <div></div>
+	</div>
+
+	<div id="sidebar" class="sidebar">
+	    <ul>
+		<li><a href="/">Playground</a></li>
+		<li><a style="color: var(--bright-text);" href="/dashboard">Dashboard</a></li>
+		<li><a href="/pricing">Pricing</a></li>
+		<li><a href="/docs">Documentation</a></li>
+		<li><a href="/settings">Settings</a></li>
+		<li><a href="/logout">Logout</a></li>
+	    </ul>
+	</div>
+
+	<div class="overlay"></div>
+	<br><br><br><br><br><br><br><br><br>
+	
+	<div class="top-stats">
+	    <div class="stat-box">Total Requests: <br><pretty>{{free_requests}}</pretty></div><br>	
+	    <div class="stat-box margin-left">Available Credits: <br><pretty id="credits">-.---</pretty></div>	
+	    {% if usable_requests != None %}
+		<div class="stat-box margin-left">Usable Requests <br><pretty id="credits">{{usable_requests}}/{{requests_plan}}</pretty></div>	
+	    {% endif %}
+	</div>
+	<br><br><br><br>
+	<div class="usage-header">Monthly Usage ({{month}})</div><br>
+	<div class="total_tokens_chart">
+	    <canvas class="chart" id="total-tokens"></canvas>
+	</div>
+	<br><br><br><br>
+	<div class="token-section">
+	    <div class="header-text">API Token</div>
+	    <div class="description">This token will only be shown once, be careful!</div>
+	    <button class="btn-white" onclick="generate_token();">Generate Token</button>
+	    <div id="new_token"></div>
+	</div>
+	<br><br><br><br>
+
+	<script src="/ui/crofui.js"></script>
+	<script src="https://files.nahcrof.com/file/styl.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+	    function generate_token(){
+		console.log("AH");
+		styLget("/user_api_create-token").then(json => {
+		    console.log(json['token']);
+		    let token = json['token'];
+		    document.getElementById("new_token").style.padding = "6px";
+		    document.getElementById("new_token").style.width = "300px";
+		    document.getElementById("new_token").style.border = "1px solid var(--border)";
+		    document.getElementById("new_token").style.borderRadius = "10px";
+		    let svg_value = '<svg onclick="copy_text(\'' + token + '\')" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>'
+		    document.getElementById("new_token").innerHTML = "<token>" + token + "</token>" + svg_value;
+		});
+		
+	    }
+
+	    function getCredits() {
+		styLget("/user-api/credits").then(json => {document.getElementById("credits").innerHTML = json});
+	    }
+	    getCredits();
+	    setInterval(getCredits, 10000); 
+
+	    // CHARTS
+	    const ctx = document.getElementById('total-tokens');
+
+	    
+
+	    model_list = [];
+	    tokens_list = [];
+	    bg_colors = [];
+	    border_colors = [];
+	    styLget("/user-api/usage").then(json => {
+		json = Object.entries(json);
+		json.sort((a, b) => {
+		    const aTokens = a[1].total_tokens || 0;
+		    const bTokens = b[1].total_tokens || 0;
+		    return bTokens - aTokens;
+		});
+
+		json = Object.fromEntries(json);
+		for (model in json) {
+		    console.log(model);
+		    model_list.push(model);
+		    tokens_list.push(json[model]['total_tokens']);
+		    bg_colors.push("rgba(110, 72, 170, 0.4)");
+		    border_colors.push("rgba(110, 72, 170, 1)");
+		}
+		let total_tokens_chart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+			labels: model_list,
+			datasets: [{
+			    label: 'Total Tokens',
+			    data: tokens_list,
+			    backgroundColor: bg_colors,
+			    borderColor: border_colors,
+			    borderWidth: 1,
+			}]
+		    },
+		    options: {
+			responseive: true,
+			scales: {
+			    y: {
+				beginAtZero: true,
+				gridLines: {display: true},
+				grid: {color: "#292929"},
+			    },
+			    x: {
+				gridLines: {display: true},
+				grid: {color: "#292929"},
+			    }
+			}
+		    }
+		});
+
+		const window_width = window.innerWidth;
+		console.log("WIDTH: " + window_width);
+		total_tokens_chart.canvas.parentNode.style.height = 'auto';
+		total_tokens_chart.canvas.parentNode.style.background = '#141414';
+		total_tokens_chart.canvas.parentNode.style.padding = '15px';
+		total_tokens_chart.canvas.parentNode.style.borderRadius = '15px';
+		total_tokens_chart.canvas.parentNode.style.width = '90%';
+		total_tokens_chart.canvas.parentNode.style.maxWidth = '675px';
+	    });
+
+	    document.addEventListener('DOMContentLoaded', function() {
+		const hamburger = document.querySelector('.hamburger');
+		const sidebar = document.querySelector('.sidebar');
+		const overlay = document.querySelector('.overlay');
+
+		hamburger.addEventListener('click', function() {
+		    hamburger.classList.toggle('active');
+		    sidebar.classList.toggle('active');
+		    overlay.classList.toggle('active');
+		});
+
+		overlay.addEventListener('click', function() {
+		    hamburger.classList.remove('active');
+		    sidebar.classList.remove('active');
+		    overlay.classList.remove('active');
+		});
+
+	    });
+
+	    function copy_text(text) {
+		navigator.clipboard.writeText(text);
+		createToast("Copied!");
+	    }
+	</script>
+	
+    </body>
+</html>
