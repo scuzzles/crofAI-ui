@@ -42,7 +42,6 @@
             overflow: hidden;
             background: var(--bg);
             color: var(--bright);
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 15px;
             -webkit-font-smoothing: antialiased;
         }
@@ -116,7 +115,7 @@
         .stat-pill {
             font-size: 0.72rem;
             color: var(--text);
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -271,7 +270,7 @@
         .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 10px; }
         .msg-bubble li { margin-bottom: 4px; }
         .msg-bubble code {
-            font-family: "SF Mono", "Fira Code", monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.82rem;
             background: var(--surface-2);
             border: 1px solid var(--border);
@@ -998,7 +997,7 @@ function escHtml(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 function formatSSEErrorHTML(rawJson) {
     let pretty;
     try { pretty = JSON.stringify(JSON.parse(rawJson), null, 2); } catch(_) { pretty = rawJson; }
-    return `<pre style="color:#f87171;font-family:'SF Mono','Fira Code',monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml(pretty)}</pre>`;
+    return `<pre style="color:#f87171;font-family:'JetBrains Mono', monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml(pretty)}</pre>`;
 }
 
 // For non-SSE errors (network failures, fetch errors, etc.)
@@ -1160,7 +1159,7 @@ async function sendMessage() {
                     // Strip HTML tags if the server returned an HTML error page
                     display = rawBody.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 1000);
                 }
-                html = `<pre style="color:#f87171;font-family:'SF Mono','Fira Code',monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml('HTTP ' + res.status + '\n\n' + display)}</pre>`;
+                html = `<pre style="color:#f87171;font-family:'JetBrains Mono', monospace;font-size:0.82rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;white-space:pre-wrap;word-break:break-word;margin:4px 0;">${escHtml('HTTP ' + res.status + '\n\n' + display)}</pre>`;
             } else {
                 html = formatErrorHTML(`HTTP ${res.status}`);
             }

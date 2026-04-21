@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root{
     --border: rgba(255, 255, 255, 0.2);
     --background: rgba(255, 255, 255, 0.1);
@@ -21,7 +23,7 @@
 body {
     background: #000000;
     color: var(--text);
-    font-family: arial;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 input:focus {

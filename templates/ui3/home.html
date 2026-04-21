@@ -9,7 +9,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Geist:wght@400;500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/ui/crofui.css">
 
@@ -51,14 +51,13 @@
         body {
             background: var(--bg);
             color: var(--primary-text);
-            font-family: Geist, -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
         a { text-decoration: none; color: inherit; }
         button { background: none; border: none; cursor: pointer; font-family: inherit; color: inherit; }
-        pre, code { font-family: 'JetBrains Mono', 'DM Mono', monospace; }
+        pre, code { font-family: 'JetBrains Mono', monospace; }
         section { width: 100%; }
 
         .page {
@@ -105,7 +104,7 @@
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-link {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             text-transform: uppercase;
             color: var(--secondary-text);
@@ -116,7 +115,7 @@
             background: var(--accent);
             color: var(--palette-bg-1);
             padding: 0.5rem 1.25rem;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -167,7 +166,7 @@
         .hero-title-highlight { color: var(--accent); display: inline-block; }
 
         .hero-sub {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             color: var(--secondary-text);
             max-width: 500px;
@@ -188,7 +187,7 @@
         @keyframes rise-in { to { opacity: 1; transform: translateY(0); } }
 
         .hero-cta, .hero-cta-outline {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
             text-transform: uppercase;
             padding: 1rem 2rem;
@@ -271,7 +270,7 @@
         .dot-green { background: #27C93F; }
         .window-title {
             margin-left: 0.5rem;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             color: #6B6B6B;
         }
@@ -283,7 +282,7 @@
             border-bottom: 1px solid #2A2A2A;
         }
         .tab {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             padding: 0.375rem 0.75rem;
             background: transparent;
@@ -302,7 +301,7 @@
             overflow: hidden;
         }
         .code-block {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             line-height: 1.5;
             color: #E0E0E0;
@@ -323,7 +322,7 @@
 
         /* Section scaffolding */
         .section-header {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
             color: var(--secondary-text);
             margin-bottom: 1rem;
@@ -420,7 +419,7 @@
         .chroma-name {
             position: relative;
             z-index: 2;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.01em;
@@ -445,7 +444,6 @@
             z-index: 1;
         }
         .integration-title {
-            font-family: 'Inter', sans-serif;
             font-size: 3.5rem;
             font-weight: 700;
             line-height: 1;
@@ -455,7 +453,7 @@
         }
         .integration-title .accent { color: var(--accent-light); }
         .integration-sub {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             color: var(--secondary-text);
             max-width: 400px;
@@ -539,7 +537,6 @@
         .popular-badge {
             position: absolute;
             top: -0.5rem; right: 1.5rem;
-            font-family: 'Inter', sans-serif;
             font-size: 0.625rem;
             font-weight: 500;
             background: var(--accent);
@@ -549,25 +546,21 @@
             border-radius: 9999px;
         }
         .pricing-plan {
-            font-family: 'Inter', sans-serif;
             font-size: 1rem;
             font-weight: 500;
             color: var(--primary-text);
         }
         .pricing-price {
-            font-family: 'Inter', sans-serif;
             font-size: 3.5rem;
             font-weight: 700;
             color: var(--primary-text);
             line-height: 1;
         }
         .pricing-sub {
-            font-family: 'Inter', sans-serif;
             font-size: 0.875rem;
             color: #A1A1AA;
         }
         .pricing-requests {
-            font-family: Geist, sans-serif;
             font-size: 0.875rem;
             color: var(--primary-text);
             padding-bottom: 1.25rem;
@@ -581,7 +574,6 @@
             gap: 0.75rem;
         }
         .pricing-feature {
-            font-family: Geist, sans-serif;
             font-size: 0.875rem;
             color: var(--primary-text);
             display: flex;
@@ -601,7 +593,6 @@
             border: 1px solid var(--border);
             padding: 0.875rem 1rem;
             text-align: center;
-            font-family: 'Inter', sans-serif;
             font-size: 0.875rem;
             font-weight: 500;
             transition: all 0.2s;
@@ -638,7 +629,7 @@
             text-transform: uppercase;
         }
         .models-sub {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             color: var(--secondary-text);
             margin-bottom: 4rem;
@@ -651,7 +642,7 @@
         .models-table {
             width: 100%;
             border-collapse: collapse;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
             text-align: left;
         }
@@ -710,7 +701,7 @@
             text-transform: uppercase;
         }
         .footer-cta-sub {
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             margin: 1.5rem 0 3rem 0;
             color: var(--palette-bg-1);
@@ -720,7 +711,7 @@
             background: var(--palette-bg-1);
             color: var(--accent);
             padding: 1.25rem 3rem;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -746,7 +737,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            font-family: 'DM Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             border-top: 1px solid var(--border);
             position: relative;
