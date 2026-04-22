@@ -202,10 +202,10 @@
 		<div class="form-box">
 		    <h2>Sign In to CrofAI</h2>
 		    <div>
-			<input placeholder="username" type="text" id="username" name="username" class="input" required>
+			<input placeholder="username" type="text" id="username" name="username" class="input" autocomplete="username" required>
 		    </div>
 		    <div>
-			<input placeholder="password" type="password" id="password" name="password" class="input" required>
+			<input placeholder="password" type="password" id="password" name="password" class="input" autocomplete="current-password" required>
 		    </div>
 		    <button class="btn-white" type="submit">Sign In</button>
 		    <div class="divider"><span>or</span></div>
@@ -219,6 +219,23 @@
 	</div>
 
 	<script src="/ui/crofui.js"></script>
+	<script type="module">
+const form = document.querySelector('form');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+
+if (navigator.credentials && window.PasswordCredential) {
+  navigator.credentials.get({ password: true, mediation: 'optional' })
+    .then((cred) => {
+      if (cred) {
+        usernameInput.value = cred.id;
+        passwordInput.value = cred.password;
+        form.submit();
+      }
+    })
+    .catch(() => {});
+}
+	</script>
 	{% if error_message %}
 	    <script>
 		// alert("{{error_message}}");
