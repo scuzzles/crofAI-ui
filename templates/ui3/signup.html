@@ -239,6 +239,7 @@ if (navigator.credentials && window.PasswordCredential) {
   signupForm.innerHTML =
     '<div>' +
     '  <input placeholder="email" type="email" id="email" name="email" class="input" autocomplete="email" required>' +
+    '  <p>You\'ll be able to save your account to your browser or anywhere else once you create it.</p>' +
     '</div>' +
     '<button class="btn-white" type="submit">Create Account</button>';
 
@@ -271,15 +272,40 @@ if (navigator.credentials && window.PasswordCredential) {
         return;
       }
 
-      await navigator.credentials.store(
-        new PasswordCredential({ id: username, password, name: email })
-      );
       try {
         await fetch('/settings-api/update-email/' + encodeURIComponent(email), {
           credentials: 'same-origin'
         });
       } catch {}
-      window.location.href = response.url;
+
+      navigator.credentials.store(
+        new PasswordCredential({ id: username, password, name: email })
+      );
+
+      const formBox = document.querySelector('.form-box');
+      formBox.innerHTML =
+        '<h2>Save your credentials</h2>' +
+        '<p>Save the username and password below to your browser.</p>' +
+        '<p><strong>Username:</strong> <span style="user-select: all;">' + username + '</span></p>' +
+        '<p><strong>Password:</strong> <span style="user-select: all; word-break: break-all;">' + password + '</span></p>' +
+        '<button class="btn-white" id="continue-btn" type="button">Continue</button>';
+
+      const poll = setInterval(async () => {
+        try {
+          const c = await navigator.credentials.get({ password: true, mediation: 'optional' });
+          if (!c) return;
+          if (c.id != username) {
+            clearInterval(poll);
+            return;
+          }
+          window.location.href = response.url;
+        } catch {}
+      }, 500);
+
+      document.getElementById('continue-btn').addEventListener('click', () => {
+        clearInterval(poll);
+        window.location.href = response.url;
+      });
     } catch (err) {
       console.error(err);
       createToast('An error occurred');
