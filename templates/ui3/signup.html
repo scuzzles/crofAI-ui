@@ -239,9 +239,9 @@ if (navigator.credentials && window.PasswordCredential) {
   signupForm.innerHTML =
     '<div>' +
     '  <input placeholder="email" type="email" id="email" name="email" class="input" autocomplete="email" required>' +
-    '  <p>You\'ll be able to save your account to your browser or anywhere else once you create it.</p>' +
     '</div>' +
-    '<button class="btn-white" type="submit">Create Account</button>';
+    '<button class="btn-white" type="submit">Create Account</button>' +
+    '<p style="opacity: 0.5; text-align: center; max-width: 15rem">You\'ll be able to save your account to your browser or anywhere else once you create it.</p>';
 
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
