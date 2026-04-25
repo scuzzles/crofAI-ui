@@ -26,30 +26,31 @@
             --bright-text: #7c3aed;
         }
         .logo { height: 50px; width: auto; }
-        header { margin-top: 25px; margin-left: 15vw; display: flex; flex: 0 0 auto; margin-bottom: 125px; }
-        header nav { margin-left: auto; margin-right: 25%; margin-top: 10px; display: flex; }
+        header { margin-top: 25px; display: flex; justify-content: center; flex: 0 0 auto; margin-bottom: 125px; }
+        header nav { margin-left: auto; margin-top: 10px; display: flex; }
+        .page-wrap { max-width: 80rem; margin: 0 auto; padding: 0 20px; }
         header .link { margin-left: 20px; color: var(--link-text); border: 1px solid transparent; width: auto; height: 17px; padding: 7px 10px; border-radius: 14px; text-decoration: none; transition: 0.3s ease; }
         header .link:hover { background: var(--hover-background); color: var(--text); }
 
         /* Stats */
         .top-stats { width: 100%; display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; }
-        .stat-box { width: 35%; border-radius: 12px; border: 1px solid var(--border); padding: 30px; transition: 0.3s ease; }
+        .stat-box { flex: 1 1 15rem; border-radius: 12px; border: 1px solid var(--border); padding: 30px; transition: 0.3s ease; }
         .stat-box:hover { background: var(--dark-background); }
         pretty { color: var(--bright-text); font-size: 1.5rem; }
 
         .stat-label { display: flex; align-items: center; gap: 6px; }
 
-        @media (max-width: 600px) { .top-stats .stat-box { width: 90%; } }
+        @media (max-width: 600px) { .top-stats .stat-box { flex: 1 1 100%; } }
 
         /* Usage section */
-        .usage-header-container { display: flex; align-items: center; margin-left: 15%; gap: 20px; }
+        .usage-header-container { display: flex; align-items: center; gap: 20px; }
         .usage-header { font-size: 2rem; color: var(--bright-text); }
         .nav-btn { background: var(--dark-background); border: 1px solid var(--border); color: var(--text); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: inherit; }
         .nav-btn:hover { background: var(--hover-background); }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         /* API keys */
-        .token-section { margin: auto; width: 70%; border-radius: 12px; padding: 30px; border: 1px solid var(--border); }
+        .token-section { margin: auto; width: 100%; border-radius: 12px; padding: 30px; border: 1px solid var(--border); }
         .token-section .header-text { font-size: 1.5rem; margin-bottom: 8px; }
         .description { color: var(--bright-text); margin-bottom: 20px; font-size: 0.9rem; }
 
@@ -90,6 +91,8 @@
     </div>
 
     <div class="overlay"></div>
+
+    <div class="page-wrap">
     <br><br><br><br><br>
 
     <div class="top-stats">
@@ -157,6 +160,7 @@
     </div>
 
     <br><br><br><br>
+    </div>
 
     <script src="/ui/crofui.js"></script>
     <script src="https://files.nahcrof.com/file/styl.js"></script>
@@ -284,7 +288,7 @@
                         scales: { y: { beginAtZero: true, grid: { color: "#292929" } }, x: { grid: { color: "#292929" } } }
                     }
                 });
-                total_tokens_chart.canvas.parentNode.style.cssText = "background: var(--palette-bg-2); padding: 20px; border-radius: 15px; width: 90%; max-width: 675px; margin: auto; border: 1px solid var(--border);";
+                total_tokens_chart.canvas.parentNode.style.cssText = "background: var(--palette-bg-2); border-radius: 15px; width: 100%; margin: auto;";
             });
         }
 
