@@ -7,10 +7,6 @@
         <meta name="description" content="The cheapest inference provider for large models" />
         <title>CrofAI - Pricing</title>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-
         <link rel="stylesheet" href="/ui/crofui.css" />
 
         <style>
@@ -25,7 +21,6 @@
                 --p-accent: #9b30ff;
                 --p-accent-dim: rgba(155, 48, 255, 0.12);
                 --p-radius: 12px;
-                --serif: 'Instrument Serif', Georgia, serif;
             }
 
             [data-theme="light"] {
@@ -105,16 +100,15 @@
                 color: var(--gray);
             }
             .plan-price {
-                font-family: var(--serif);
+                font-family: 'Google Sans Flex', 'Geist', sans-serif;
                 font-size: 2rem;
                 line-height: 1.25;
                 margin-bottom: 0.75rem;
                 font-weight: bold;
             }
-            .plan-price em {
+            .plan-price strong {
                 font-size: 1rem;
                 color: var(--gray);
-                font-style: italic;
             }
             .plan-features {
                 margin: 0;
@@ -458,12 +452,12 @@
             function renderPlans(userPlan) {
                 const container = document.getElementById('plans-container');
                 const plans = [
-                    { id: 'free', name: 'Free', price: 0, features: ['Pay only for usage', 'No recurring charge'] },
+                    { id: 'free', name: 'Free', price: 0, features: ["World's lowest prices", 'Credit-based system'] },
                     { id: 'hobby', name: 'Hobby', price: 5, features: ['500 daily requests'] },
-                    { id: 'pro', name: 'Pro', price: 10, features: ['1,000 daily requests', 'Priority support'] },
-                    { id: 'int', name: 'Intermediate', price: 20, features: ['2,500 daily requests', 'Priority support'] },
-                    { id: 'ent1', name: 'Scale', price: 50, features: ['7,500 daily requests', 'Priority support'] },
-                    { id: 'max', name: 'Max', price: 100, features: ['15,000 daily requests', 'Priority support'] }
+                    { id: 'pro', name: 'Pro', price: 10, features: ['Priority support', '1,000 daily requests'] },
+                    { id: 'int', name: 'Intermediate', price: 20, features: ['Priority support', '2,500 daily requests'] },
+                    { id: 'ent1', name: 'Scale', price: 50, features: ['Priority support', '7,500 daily requests'] },
+                    { id: 'max', name: 'Max', price: 100, features: ['Priority support', '15,000 daily requests'] }
                 ];
 
                 // Add any unknown plan the user currently has

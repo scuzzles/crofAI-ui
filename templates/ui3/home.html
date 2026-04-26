@@ -11,13 +11,6 @@
     <link rel="canonical" href="https://crof.ai/" />
     <title>CrofAI - World's Cheapest Inference</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
-
     <link rel="stylesheet" href="/ui/crofui.css" />
 
     <style>
@@ -26,7 +19,6 @@
         --nav-bg: rgba(10, 10, 10, 0.82);
         --border-subtle: rgba(255, 255, 255, 0.06);
         --muted: #666;
-        --serif: "Instrument Serif", Georgia, serif;
       }
 
       [data-theme="light"] {
@@ -61,9 +53,8 @@
       section {
         width: 100%;
       }
-      em {
+      strong {
         color: var(--bright-text);
-        font-style: italic;
       }
 
       .page {
@@ -159,16 +150,20 @@
         gap: 1.5rem;
       }
       .hero-title {
-        font-family: var(--serif);
-        font-size: 5.5rem;
+        font-family: "Google Sans Flex", "Geist", sans-serif;
+        font-size: 4.5rem;
         line-height: 1;
         color: var(--text);
-        letter-spacing: 0.01em;
-        font-weight: bold;
+        letter-spacing: -0.04em;
+        font-weight: normal;
         overflow: hidden;
         opacity: 0;
         transform: translateY(40px);
         animation: rise-in 0.3s ease-out forwards;
+        > strong {
+          font-variation-settings: "wdth" 116;
+          font-weight: 1000;
+        }
       }
 
       .hero-sub {
@@ -323,13 +318,17 @@
       .reveal-text-section {
         position: relative;
         z-index: 1;
-        max-width: 45ch;
+        max-width: 40ch;
         margin: 0 auto;
         width: 100%;
-        font-family: var(--serif);
+        font-family: "Google Sans Flex", "Geist", sans-serif;
+        font-variation-settings: "wdth" 100;
         font-size: clamp(2rem, 4vw, 3.25rem);
         line-height: 1.156;
         text-align: center;
+        > strong {
+          font-variation-settings: "wdth" 150;
+        }
       }
       .reveal-text-scroll {
         color: var(--muted);
@@ -346,7 +345,8 @@
         z-index: 1;
       }
       .plans-header {
-        font-family: var(--serif);
+        font-family: "Google Sans Flex", "Geist", sans-serif;
+        font-variation-settings: "wdth" 90;
         font-size: 2.5rem;
         line-height: 1.222;
         text-align: center;
@@ -392,15 +392,15 @@
         color: var(--gray);
       }
       .plans > a > strong {
-        font-family: var(--serif);
+        font-family: Google Sans Flex, Geist, sans-serif;
         font-size: 2rem;
         line-height: 1.25;
         margin-bottom: 0.75rem;
+        color: inherit;
       }
       .plans > a > strong > em {
         font-size: 1rem;
         color: var(--gray);
-        font-style: italic;
       }
       .plans > a > ul {
         margin-top: auto;
@@ -579,14 +579,12 @@
       <section class="hero">
         <div class="hero-content">
           <h1 class="hero-title">
-            <em>43x</em> Chutes usage.<br /><em>50x</em> Claude's.<br /><em
-              >26x</em
-            >
-            OpenCode's.
+            <strong>43x</strong> Chutes usage.<br /><strong>50x</strong>
+            Claude's.<br /><strong>26x</strong> OpenCode's.
           </h1>
           <p class="hero-sub">
             Same models. Same API. Same everything - except on CrofAI, your $10
-            plan gives you 1,000 requests <em>every</em> day.
+            plan gives you 1,000 requests <strong>every</strong> day.
           </p>
           <div class="hero-buttons">
             <a href="/signin" class="hero-cta">
@@ -615,7 +613,7 @@
       <!-- Plans -->
       <section class="plans-section" id="pricing">
         <div class="reveal-text-section">
-          <em>Plans</em>
+          <strong>Plans</strong>
           <p class="reveal-text-scroll">
             CrofAI may be the world's cheapest inference provider, but we offer
             zero data retention, high speeds, free models, and everything else
@@ -625,7 +623,9 @@
         <div class="plans">
           <a href="/signin" class="reveal">
             <h3>Free</h3>
-            <strong>Pay as you go</strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 50"
+              >Pay as you go</strong
+            >
             <ul>
               <li>World's lowest prices</li>
               <li>Credit-based system</li>
@@ -633,14 +633,18 @@
           </a>
           <a href="/pricing" class="reveal">
             <h3>Hobby</h3>
-            <strong>$5<em>/mo</em></strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 70"
+              >$5<em>/mo</em></strong
+            >
             <ul>
               <li>500 daily requests</li>
             </ul>
           </a>
           <a href="/pricing" class="reveal">
             <h3>Pro</h3>
-            <strong>$10<em>/mo</em></strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 90"
+              >$10<em>/mo</em></strong
+            >
             <ul>
               <li>Priority support</li>
               <li>1000 daily requests</li>
@@ -648,7 +652,9 @@
           </a>
           <a href="/pricing" class="reveal">
             <h3>Intermediate</h3>
-            <strong>$20<em>/mo</em></strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 110"
+              >$20<em>/mo</em></strong
+            >
             <ul>
               <li>Priority support</li>
               <li>2500 daily requests</li>
@@ -656,7 +662,9 @@
           </a>
           <a href="/pricing" class="reveal">
             <h3>Scale</h3>
-            <strong>$50<em>/mo</em></strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 130"
+              >$50<em>/mo</em></strong
+            >
             <ul>
               <li>Priority support</li>
               <li>7500 daily requests</li>
@@ -664,7 +672,9 @@
           </a>
           <a href="/pricing" class="reveal">
             <h3>Max</h3>
-            <strong>$100<em>/mo</em></strong>
+            <strong style="font-variation-settings: &quot;wdth&quot; 150"
+              >$100<em>/mo</em></strong
+            >
             <ul>
               <li>Priority support</li>
               <li>15000 daily requests</li>
