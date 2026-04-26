@@ -1,555 +1,748 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{ theme|default("dark") }}">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="https://files.nahcrof.com/file/crofaicolor.png" />
-    <meta name="description" content="43x Chutes' usage, 26x OpenCode's, starting at $5/mo." />
+    <meta
+      name="description"
+      content="43x Chutes' usage, 26x OpenCode's, starting at $5/mo."
+    />
     <link rel="canonical" href="https://crof.ai/" />
     <title>CrofAI - World's Cheapest Inference</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="/ui/crofui.css">
+    <link rel="stylesheet" href="/ui/crofui.css" />
 
     <style>
-        :root {
-            --bg: #000000;
-            --nav-bg: rgba(10, 10, 10, 0.82);
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --muted: #666;
-            --serif: 'Instrument Serif', Georgia, serif;
-        }
+      :root {
+        --bg: #000000;
+        --nav-bg: rgba(10, 10, 10, 0.82);
+        --border-subtle: rgba(255, 255, 255, 0.06);
+        --muted: #666;
+        --serif: "Instrument Serif", Georgia, serif;
+      }
 
-        [data-theme="light"] {
-            --bg: #ffffff;
-            --text: #111111;
-            --link-text: #555555;
-            --dark-background: #f7f7f8;
-            --border: #e5e5e7;
-            --nav-bg: rgba(255, 255, 255, 0.85);
-            --border-subtle: rgba(0, 0, 0, 0.08);
-        }
+      [data-theme="light"] {
+        --bg: #ffffff;
+        --text: #111111;
+        --link-text: #555555;
+        --dark-background: #f7f7f8;
+        --border: #e5e5e7;
+        --nav-bg: rgba(255, 255, 255, 0.85);
+        --border-subtle: rgba(0, 0, 0, 0.08);
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
-        }
-        a { text-decoration: none; color: inherit; }
-        section { width: 100%; }
-        em { color: var(--bright-text); font-style: italic; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      section {
+        width: 100%;
+      }
+      em {
+        color: var(--bright-text);
+        font-style: italic;
+      }
 
-        .page {
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+      .page {
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
 
-        /* Grid background */
-        .grid-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background-image:
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 64px 64px;
-            background-position: center center;
-            opacity: 0.2;
-            pointer-events: none;
-            z-index: 0;
-        }
+      /* Grid background */
+      .grid-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 64px 64px;
+        background-position: center center;
+        opacity: 0.2;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-        /* Floating bottom nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 1.25rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0.5rem;
-            background: var(--nav-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 9999px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-        .bottom-nav-link {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--link-text);
-            padding: 0.4rem 0.75rem;
-            border-radius: 9999px;
-            transition: color 0.2s, background 0.2s;
-            white-space: nowrap;
-        }
-        .bottom-nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-        .bottom-nav-cta {
-            background: var(--bright);
-            color: #fff;
-            padding: 0.4rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .bottom-nav-cta:hover { background: var(--bright-text); transform: scale(1.05); }
+      /* Floating bottom nav */
+      .bottom-nav {
+        position: fixed;
+        bottom: 1.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.5rem;
+        background: var(--nav-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--border-subtle);
+        border-radius: 9999px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      }
+      .bottom-nav-link {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--link-text);
+        padding: 0.4rem 0.75rem;
+        border-radius: 9999px;
+        transition:
+          color 0.2s,
+          background 0.2s;
+        white-space: nowrap;
+      }
+      .bottom-nav-link:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .bottom-nav-cta {
+        background: var(--bright);
+        color: #fff;
+        padding: 0.4rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .bottom-nav-cta:hover {
+        background: var(--bright-text);
+        transform: scale(1.05);
+      }
 
-        /* Hero */
+      /* Hero */
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 480px;
+        gap: 4rem;
+        padding: 8rem 4rem 8rem 4rem;
+        min-height: 90vh;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        max-width: 78rem;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .hero-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .hero-title {
+        font-family: var(--serif);
+        font-size: 5.5rem;
+        line-height: 1;
+        color: var(--text);
+        letter-spacing: 0.01em;
+        font-weight: bold;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(40px);
+        animation: rise-in 0.3s ease-out forwards;
+      }
+
+      .hero-sub {
+        font-size: 1.05rem;
+        color: var(--link-text);
+        max-width: 520px;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: rise-in 0.6s ease 0.2s forwards;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: rise-in 0.6s ease 0.4s forwards;
+      }
+      @keyframes rise-in {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-cta,
+      .hero-cta-outline {
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 0.9rem 1.75rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.15s ease,
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+      .hero-cta {
+        background: var(--bright);
+        color: #fff;
+      }
+      .hero-cta:hover {
+        transform: scale(1.05);
+        background: var(--bright-text);
+      }
+      .hero-cta:active {
+        transform: scale(0.95);
+      }
+      .hero-cta svg {
+        margin-left: 8px;
+        width: 16px;
+        height: 16px;
+      }
+      .hero-cta-outline {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .hero-cta-outline:hover {
+        background: var(--dark-background);
+        border-color: var(--link-text);
+        transform: scale(1.05);
+      }
+      .hero-cta-outline:active {
+        transform: scale(0.95);
+      }
+
+      /* Hero chart iframe */
+      .hero-chart {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
+      .chart-frame {
+        width: 500px;
+        height: 500px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #0a0a0a;
+        box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.4);
+        transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+        transition: transform 0.5s ease;
+        animation: chart-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s
+          backwards;
+      }
+      @keyframes chart-slide-in {
+        from {
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg)
+            translateX(80px);
+          opacity: 0;
+        }
+      }
+      .chart-frame.entered {
+        animation: none;
+      }
+      .chart-frame.floating {
+        animation:
+          chart-float 5s ease-in-out infinite,
+          chart-glow 3s ease-in-out infinite;
+      }
+      @keyframes chart-float {
+        0%,
+        100% {
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg)
+            translateY(0);
+          opacity: 1;
+        }
+        50% {
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg)
+            translateY(-8px);
+          opacity: 1;
+        }
+      }
+      @keyframes chart-glow {
+        0%,
+        100% {
+          box-shadow:
+            -20px 20px 60px rgba(0, 0, 0, 0.4),
+            0 0 0 rgba(124, 58, 237, 0);
+        }
+        50% {
+          box-shadow:
+            -20px 20px 60px rgba(0, 0, 0, 0.4),
+            0 0 40px rgba(124, 58, 237, 0.15);
+        }
+      }
+      .chart-frame:hover {
+        transform: perspective(1200px) rotateY(-3deg) rotateX(1deg) !important;
+        animation: none !important;
+        opacity: 1 !important;
+      }
+
+      /* Reveal-on-scroll */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Scroll-reveal text */
+      .reveal-text-section {
+        position: relative;
+        z-index: 1;
+        max-width: 45ch;
+        margin: 0 auto;
+        width: 100%;
+        font-family: var(--serif);
+        font-size: clamp(2rem, 4vw, 3.25rem);
+        line-height: 1.156;
+        text-align: center;
+      }
+      .reveal-text-scroll {
+        color: var(--muted);
+        padding: 0.5rem 2rem 1.5rem;
+      }
+      ::highlight(reveal) {
+        color: var(--text);
+      }
+
+      /* Plans */
+      .plans-section {
+        padding: 6rem 2rem 8rem;
+        position: relative;
+        z-index: 1;
+      }
+      .plans-header {
+        font-family: var(--serif);
+        font-size: 2.5rem;
+        line-height: 1.222;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .plans {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 80rem;
+        margin: 0 auto;
+        color: var(--text);
+      }
+      .plans > a {
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        flex: 1;
+        background: var(--dark-background);
+        --gray: var(--link-text);
+        border-radius: 1rem;
+        padding: 0.5rem 0.75rem;
+        font: inherit;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 0;
+      }
+      .plans > a:hover {
+        background: color-mix(
+          in oklch,
+          var(--bright) 10%,
+          var(--dark-background)
+        );
+        --gray: color-mix(in oklch, var(--bright) 30%, var(--link-text));
+        color: color-mix(in oklch, var(--bright) 50%, var(--text));
+        border-color: rgba(168, 85, 247, 0.3);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+      }
+      .plans > a > h3 {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        color: var(--gray);
+      }
+      .plans > a > strong {
+        font-family: var(--serif);
+        font-size: 2rem;
+        line-height: 1.25;
+        margin-bottom: 0.75rem;
+      }
+      .plans > a > strong > em {
+        font-size: 1rem;
+        color: var(--gray);
+        font-style: italic;
+      }
+      .plans > a > ul {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        padding-left: 0.25rem;
+        font-size: 0.8rem;
+        color: var(--gray);
+        list-style: none;
+      }
+      .plans > a > ul > li {
+        text-indent: -0.125rem;
+        margin-bottom: 0.25rem;
+      }
+      .plans > a > ul > li::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--bright);
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--bg);
+        color: var(--link-text);
+        padding: 2rem 4rem 5rem 4rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.75rem;
+        border-top: 1px solid var(--border);
+        position: relative;
+        z-index: 1;
+      }
+      .footer-copy {
+        color: rgba(255, 255, 255, 0.3);
+      }
+      .footer-links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .footer-link {
+        color: var(--link-text);
+        transition: color 0.2s;
+      }
+      .footer-link:hover {
+        color: var(--text);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--bright);
+      }
+
+      @media (max-width: 1024px) {
         .hero {
-            display: grid;
-            grid-template-columns: 1fr 480px;
-            gap: 4rem;
-            padding: 8rem 4rem 8rem 4rem;
-            min-height: 90vh;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-            max-width: 78rem;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+          grid-template-columns: 1fr;
+          padding: 4rem 2rem 6rem;
+          gap: 3rem;
         }
         .hero-title {
-            font-family: var(--serif);
-            font-size: 5.5rem;
-            line-height: 1;
-            color: var(--text);
-            letter-spacing: 0.01em;
-            font-weight: bold;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(40px);
-            animation: rise-in 0.3s ease-out forwards;
+          font-size: 3.5rem;
         }
-
-        .hero-sub {
-            font-size: 1.05rem;
-            color: var(--link-text);
-            max-width: 520px;
-            line-height: 1.5;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: rise-in 0.6s ease 0.2s forwards;
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: rise-in 0.6s ease 0.4s forwards;
-        }
-        @keyframes rise-in { to { opacity: 1; transform: translateY(0); } }
-
-        .hero-cta, .hero-cta-outline {
-            font-size: 0.9rem;
-            font-weight: 600;
-            padding: 0.9rem 1.75rem;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
-        }
-        .hero-cta { background: var(--bright); color: #fff; }
-        .hero-cta:hover { transform: scale(1.05); background: var(--bright-text); }
-        .hero-cta:active { transform: scale(0.95); }
-        .hero-cta svg { margin-left: 8px; width: 16px; height: 16px; }
-        .hero-cta-outline {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .hero-cta-outline:hover { background: var(--dark-background); border-color: var(--link-text); transform: scale(1.05); }
-        .hero-cta-outline:active { transform: scale(0.95); }
-
-        /* Hero chart iframe */
         .hero-chart {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+          justify-content: center;
         }
         .chart-frame {
-            width: 500px;
-            height: 500px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: #0a0a0a;
-            box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.4);
-            transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
-            transition: transform 0.5s ease;
-            animation: chart-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s backwards;
-        }
-        @keyframes chart-slide-in {
-            from { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateX(80px); opacity: 0; }
-        }
-        .chart-frame.entered { animation: none; }
-        .chart-frame.floating {
-            animation: chart-float 5s ease-in-out infinite, chart-glow 3s ease-in-out infinite;
-        }
-        @keyframes chart-float {
-            0%, 100% { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(0); opacity: 1; }
-            50%      { transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(-8px); opacity: 1; }
-        }
-        @keyframes chart-glow {
-            0%, 100% { box-shadow: -20px 20px 60px rgba(0,0,0,0.4), 0 0 0 rgba(124,58,237,0); }
-            50%      { box-shadow: -20px 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(124,58,237,0.15); }
-        }
-        .chart-frame:hover {
-            transform: perspective(1200px) rotateY(-3deg) rotateX(1deg) !important;
-            animation: none !important;
-            opacity: 1 !important;
-        }
-
-        /* Reveal-on-scroll */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-
-        /* Scroll-reveal text */
-        .reveal-text-section {
-            position: relative;
-            z-index: 1;
-            max-width: 45ch;
-            margin: 0 auto;
-            width: 100%;
-            font-family: var(--serif);
-            font-size: clamp(2rem, 4vw, 3.25rem);
-            line-height: 1.156;
-            text-align: center;
-        }
-        .reveal-text-scroll {
-            color: var(--muted);
-            padding: 0.5rem 2rem 1.5rem;
-        }
-        ::highlight(reveal) {
-            color: var(--text);
-        }
-
-        /* Plans */
-        .plans-section {
-            padding: 6rem 2rem 8rem;
-            position: relative;
-            z-index: 1;
-        }
-        .plans-header {
-            font-family: var(--serif);
-            font-size: 2.5rem;
-            line-height: 1.222;
-            text-align: center;
-            margin-bottom: 1.5rem;
+          width: 100%;
+          max-width: 500px;
         }
         .plans {
-            display: flex;
-            gap: 0.5rem;
-            max-width: 80rem;
-            margin: 0 auto;
-            color: var(--text);
+          flex-wrap: wrap;
         }
         .plans > a {
-            display: flex;
-            flex-direction: column;
-            text-align: start;
-            flex: 1;
-            background: var(--dark-background);
-            --gray: var(--link-text);
-            border-radius: 1rem;
-            padding: 0.5rem 0.75rem;
-            font: inherit;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 0;
+          min-width: calc(33% - 0.5rem);
         }
-        .plans > a:hover {
-            background: color-mix(in oklch, var(--bright) 10%, var(--dark-background));
-            --gray: color-mix(in oklch, var(--bright) 30%, var(--link-text));
-            color: color-mix(in oklch, var(--bright) 50%, var(--text));
-            border-color: rgba(168, 85, 247, 0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+      }
+      @media (max-width: 768px) {
+        .bottom-nav {
+          bottom: 0.75rem;
+          padding: 0.4rem 0.5rem;
         }
-        .plans > a > h3 {
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            color: var(--gray);
+        .bottom-nav-link {
+          font-size: 0.7rem;
+          padding: 0.35rem 0.5rem;
         }
-        .plans > a > strong {
-            font-family: var(--serif);
-            font-size: 2rem;
-            line-height: 1.25;
-            margin-bottom: 0.75rem;
-        }
-        .plans > a > strong > em {
-            font-size: 1rem;
-            color: var(--gray);
-            font-style: italic;
-        }
-        .plans > a > ul {
-            margin-top: auto;
-            padding-top: 0.75rem;
-            padding-left: 0.25rem;
-            font-size: 0.8rem;
-            color: var(--gray);
-            list-style: none;
-        }
-        .plans > a > ul > li {
-            text-indent: -0.125rem;
-            margin-bottom: 0.25rem;
-        }
-        .plans > a > ul > li::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--bright);
-            margin-right: 0.5rem;
-            vertical-align: middle;
+        .bottom-nav-cta {
+          font-size: 0.7rem;
+          padding: 0.35rem 0.75rem;
         }
 
-        /* Footer */
+        .hero {
+          padding: 3rem 1.25rem 4rem;
+          gap: 2.5rem;
+        }
+        .hero-title {
+          font-size: 2.5rem;
+        }
+        .hero-sub {
+          font-size: 0.9rem;
+        }
+        .chart-frame {
+          height: 400px;
+          transform: perspective(1200px) rotateY(-4deg) rotateX(1deg);
+        }
+        @keyframes chart-slide-in {
+          from {
+            transform: perspective(1200px) rotateY(-4deg) rotateX(1deg)
+              translateX(40px);
+            opacity: 0;
+          }
+        }
+        @keyframes chart-float {
+          0%,
+          100% {
+            transform: perspective(1200px) rotateY(-4deg) rotateX(1deg)
+              translateY(0);
+            opacity: 1;
+          }
+          50% {
+            transform: perspective(1200px) rotateY(-4deg) rotateX(1deg)
+              translateY(-6px);
+            opacity: 1;
+          }
+        }
+        .chart-frame:hover {
+          transform: perspective(1200px) rotateY(-2deg) rotateX(0.5deg) !important;
+        }
+
+        .plans {
+          flex-direction: column;
+        }
+        .plans > a {
+          min-width: auto;
+        }
+
         .footer {
-            background: var(--bg);
-            color: var(--link-text);
-            padding: 2rem 4rem 5rem 4rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.75rem;
-            border-top: 1px solid var(--border);
-            position: relative;
-            z-index: 1;
+          padding: 2rem 1.25rem 5rem 1.25rem;
+          flex-direction: column;
+          text-align: center;
+          gap: 1.25rem;
         }
-        .footer-copy { color: rgba(255,255,255,0.3); }
-        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .footer-link { color: var(--link-text); transition: color 0.2s; }
-        .footer-link:hover { color: var(--text); }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--bright); }
-
-        @media (max-width: 1024px) {
-            .hero {
-                grid-template-columns: 1fr;
-                padding: 4rem 2rem 6rem;
-                gap: 3rem;
-            }
-            .hero-title { font-size: 3.5rem; }
-            .hero-chart { justify-content: center; }
-            .chart-frame { width: 100%; max-width: 500px; }
-            .plans { flex-wrap: wrap; }
-            .plans > a { min-width: calc(33% - 0.5rem); }
+        .footer-links {
+          justify-content: center;
+          gap: 1rem 1.25rem;
         }
-        @media (max-width: 768px) {
-            .bottom-nav { bottom: 0.75rem; padding: 0.4rem 0.5rem; }
-            .bottom-nav-link { font-size: 0.7rem; padding: 0.35rem 0.5rem; }
-            .bottom-nav-cta { font-size: 0.7rem; padding: 0.35rem 0.75rem; }
-
-            .hero { padding: 3rem 1.25rem 4rem; gap: 2.5rem; }
-            .hero-title { font-size: 2.5rem; }
-            .hero-sub { font-size: 0.9rem; }
-            .chart-frame {
-                height: 400px;
-                transform: perspective(1200px) rotateY(-4deg) rotateX(1deg);
-            }
-            @keyframes chart-slide-in {
-                from { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateX(40px); opacity: 0; }
-            }
-            @keyframes chart-float {
-                0%, 100% { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateY(0); opacity: 1; }
-                50%      { transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) translateY(-6px); opacity: 1; }
-            }
-            .chart-frame:hover {
-                transform: perspective(1200px) rotateY(-2deg) rotateX(0.5deg) !important;
-            }
-
-            .plans { flex-direction: column; }
-            .plans > a { min-width: auto; }
-
-            .footer { padding: 2rem 1.25rem 5rem 1.25rem; flex-direction: column; text-align: center; gap: 1.25rem; }
-            .footer-links { justify-content: center; gap: 1rem 1.25rem; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="page">
+      <div class="grid-bg"></div>
 
-<div class="page">
-    <div class="grid-bg"></div>
-
-    <!-- Floating Bottom Nav -->
-    <nav class="bottom-nav">
+      <!-- Floating Bottom Nav -->
+      <nav class="bottom-nav">
         <a href="/pricing" class="bottom-nav-link">Pricing</a>
         <a href="/docs" class="bottom-nav-link">Docs</a>
         <a href="/signin" class="bottom-nav-cta">Get Started</a>
-    </nav>
+      </nav>
 
-    <!-- Hero -->
-    <section class="hero">
+      <!-- Hero -->
+      <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title"><em>43x</em> Chutes usage.<br/><em>50x</em> Claude's.<br/><em>26x</em> OpenCode's.</h1>
-            <p class="hero-sub">Same models. Same API. Same everything - except on CrofAI, your $10 plan gives you 1,000 requests <em>every</em> day.</p>
-            <div class="hero-buttons">
-                <a href="/signin" class="hero-cta">
-                    Get Started
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-                <a href="/pricing" class="hero-cta-outline">View Pricing</a>
-            </div>
+          <h1 class="hero-title">
+            <em>43x</em> Chutes usage.<br /><em>50x</em> Claude's.<br /><em
+              >26x</em
+            >
+            OpenCode's.
+          </h1>
+          <p class="hero-sub">
+            Same models. Same API. Same everything - except on CrofAI, your $10
+            plan gives you 1,000 requests <em>every</em> day.
+          </p>
+          <div class="hero-buttons">
+            <a href="/signin" class="hero-cta">
+              Get Started
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+            <a href="/pricing" class="hero-cta-outline">View Pricing</a>
+          </div>
         </div>
 
         <div class="hero-chart">
-            <iframe class="chart-frame" id="heroChart" scrolling="no"></iframe>
+          <iframe class="chart-frame" id="heroChart" scrolling="no"></iframe>
         </div>
-    </section>
+      </section>
 
-    <!-- Plans -->
-    <section class="plans-section" id="pricing">
+      <!-- Plans -->
+      <section class="plans-section" id="pricing">
         <div class="reveal-text-section">
-            <em>Plans</em>
-            <p class="reveal-text-scroll">CrofAI may be the world's cheapest inference provider, but we offer zero data retention, high speeds, free models, and everything else you'd expect on every plan, starting from $5/mo.</p>
+          <em>Plans</em>
+          <p class="reveal-text-scroll">
+            CrofAI may be the world's cheapest inference provider, but we offer
+            zero data retention, high speeds, free models, and everything else
+            you'd expect on every plan, starting from $5/mo.
+          </p>
         </div>
         <div class="plans">
-            <a href="/signin" class="reveal">
-                <h3>Free</h3>
-                <strong>Pay as you go</strong>
-                <ul>
-                    <li>World's lowest prices</li>
-                    <li>Credit-based system</li>
-                </ul>
-            </a>
-            <a href="/pricing" class="reveal">
-                <h3>Hobby</h3>
-                <strong>$5<em>/mo</em></strong>
-                <ul>
-                    <li>500 daily requests</li>
-                </ul>
-            </a>
-            <a href="/pricing" class="reveal">
-                <h3>Pro</h3>
-                <strong>$10<em>/mo</em></strong>
-                <ul>
-                    <li>Priority support</li>
-                    <li>1000 daily requests</li>
-                </ul>
-            </a>
-            <a href="/pricing" class="reveal">
-                <h3>Intermediate</h3>
-                <strong>$20<em>/mo</em></strong>
-                <ul>
-                    <li>Priority support</li>
-                    <li>2500 daily requests</li>
-                </ul>
-            </a>
-            <a href="/pricing" class="reveal">
-                <h3>Scale</h3>
-                <strong>$50<em>/mo</em></strong>
-                <ul>
-                    <li>Priority support</li>
-                    <li>7500 daily requests</li>
-                </ul>
-            </a>
-            <a href="/pricing" class="reveal">
-                <h3>Max</h3>
-                <strong>$100<em>/mo</em></strong>
-                <ul>
-                    <li>Priority support</li>
-                    <li>15000 daily requests</li>
-                </ul>
-            </a>
+          <a href="/signin" class="reveal">
+            <h3>Free</h3>
+            <strong>Pay as you go</strong>
+            <ul>
+              <li>World's lowest prices</li>
+              <li>Credit-based system</li>
+            </ul>
+          </a>
+          <a href="/pricing" class="reveal">
+            <h3>Hobby</h3>
+            <strong>$5<em>/mo</em></strong>
+            <ul>
+              <li>500 daily requests</li>
+            </ul>
+          </a>
+          <a href="/pricing" class="reveal">
+            <h3>Pro</h3>
+            <strong>$10<em>/mo</em></strong>
+            <ul>
+              <li>Priority support</li>
+              <li>1000 daily requests</li>
+            </ul>
+          </a>
+          <a href="/pricing" class="reveal">
+            <h3>Intermediate</h3>
+            <strong>$20<em>/mo</em></strong>
+            <ul>
+              <li>Priority support</li>
+              <li>2500 daily requests</li>
+            </ul>
+          </a>
+          <a href="/pricing" class="reveal">
+            <h3>Scale</h3>
+            <strong>$50<em>/mo</em></strong>
+            <ul>
+              <li>Priority support</li>
+              <li>7500 daily requests</li>
+            </ul>
+          </a>
+          <a href="/pricing" class="reveal">
+            <h3>Max</h3>
+            <strong>$100<em>/mo</em></strong>
+            <ul>
+              <li>Priority support</li>
+              <li>15000 daily requests</li>
+            </ul>
+          </a>
         </div>
-    </section>
+      </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+      <!-- Footer -->
+      <footer class="footer">
         <p class="footer-copy">&copy; 2025 Nahcrof LLC</p>
         <div class="footer-links">
-            <a href="/pricing" class="footer-link">Pricing</a>
-            <a href="/docs" class="footer-link">Docs</a>
-            <a href="/privacy" class="footer-link">Privacy</a>
-            <a href="/tos" class="footer-link">ToS</a>
-            <a href="https://status.nahcrof.com" class="footer-link">Status</a>
-            <a href="https://discord.gg/e8UeP7YdJW" class="footer-link">Discord</a>
-            <a href="/startups" class="footer-link">Startups</a>
-            <a href="/enterprise_login" class="footer-link">Enterprise</a>
-            <a href="mailto:nahcrof@gmail.com" class="footer-link">Contact</a>
-            <a href="https://nahcrof.com" class="footer-link">Nahcrof</a>
+          <a href="/pricing" class="footer-link">Pricing</a>
+          <a href="/docs" class="footer-link">Docs</a>
+          <a href="/privacy" class="footer-link">Privacy</a>
+          <a href="/tos" class="footer-link">ToS</a>
+          <a href="https://status.nahcrof.com" class="footer-link">Status</a>
+          <a href="https://discord.gg/e8UeP7YdJW" class="footer-link"
+            >Discord</a
+          >
+          <a href="/startups" class="footer-link">Startups</a>
+          <a href="/enterprise_login" class="footer-link">Enterprise</a>
+          <a href="mailto:nahcrof@gmail.com" class="footer-link">Contact</a>
+          <a href="https://nahcrof.com" class="footer-link">Nahcrof</a>
         </div>
-    </footer>
-</div>
+      </footer>
+    </div>
 
-<script src="/ui/crofui.js"></script>
-<script>
-(function () {
-    /* ── Reveal-on-scroll ────────────────────────────────── */
-    const revealEls = document.querySelectorAll('.reveal');
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
+    <script src="/ui/crofui.js"></script>
+    <script>
+      (function () {
+        /* ── Reveal-on-scroll ────────────────────────────────── */
+        const revealEls = document.querySelectorAll(".reveal");
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("visible");
                 revealObserver.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.12 });
-    revealEls.forEach(el => revealObserver.observe(el));
+              }
+            });
+          },
+          { threshold: 0.12 },
+        );
+        revealEls.forEach((el) => revealObserver.observe(el));
 
-    /* ── Scroll-reveal text (CSS Custom Highlight) ───────── */
-    const revealEl = document.querySelector('.reveal-text-scroll');
-    if (revealEl && CSS.highlights) {
-        const revealText = revealEl.childNodes[0];
-        const totalLen = revealText.textContent.length;
-        const revealRange = document.createRange();
-        const revealHighlight = new Highlight(revealRange);
-        CSS.highlights.set("reveal", revealHighlight);
-        const updateReveal = () => {
+        /* ── Scroll-reveal text (CSS Custom Highlight) ───────── */
+        const revealEl = document.querySelector(".reveal-text-scroll");
+        if (revealEl && CSS.highlights) {
+          const revealText = revealEl.childNodes[0];
+          const totalLen = revealText.textContent.length;
+          const revealRange = document.createRange();
+          const revealHighlight = new Highlight(revealRange);
+          CSS.highlights.set("reveal", revealHighlight);
+          const updateReveal = () => {
             const rect = revealEl.getBoundingClientRect();
-            const progress = Math.min(1, Math.max(0, (1 - rect.top / window.innerHeight) * 1.8));
+            const progress = Math.min(
+              1,
+              Math.max(0, (1 - rect.top / window.innerHeight) * 1.8),
+            );
             revealRange.setStart(revealText, 0);
             revealRange.setEnd(revealText, Math.round(progress * totalLen));
-        };
-        window.addEventListener("scroll", updateReveal, { passive: true });
-        new ResizeObserver(updateReveal).observe(document.body);
-        updateReveal();
-    }
-
-    /* ── Chart iframe (srcdoc) ───────────────────────────── */
-    const chartFrame = document.getElementById('heroChart');
-    chartFrame.addEventListener('animationend', function onEntry(e) {
-        if (e.animationName === 'chart-slide-in') {
-            chartFrame.classList.add('entered');
-            chartFrame.removeEventListener('animationend', onEntry);
+          };
+          window.addEventListener("scroll", updateReveal, { passive: true });
+          new ResizeObserver(updateReveal).observe(document.body);
+          updateReveal();
         }
-    });
 
-    const chartSrcdoc = `<!DOCTYPE html>
+        /* ── Chart iframe (srcdoc) ───────────────────────────── */
+        const chartFrame = document.getElementById("heroChart");
+        chartFrame.addEventListener("animationend", function onEntry(e) {
+          if (e.animationName === "chart-slide-in") {
+            chartFrame.classList.add("entered");
+            chartFrame.removeEventListener("animationend", onEntry);
+          }
+        });
+
+        const chartSrcdoc = `<!DOCTYPE html>
 <html><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -609,9 +802,11 @@ plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.x.toLo
 });
 <\/script></body></html>`;
 
-    chartFrame.srcdoc = chartSrcdoc;
-    setTimeout(() => { chartFrame.classList.add('floating'); }, 3000);
-})();
-</script>
-</body>
+        chartFrame.srcdoc = chartSrcdoc;
+        setTimeout(() => {
+          chartFrame.classList.add("floating");
+        }, 3000);
+      })();
+    </script>
+  </body>
 </html>
