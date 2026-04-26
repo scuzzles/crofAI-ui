@@ -96,7 +96,7 @@
             .plan-name {
                 font-size: 0.9rem;
                 font-weight: 500;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.25rem;
                 color: var(--gray);
             }
             .plan-price {
@@ -104,9 +104,8 @@
                 font-size: 2rem;
                 line-height: 1.25;
                 margin-bottom: 0.75rem;
-                font-weight: bold;
             }
-            .plan-price strong {
+            .plan-price em {
                 font-size: 1rem;
                 color: var(--gray);
             }
@@ -471,7 +470,7 @@
                     });
                 }
 
-                container.innerHTML = plans.map(plan => {
+                container.innerHTML = plans.map((plan, i) => {
                     const isCurrent = userPlan.name === plan.id;
                     const click = !isLoggedIn
                         ? `onclick="location.href='/signin'" tabindex="0" role="link"`
@@ -483,7 +482,7 @@
                     return `
                         <div class="plan-box"${click}${current}>
                             <h3 class="plan-name">${plan.name}</h3>
-                            <strong class="plan-price">$${plan.price}<em>/mo</em></strong>
+                            <strong class="plan-price" style="font-variation-settings: 'wdth' ${30 + i * 20}">$${plan.price}<em>/mo</em></strong>
                             <ul class="plan-features">
                                 ${plan.features.map(f => `<li>${f}</li>`).join('')}
                             </ul>
