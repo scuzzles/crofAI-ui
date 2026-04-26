@@ -6,6 +6,11 @@
         <link rel="icon" href="https://files.nahcrof.com/file/crofai-black.png" />
         <meta name="description" content="The cheapest inference provider for large models" />
         <title>CrofAI - Pricing</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="/ui/crofui.css" />
 
         <style>
@@ -20,6 +25,7 @@
                 --p-accent: #9b30ff;
                 --p-accent-dim: rgba(155, 48, 255, 0.12);
                 --p-radius: 12px;
+                --serif: 'Instrument Serif', Georgia, serif;
             }
 
             [data-theme="light"] {
@@ -63,65 +69,94 @@
             }
 
             /* ── Plan cards ───────────────────────────────────────────── */
-            .plans { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 64px; }
+            .plans { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+            .plans-sub {
+                text-align: center;
+                font-size: 0.78rem;
+                color: var(--p-muted);
+                margin-bottom: 4rem;
+            }
 
             .plan-box {
-                flex: 1 1 220px;
-                max-width: 380px;
-                border: 1px solid var(--p-border);
-                border-radius: var(--p-radius);
-                background: var(--p-surface);
-                padding: 22px 20px 20px;
-                transition: border-color 0.2s, background 0.2s;
                 display: flex;
                 flex-direction: column;
-                gap: 0;
+                text-align: start;
+                flex: 1;
+                min-width: 0;
+                background: var(--p-surface);
+                --gray: var(--p-muted);
+                border-radius: 1rem;
+                padding: 0.5rem 0.75rem;
+                transition: all 0.2s;
             }
-            .plan-box:hover { border-color: #3a3a3a; background: var(--p-surface-2); }
-
-            .plan-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-            .plan-name { font-weight: 600; font-size: 0.95rem; color: var(--p-bright); }
-            .pretty { font-size: 1.4rem; font-weight: 700; color: var(--p-bright); line-height: 1; }
-            .pretty span { font-size: 0.78rem; font-weight: 400; color: var(--p-muted); }
-
-            .plan-divider { height: 1px; background: var(--p-border); margin: 14px 0; }
-
-            .plan-features { flex-grow: 1; display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
-            .plan-feature { display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: var(--p-muted); line-height: 1.4; }
-            .plan-feature .check { color: var(--p-accent); flex-shrink: 0; margin-top: 1px; }
-
-            .plan-box .bubble {
+            .plan-box:hover {
+                background: color-mix(in oklch, var(--p-accent) 10%, var(--p-surface));
+                --gray: color-mix(in oklch, var(--p-accent) 30%, var(--p-muted));
+                color: color-mix(in oklch, var(--p-accent) 50%, var(--p-text));
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(155, 48, 255, 0.1);
+            }
+            .plan-box:not([data-current]) { cursor: pointer; }
+            .plan-box:not([data-current]):active { transform: scale(0.97); }
+            .plan-name {
+                font-size: 0.9rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+                color: var(--gray);
+            }
+            .plan-price {
+                font-family: var(--serif);
+                font-size: 2rem;
+                line-height: 1.25;
+                margin-bottom: 0.75rem;
+                font-weight: bold;
+            }
+            .plan-price em {
+                font-size: 1rem;
+                color: var(--gray);
+                font-style: italic;
+            }
+            .plan-features {
+                margin: 0;
                 margin-top: auto;
+                padding: 0;
+                padding-top: 0.75rem;
+                padding-left: 0.25rem;
+                font-size: 0.8rem;
+                color: var(--gray);
+                list-style: none;
+            }
+            .plan-features li {
+                text-indent: -0.125rem;
+                margin-bottom: 0.25rem;
+            }
+            .plan-features li::before {
+                content: '';
+                display: inline-block;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background: var(--p-accent);
+                margin-right: 0.5rem;
+                vertical-align: middle;
+            }
+
+            .plan-cta {
+                margin-top: 0.75rem;
                 width: fit-content;
                 align-self: center;
                 font-size: 0.78rem;
-                padding: 5px 12px;
-                border-radius: 6px;
-                border: 1px solid var(--p-accent);
+                padding: 0.3rem 0.85rem;
+                border-radius: 9999px;
+                border: 1px solid var(--p-border);
+                color: var(--p-muted);
+                font-weight: 500;
+            }
+            .plan-cta--current {
+                border-color: var(--p-accent);
                 color: var(--p-accent);
                 background: var(--p-accent-dim);
-                font-weight: 500;
             }
-
-            .btn-white {
-                margin-top: auto;
-                width: 100%;
-                display: inline-block;
-                text-decoration: none;
-                text-align: center;
-                box-sizing: border-box;
-                padding: 8px 16px;
-                border-radius: 8px;
-                border: 1px solid var(--p-border);
-                background: var(--p-surface-2);
-                color: var(--p-text);
-                font-size: 0.85rem;
-                font-weight: 500;
-                cursor: pointer;
-                transition: 0.2s ease;
-                font-family: inherit;
-            }
-            .btn-white:hover { border-color: #3a3a3a; background: var(--palette-bg-5); color: var(--p-bright); }
 
             /* ── Model table ──────────────────────────────────────────── */
             .pricing-header { display: none; } /* replaced by section-title */
@@ -217,13 +252,7 @@
                 body { font-size: 16px; }
                 .page-wrap { padding: 0 40px 100px; }
                 .section-title { font-size: 0.8rem; margin-bottom: 32px; letter-spacing: 0.12em; }
-                .plan-box { padding: 28px 24px 24px; }
-                .plan-name { font-size: 1rem; }
-                .pretty { font-size: 2rem; }
-                .plan-divider { margin: 18px 0; }
-                .plan-features { gap: 12px; margin-bottom: 22px; }
-                .plan-feature { font-size: 0.9rem; gap: 10px; }
-                .btn-white { padding: 10px 18px; font-size: 0.9rem; }
+                .plan-price { font-size: 2.2rem; }
                 .price-box { padding: 18px 22px; gap: 20px; }
                 .row-left .model_name { font-size: 0.95rem; }
                 .bubble { font-size: 0.8rem; padding: 4px 10px; }
@@ -232,7 +261,7 @@
             }
 
             @media (min-width: 1100px) {
-                .pretty { font-size: 2.2rem; }
+                .plan-price { font-size: 2.4rem; }
             }
 
             /* ── Mobile ───────────────────────────────────────────────── */
@@ -241,7 +270,8 @@
                 .price-box { grid-template-columns: 1fr; gap: 10px; }
                 .col { text-align: left; display: flex; align-items: baseline; gap: 8px; }
                 .col::before { content: attr(data-label); color: var(--p-muted); font-weight: 600; min-width: 7.5rem; font-size: 0.8rem; }
-                .plan-box { flex: 1 1 100%; max-width: 100%; }
+                .plans { flex-wrap: wrap; }
+                .plan-box { min-width: calc(50% - 0.5rem); }
             }
         </style>
     </head>
@@ -290,6 +320,7 @@
         <div class="page-wrap">
             <div class="section-title">Plans</div>
             <div class="plans" id="plans-container"></div>
+            <p class="plans-sub">All plans have access to all models</p>
 
             <div class="section-title">LLM Pricing</div>
             <div class="price-list">
@@ -427,12 +458,12 @@
             function renderPlans(userPlan) {
                 const container = document.getElementById('plans-container');
                 const plans = [
-                    { id: 'free', name: 'Free/Pay-as-you-go', price: 0, features: ['Pay only for usage', 'No recurring monthly charge'] },
-                    { id: 'hobby', name: 'Hobby', price: 5, features: ['500 daily requests', 'Access to all models'] },
-                    { id: 'pro', name: 'Pro', price: 10, features: ['All Hobby benefits', '1,000 daily requests', 'Priority Support'] },
-                    { id: 'int', name: 'Intermediate', price: 20, features: ['All Pro benefits', '2,500 daily requests'] },
-                    { id: 'ent1', name: 'Scale', price: 50, features: ['All Intermediate benefits', '7,500 daily requests'] },
-                    { id: 'max', name: 'Max', price: 100, features: ['All Scale benefits', '15,000 daily requests'] }
+                    { id: 'free', name: 'Free', price: 0, features: ['Pay only for usage', 'No recurring charge'] },
+                    { id: 'hobby', name: 'Hobby', price: 5, features: ['500 daily requests'] },
+                    { id: 'pro', name: 'Pro', price: 10, features: ['1,000 daily requests', 'Priority support'] },
+                    { id: 'int', name: 'Intermediate', price: 20, features: ['2,500 daily requests', 'Priority support'] },
+                    { id: 'ent1', name: 'Scale', price: 50, features: ['7,500 daily requests', 'Priority support'] },
+                    { id: 'max', name: 'Max', price: 100, features: ['15,000 daily requests', 'Priority support'] }
                 ];
 
                 // Add any unknown plan the user currently has
@@ -442,37 +473,27 @@
                         id: userPlan.name,
                         name: getPlanName(userPlan.name),
                         price: userPlan.cost,
-                        features: ['All Pro benefits', `${(userPlan.requests || 0).toLocaleString()} daily requests`, 'Priority Support']
+                        features: [`${(userPlan.requests || 0).toLocaleString()} daily requests`, 'Priority support']
                     });
                 }
 
-                const checkSvg = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="check"><path d="M2 6l3 3 5-5" stroke="#9b30ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
                 container.innerHTML = plans.map(plan => {
                     const isCurrent = userPlan.name === plan.id;
-                    let actionHtml = '';
-
-                    if (!isLoggedIn) {
-                        actionHtml = `<a href="/signin" class="btn-white">Sign in to purchase</a>`;
-                    } else if (isCurrent) {
-                        actionHtml = `<div class="bubble">Current plan</div>`;
-                    } else {
-                        const btnText = plan.id === 'free' ? 'Switch to Free' : `Get ${plan.name}`;
-                        actionHtml = `<button class="btn-white" onclick="showPlanModal('${plan.id}', '${plan.price}')">${btnText}</button>`;
-                    }
+                    const click = !isLoggedIn
+                        ? `onclick="location.href='/signin'" tabindex="0" role="link"`
+                        : isCurrent ? ''
+                        : `onclick="showPlanModal('${plan.id}','${plan.price}')" tabindex="0" role="button"`;
+                    const current = isCurrent ? ' data-current' : '';
+                    const cta = isCurrent ? 'Current' : plan.price === 0 ? 'Get started' : `Get ${plan.name}`;
 
                     return `
-                        <div class="plan-box">
-                            <div class="plan-header">
-                                <span class="plan-name">${plan.name}</span>
-                            </div>
-                            <div class="pretty">$${plan.price}<span>/mo</span></div>
-                            <div class="plan-divider"></div>
-                            <div class="plan-features">
-                                ${plan.features.map(f => {
-                                    return `<div class="plan-feature">${checkSvg}<span>${f}</span></div>`;
-                                }).join('')}
-                            </div>
-                            ${actionHtml}
+                        <div class="plan-box"${click}${current}>
+                            <h3 class="plan-name">${plan.name}</h3>
+                            <strong class="plan-price">$${plan.price}<em>/mo</em></strong>
+                            <ul class="plan-features">
+                                ${plan.features.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                            <div class="plan-cta${isCurrent ? ' plan-cta--current' : ''}">${cta}</div>
                         </div>
                     `;
                 }).join('');
