@@ -12,6 +12,18 @@
     --bright-text: #b366ff;
 }
 
+[data-theme="light"] {
+    --border: rgba(0, 0, 0, 0.15);
+    --background: rgba(0, 0, 0, 0.05);
+    --dark-background: #f7f7f8;
+    --hover-background: #f0f0f1;
+    --text: #111111;
+    --link-text: #555555;
+    --input-focus: #e5e5e7;
+    --bright: #9b30ff;
+    --bright-text: #7c3aed;
+}
+
 .selected-page {
     color: var(--bright-text);
 }
