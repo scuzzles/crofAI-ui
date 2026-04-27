@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ theme|default("dark") }}">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,33 +11,39 @@
             name="description"
             content="The cheapest inference provider for large models"
         />
-        <title>CrofAI - Settings</title>
+        <title>Settings</title>
         <link rel="stylesheet" href="/ui/crofui.css" />
         <script src="https://files.nahcrof.com/file/styl.js"></script>
 
         <style>
-            .page-header {
-                margin-top: 12vh;
-                text-align: center;
+	:root {
+                --p-bg: #000;
+                --p-surface: #0c0c0c;
+                --p-surface-2: #111;
+                --p-border: #232323;
+                --p-text: #e5e5e5;
+                --p-muted: #666;
+                --p-bright: #fff;
+                --p-accent: #9b30ff;
+                --p-accent-dim: rgba(155, 48, 255, 0.12);
+                --p-radius: 12px;
             }
 
-            .page-header h1 {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-                font-size: 2.2rem;
-                color: var(--bright-text);
-                margin: 0;
+            [data-theme="light"] {
+                --p-bg: #ffffff;
+                --p-surface: #f7f7f8;
+                --p-surface-2: #ededef;
+                --p-border: #e4e4e7;
+                --p-text: #111111;
+                --p-muted: #666;
+                --p-bright: #000;
+                --p-accent: #7c3aed;
+                --p-accent-dim: rgba(124, 58, 237, 0.1);
             }
-
-            .page-subtitle {
-                color: var(--link-text);
-                margin-top: 6px;
-            }
-
             .settings-container {
                 margin: 40px auto 80px auto;
                 width: 90%;
-                max-width: 800px;
+                max-width: 40rem;
             }
 
             .panel {
@@ -46,9 +52,8 @@
                 padding: 22px;
                 transition: 0.3s ease;
                 background: transparent;
-                margin-bottom: 20px; /* Space between stacked panels */
+                margin-bottom: 20px;
             }
-
 
             .panel .title-row {
                 display: flex;
@@ -79,8 +84,8 @@
             }
 
             .input {
-                width: 95%;
-                background: var(--background);
+                width: 100%;
+                background: var(--p-surface);
                 color: var(--text);
                 border: 1px solid var(--border);
                 border-radius: 9px;
@@ -88,6 +93,7 @@
                 font-size: 0.95rem;
                 outline: none;
                 transition: border 0.2s ease;
+                font-family: inherit;
             }
 
             .row {
@@ -103,11 +109,10 @@
                 flex-wrap: wrap;
             }
 
-            /* Set all buttons to the requested width */
             .settings-container .btn,
             .settings-container .btn-white {
                 width: 200px;
-                justify-content: center; /* Center text in the button */
+                justify-content: center;
             }
 
             .credits-box {
@@ -122,7 +127,7 @@
 
             .toggle-row {
                 display: flex;
-		flex-wrap: wrap;
+                flex-wrap: wrap;
                 justify-content: space-between;
                 align-items: center;
                 border: 1px solid var(--border);
@@ -132,13 +137,12 @@
             }
 
             .toggle-caption {
-		max-width: 625px;
+                max-width: 625px;
                 color: var(--link-text);
                 margin-top: 6px;
                 font-size: 0.95rem;
             }
 
-            /* Simpler Toggle Switch */
             .toggle-switch {
                 position: relative;
                 display: inline-block;
@@ -155,10 +159,7 @@
             .slider {
                 position: absolute;
                 cursor: pointer;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                top: 0; left: 0; right: 0; bottom: 0;
                 background-color: var(--border);
                 transition: 0.3s;
                 border-radius: 34px;
@@ -176,10 +177,7 @@
                 border-radius: 50%;
             }
 
-            input:checked + .slider {
-                background-color: white;
-            }
-
+            input:checked + .slider { background-color: white; }
             input:checked + .slider:before {
                 background-color: black;
                 transform: translateX(22px);
@@ -195,17 +193,159 @@
                 font-size: 0.95rem;
             }
 
-            .spacer-vert {
-                height: 12px;
+            .spacer-vert { height: 12px; }
+
+            .preset-amounts {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+                flex-wrap: wrap;
             }
-	    .btn-wrapper {
-		display: flex;
-		justify-content: center;
-	    }
 
+            .preset-btn {
+                padding: 6px 12px;
+                border: 1px solid var(--border);
+                background: var(--background);
+                color: var(--text);
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: all 0.2s ease;
+                font-family: inherit;
+            }
 
+            .preset-btn:hover {
+                border-color: var(--bright-text);
+                color: var(--bright-text);
+            }
 
+            .credit-input-group {
+                margin: auto;
+                width: 90%;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 15px;
+            }
 
+            .credit-input-wrapper {
+                position: relative;
+                flex: 1;
+            }
+
+            .credit-input-wrapper::before {
+                content: "$";
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--link-text);
+                font-size: 0.95rem;
+            }
+
+            #credit-amount {
+                padding-left: 25px;
+                width: 100%;
+            }
+
+            .btn-loading {
+                opacity: 0.6;
+                pointer-events: none;
+            }
+
+            .credits-locked {
+                opacity: 0.4;
+                pointer-events: none;
+                user-select: none;
+            }
+
+            .no-billing-notice {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: var(--background);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 12px 14px;
+                margin-top: 14px;
+                color: var(--link-text);
+                font-size: 0.95rem;
+            }
+
+            .no-billing-notice a {
+                color: var(--bright-text);
+                text-decoration: underline;
+                white-space: nowrap;
+            }
+
+            .credits-modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(4px);
+                z-index: 9999;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .credits-modal {
+                background: var(--dark-background, #111);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 32px 36px;
+                max-width: 420px;
+                width: 90%;
+                text-align: center;
+                animation: modalFadeIn 0.3s ease;
+            }
+
+            @keyframes modalFadeIn {
+                from { opacity: 0; transform: scale(0.95) translateY(10px); }
+                to   { opacity: 1; transform: scale(1) translateY(0); }
+            }
+
+            .credits-modal .modal-icon {
+                font-size: 2.4rem;
+                margin-bottom: 12px;
+            }
+
+            .credits-modal .modal-title {
+                font-size: 1.15rem;
+                color: var(--text);
+                font-weight: 500;
+                margin-bottom: 8px;
+            }
+
+            .credits-modal .modal-desc {
+                color: var(--link-text);
+                font-size: 0.95rem;
+                margin-bottom: 24px;
+                line-height: 1.5;
+            }
+
+            .credits-modal .modal-refresh-btn {
+                width: 100%;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 0.95rem;
+                padding: 10px 0;
+            }
+
+            .credits-modal .modal-spinner {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                border: 2px solid var(--link-text);
+                border-top-color: var(--bright-text);
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                margin-bottom: 14px;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
         </style>
     </head>
     <body>
@@ -219,6 +359,7 @@
             <ul>
                 <li><a href="/">Playground</a></li>
                 <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/dedicated">Dedicated</a></li>
                 <li><a href="/pricing">Pricing</a></li>
                 <li><a href="/docs">Documentation</a></li>
                 <li>
@@ -230,9 +371,10 @@
 
         <div class="overlay"></div>
 
-	<br><br><br><br><br><br>
+        <br><br><br><br><br><br>
 
         <div class="settings-container">
+
             <!-- Account Settings -->
             <div class="panel">
                 <div class="title-row">
@@ -254,59 +396,46 @@
                         id="email"
                         class="input"
                         placeholder="Enter an Email"
+                        value="{{email or ''}}"
                     />
                 </div>
                 <div class="btn-row">
                     <button class="btn" onclick="updateEmail()">Update Email</button>
-
-                    {% if email %}
-                    <script>
-                        function addCredits() {
-                            window.location.replace("/settings-api/add-credits");
-                        }
-                    </script>
-                    {% else %}
-                    <script>
-                        function addCredits() {
-                            alert("You must have an email to add credits to your account");
-                        }
-                    </script>
-                    {% endif %}
                 </div>
 
                 <div class="hr"></div>
 
-                <!-- Password -->
                 <div class="title">Change Password</div>
                 <div class="field">
                     <label class="label" for="current-password">Current password</label>
-                    <input
-                        type="password"
-                        id="current-password"
-                        class="input"
-                        placeholder="Enter current password"
-                    />
+                    <input type="password" id="current-password" class="input" placeholder="Enter current password" />
                 </div>
                 <div class="field">
                     <label class="label" for="new-password">New password</label>
-                    <input
-                        type="password"
-                        id="new-password"
-                        class="input"
-                        placeholder="Enter new password"
-                    />
+                    <input type="password" id="new-password" class="input" placeholder="Enter new password" />
                 </div>
                 <div class="field">
                     <label class="label" for="confirm-password">Confirm new password</label>
-                    <input
-                        type="password"
-                        id="confirm-password"
-                        class="input"
-                        placeholder="Confirm new password"
-                    />
+                    <input type="password" id="confirm-password" class="input" placeholder="Confirm new password" />
                 </div>
                 <div class="btn-row">
                     <button class="btn" onclick="updatePassword()">Update Password</button>
+                </div>
+            </div>
+
+            <!-- Appearance -->
+            <div class="panel">
+                <div class="title">Appearance</div>
+                <div class="subtitle">Switch between dark and light mode.</div>
+                <div class="toggle-row" style="margin-top: 10px;">
+                    <div>
+                        <div style="color: var(--text);">Light mode</div>
+                        <div class="toggle-caption">Dark mode is the default. Your preference is saved to your account.</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="themeToggle" {% if theme == "light" %}checked{% endif %} />
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
 
@@ -315,63 +444,75 @@
                 <div class="title">Credits</div>
                 <div class="spacer-vert"></div>
                 <div class="credits-box">${{user_credits}}</div>
-		<br>
-		<button class="btn-wrapper btn-purple" onclick="addCredits()" style="width: 200px;">
-		    Add Credits
-		</button>
+
+                <!-- Add Credits — greyed out if no email -->
+                <div style="margin-top: 20px;" {% if not email %}class="credits-locked"{% endif %}>
+                    <div class="subtitle">Add Credits to Your Account</div>
+                    <div class="preset-amounts">
+                        <button class="preset-btn" onclick="setAmount(10)">$10</button>
+                        <button class="preset-btn" onclick="setAmount(25)">$25</button>
+                        <button class="preset-btn" onclick="setAmount(50)">$50</button>
+                        <button class="preset-btn" onclick="setAmount(100)">$100</button>
+                    </div>
+                    <div class="credit-input-group">
+                        <div class="credit-input-wrapper">
+                            <input
+                                type="number"
+                                id="credit-amount"
+                                class="input"
+                                placeholder="Amount (USD)"
+                                min="2"
+                                step="1"
+                            />
+                        </div><br>
+                    </div>
+                    <div class="btn-row">
+                        <button
+                            class="btn-purple"
+                            id="add-credits-btn"
+                            onclick="initiateCheckout()"
+                            style="width: 140px;"
+                        >
+                            Add Credits
+                        </button>
+                    </div>
+                    <div class="toggle-caption" style="margin-top: 8px;">
+                        Minimum $2. Credits are added instantly after payment.
+                    </div>
+                </div>
+
+                <!-- Only shown when no email -->
+                {% if not email %}
+                <div class="no-billing-notice">
+                    <span>An email address is required before adding credits.</span>
+                    <a href="#email" onclick="document.getElementById('email').focus()">Add email →</a>
+                </div>
+                {% endif %}
 
                 <div class="hr"></div>
 
                 <div class="title">Payment Settings</div>
                 <div class="spacer-vert"></div>
 
-                <div class="toggle-row">
-                    <div>
-                        <div class="title" style="font-size: 1rem">Auto Top Up</div>
-                        <div class="toggle-caption">
-			    Automatically add credits when your balance is low (adds $10 —
-                            requires a default payment method)
-                        </div>
-                    </div>
-                    <label class="toggle-switch" aria-label="Auto Top Up toggle">
-                        {% if top_up %}
-                        <input type="checkbox" id="autoTopUpToggle" checked />
-                        {% else %}
-                        <input type="checkbox" id="autoTopUpToggle" />
-                        {% endif %}
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
                 <div class="btn-row" style="margin-top: 14px">
-                    {% if email %}
-                    <script>
-                        function manageBilling() {
-                            window.location.replace(
-                                "https://billing.stripe.com/p/login/aEU3ePgBj3aEePe288"
-                            );
-                        }
-                    </script>
-                    {% else %}
-                    <script>
-                        function manageBilling() {
-                            alert(
-                                "You must have an email and purchase credits before you can set a default payment method."
-                            );
-                        }
-                    </script>
-                    {% endif %}
-                    <button class="btn" onclick="manageBilling()">Manage Billing</button>
+                    <button class="btn" onclick="manageBilling()" {% if not email %}disabled style="opacity: 0.4; pointer-events: none; cursor: not-allowed;"{% endif %}>Manage Payment Methods</button>
                 </div>
+                {% if not email %}
+                <div class="no-billing-notice" style="margin-top: 10px;">
+                    <span>An email address is required before managing payment methods.</span>
+                    <a href="#email" onclick="document.getElementById('email').focus()">Add email →</a>
+                </div>
+                {% elif not has_id %}
+                <div class="no-billing-notice" style="margin-top: 10px;">
+                    <span>No saved payment method. Click to set one up via Polar.</span>
+                    <a href="/u_v2/billing-setup">Set up →</a>
+                </div>
+                {% endif %}
 
                 <div class="hr"></div>
 
-                <div class="title" style="color: var(--bright)">
-                    Danger Zone
-                </div>
-                <div class="subtitle">
-                    Warning: This action is irreversible. Proceed with caution.
-                </div>
+                <div class="title" style="color: var(--bright)">Danger Zone</div>
+                <div class="subtitle">Warning: This action is irreversible. Proceed with caution.</div>
                 <div class="btn-row">
                     <button class="btn-red" onclick="confirmDeleteAccount()" style="width: 200px;">
                         Delete Account
@@ -380,9 +521,22 @@
             </div>
         </div>
 
+        <!-- Credits Added Modal -->
+        <div class="credits-modal-overlay" id="credits-modal-overlay">
+            <div class="credits-modal">
+                <div class="modal-spinner"></div>
+                <div class="modal-title">Credits Are Being Added</div>
+                <div class="modal-desc">
+                    Your payment was received. Credits are being added to your account and should appear shortly.
+                </div>
+                <button class="btn-purple modal-refresh-btn" onclick="location.replace('/settings')">
+                    Refresh to Check Balance
+                </button>
+            </div>
+        </div>
+
         <script src="/ui/crofui.js"></script>
         <script>
-            // Sidebar/hamburger
             document.addEventListener("DOMContentLoaded", function () {
                 const hamburger = document.querySelector(".hamburger");
                 const sidebar = document.querySelector(".sidebar");
@@ -400,45 +554,90 @@
                     overlay.classList.remove("active");
                 });
 
-                // Auto Top Up toggle
                 const autoTopUpToggle = document.getElementById("autoTopUpToggle");
                 if (autoTopUpToggle) {
                     autoTopUpToggle.addEventListener("change", function () {
                         const state = this.checked ? "on" : "off";
                         try {
-                            styLpost(
-                                "/settings-api/auto-top-up",
-                                JSON.stringify({ toggle: state })
-                            );
-                            console.log(`toggled: ${state}`);
+                            styLpost("/settings-api/auto-top-up", JSON.stringify({ toggle: state }));
                         } catch (e) {
                             console.error(e);
                         }
                     });
                 }
+
+                const themeToggle = document.getElementById("themeToggle");
+                if (themeToggle) {
+                    themeToggle.addEventListener("change", async function () {
+                        const theme = this.checked ? "light" : "dark";
+                        document.documentElement.setAttribute("data-theme", theme);
+                        try {
+                            const res = await fetch("/settings-api/update-theme/" + theme, { method: "POST" });
+                            if (!res.ok) {
+                                createToast("Could not save theme preference.");
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            createToast("Could not save theme preference.");
+                        }
+                    });
+                }
             });
+
+            function setAmount(amount) {
+                document.getElementById('credit-amount').value = amount;
+            }
+
+            async function initiateCheckout() {
+                const amount = parseFloat(document.getElementById('credit-amount').value);
+                const btn = document.getElementById('add-credits-btn');
+
+                if (!amount || amount < 2) {
+                    createToast("Minimum amount is $2");
+                    return;
+                }
+
+                btn.classList.add('btn-loading');
+                btn.textContent = 'Loading...';
+
+                try {
+                    const response = await fetch(`/u_v2/buy-credits/${amount}`);
+                    const data = await response.json();
+
+                    if (data.checkout_url) {
+                        window.location.href = data.checkout_url;
+                    } else {
+                        createToast(data.message || "Failed to create checkout. Please try again.");
+                        btn.classList.remove('btn-loading');
+                        btn.textContent = 'Add Credits';
+                    }
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    createToast("Something went wrong. Please try again.");
+                    btn.classList.remove('btn-loading');
+                    btn.textContent = 'Add Credits';
+                }
+            }
+
+            function manageBilling() {
+                window.open('/u_v2/billing-setup', '_blank', 'noopener,noreferrer');
+            }
 
             function updateEmail() {
                 const newEmail = document.getElementById("email").value;
                 if (newEmail.trim() === "") {
-                    alert("Please enter a username");
+                    createToast("Please enter an email");
                     return;
                 }
-                window.location.replace("/settings-api/update-email/" + newEmail);
+                window.location.replace("/settings-api/update-email/" + encodeURIComponent(newEmail));
             }
 
             function updatePassword() {
-                const currentPassword =
-                    document.getElementById("current-password").value;
+                const currentPassword = document.getElementById("current-password").value;
                 const newPassword = document.getElementById("new-password").value;
-                const confirmPassword =
-                    document.getElementById("confirm-password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
 
-                if (
-                    currentPassword.trim() === "" ||
-                    newPassword.trim() === "" ||
-                    confirmPassword.trim() === ""
-                ) {
+                if (!currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()) {
                     alert("Please fill in all password fields");
                     return;
                 }
@@ -450,48 +649,53 @@
 
                 fetch("/settings-api/update-password", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        currentPassword: currentPassword,
-                        newPassword: newPassword,
-                    }),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ currentPassword, newPassword }),
                 })
-                    .then((response) => response.json())
-                    .then((updatePasswordResponse) => {
-                        if (updatePasswordResponse["error"]) {
-                            createToast(updatePasswordResponse["message"]);
-                        } else {
-                            createToast("Password updated successfully!");
-                        }
+                    .then((r) => r.json())
+                    .then((res) => {
+                        createToast(res.error ? res.message : "Password updated successfully!");
                     })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
+                    .catch((e) => console.error("Error:", e));
 
-                // Clear fields
                 document.getElementById("current-password").value = "";
                 document.getElementById("new-password").value = "";
                 document.getElementById("confirm-password").value = "";
             }
 
-            function confirmDeleteAccount() {
-                let confirmDelete = window.prompt(
-                    'This action cannot be undone. Type "Delete my account" to continue'
-                );
-                if (confirmDelete === "Delete my account") {
-                    window.location.replace("/settings-api/delete-user");
-                } else {
+            async function confirmDeleteAccount() {
+                const confirmDelete = window.prompt('This action cannot be undone. Type "Delete my account" to continue');
+                if (confirmDelete !== "Delete my account") {
                     createToast("canceled");
+                    return;
+                }
+                try {
+                    const res = await fetch("/settings-api/delete-user", {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ confirm: "delete" }),
+                    });
+                    if (res.ok) {
+                        const data = await res.json().catch(() => ({}));
+                        window.location.replace(data.redirect || "/logout");
+                    } else {
+                        createToast("Could not delete account, please try again.");
+                    }
+                } catch (e) {
+                    createToast("Network error, please try again.");
                 }
             }
         </script>
 
         {% if error %}
-        <script>
-	    createToast("{{error}}");
-        </script>
+        <script>createToast("{{error}}");</script>
         {% endif %}
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("credits_added") === "true") {
+                document.getElementById("credits-modal-overlay").style.display = "flex";
+            }
+        </script>
     </body>
 </html>
