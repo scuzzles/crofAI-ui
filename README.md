@@ -18,9 +18,7 @@ Some pages expect Jinja2 template variables (passed by the Python backend at `cr
 ├── settings.html       account settings
 ├── docs.html           documentation
 ├── dedicated.html      dedicated deployment management
-├── router.html         model router explorer
 ├── signin / signup     auth pages
-├── admin-*.html        admin panel pages
 ├── crofui.css          global styles
 ├── crofui.js           global scripts
 └── *.html              legal / misc pages
