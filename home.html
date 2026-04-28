@@ -774,19 +774,19 @@ const providers=[
 {name:"CrofAI $20",type:'fixed',limit:2500,price:20},
 {name:"CrofAI $10",type:'fixed',limit:1000,price:10},
 {name:"CrofAI $5",type:'fixed',limit:500,price:5},
-{name:"OpenAI $100",type:'payg',cap:3897,inR:2.5,outR:15,readR:0.25,writeR:0,price:100,model:'GPT-5.4',link:'https://kendell.dev/milliblog/codexlimits/'},
-{name:"OpenAI $20",type:'payg',cap:780,inR:2.5,outR:15,readR:0.25,writeR:0,price:20,model:'GPT-5.4',link:'https://kendell.dev/milliblog/codexlimits/'},
-{name:"OpenCode $10",type:'payg',cap:60,inR:1.4,outR:4.4,readR:0.26,writeR:0,price:10,model:'GLM-5.1',link:'https://opencode.ai/docs/go/#usage-limits'},
-{name:"Chutes $3",type:'payg',cap:15,inR:1.05,outR:3.5,readR:0.525,writeR:0,price:3,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
-{name:"Chutes $10",type:'payg',cap:50,inR:1.05,outR:3.5,readR:0.525,writeR:0,price:10,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
-{name:"Chutes $20",type:'payg',cap:100,inR:1.05,outR:3.5,readR:0.525,writeR:0,price:20,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
-{name:"Claude $20",type:'payg',cap:163,inR:3,outR:15,readR:0,writeR:3,price:20,model:'Claude Sonnet',link:'https://she-llac.com/claude-limits'},
-{name:"Claude $100",type:'payg',cap:1354,inR:3,outR:15,readR:0,writeR:3,price:100,model:'Claude Sonnet',link:'https://she-llac.com/claude-limits'},
+{name:"OpenAI $100",type:'payg',cap:3897,inR:2.5,outR:15,readR:0.25,price:100,model:'GPT-5.4',link:'https://kendell.dev/milliblog/codexlimits/'},
+{name:"OpenAI $20",type:'payg',cap:780,inR:2.5,outR:15,readR:0.25,price:20,model:'GPT-5.4',link:'https://kendell.dev/milliblog/codexlimits/'},
+{name:"OpenCode $10",type:'payg',cap:60,inR:1.4,outR:4.4,readR:0.26,price:10,model:'GLM-5.1',link:'https://opencode.ai/docs/go/#usage-limits'},
+{name:"Chutes $3",type:'payg',cap:15,inR:1.05,outR:3.5,readR:0.525,price:3,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
+{name:"Chutes $10",type:'payg',cap:50,inR:1.05,outR:3.5,readR:0.525,price:10,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
+{name:"Chutes $20",type:'payg',cap:100,inR:1.05,outR:3.5,readR:0.525,price:20,model:'GLM-5.1',link:'https://chutes.ai/pricing'},
+{name:"Claude $20",type:'payg',cap:163,inR:3,outR:15,readR:0,price:20,model:'Claude Sonnet',link:'https://she-llac.com/claude-limits'},
+{name:"Claude $100",type:'payg',cap:1354,inR:3,outR:15,readR:0,price:100,model:'Claude Sonnet',link:'https://she-llac.com/claude-limits'},
 ];
 const s={in:5000,out:5000,read:95000};
 function calc(p){
 if(p.type==='fixed')return p.limit*30;
-const cpm=(s.in*(p.inR+p.writeR))+(s.out*p.outR)+(s.read*p.readR);
+const cpm=(s.in*p.inR/*assume write surcharge is 0*/)+(s.out*p.outR)+(s.read*p.readR);
 return Math.floor(p.cap/(cpm/1e6));
 }
 function color(n){
