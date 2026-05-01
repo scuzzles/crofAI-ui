@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="/ui/crofui.css">
 
     <style>
-        /* Playground color theme */
         :root {
             --border: #232323;
             --background: rgba(255,255,255,0.04);
@@ -17,6 +16,11 @@
             --hover-background: var(--palette-bg-3);
             --link-text: #666;
             --bright-text: #a678e8;
+            --purple-dark: #3b0764;
+            --purple-mid: #7c3aed;
+            --purple-light: #c4b5fd;
+            --card-bg: rgba(255,255,255,0.03);
+            --glow: 0 0 20px rgba(124, 58, 237, 0.1);
         }
 
         [data-theme="light"] {
@@ -24,7 +28,13 @@
             --background: rgba(0, 0, 0, 0.04);
             --link-text: #666;
             --bright-text: #7c3aed;
+            --purple-dark: #5b21b6;
+            --purple-mid: #7c3aed;
+            --purple-light: #c4b5fd;
+            --card-bg: rgba(0,0,0,0.02);
+            --glow: 0 0 20px rgba(124, 58, 237, 0.08);
         }
+
         .logo { height: 50px; width: auto; }
         header { margin-top: 25px; display: flex; justify-content: center; flex: 0 0 auto; margin-bottom: 125px; }
         header nav { margin-left: auto; margin-top: 10px; display: flex; }
@@ -32,25 +42,32 @@
         header .link { margin-left: 20px; color: var(--link-text); border: 1px solid transparent; width: auto; height: 17px; padding: 7px 10px; border-radius: 14px; text-decoration: none; transition: 0.3s ease; }
         header .link:hover { background: var(--hover-background); color: var(--text); }
 
-        /* Stats */
         .top-stats { width: 100%; display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; }
-        .stat-box { flex: 1 1 15rem; border-radius: 12px; border: 1px solid var(--border); padding: 30px; transition: 0.3s ease; }
-        .stat-box:hover { background: var(--dark-background); }
+        .stat-box { flex: 1 1 15rem; border-radius: 12px; border: 1px solid var(--border); padding: 30px; transition: 0.3s ease; background: var(--card-bg); }
+        .stat-box:hover { background: var(--dark-background); box-shadow: var(--glow); }
         pretty { color: var(--bright-text); font-size: 1.5rem; }
-
         .stat-label { display: flex; align-items: center; gap: 6px; }
 
         @media (max-width: 600px) { .top-stats .stat-box { flex: 1 1 100%; } }
 
-        /* Usage section */
-        .usage-header-container { display: flex; align-items: center; gap: 20px; }
+        .usage-header-container { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .usage-header { font-size: 2rem; color: var(--bright-text); }
         .nav-btn { background: var(--dark-background); border: 1px solid var(--border); color: var(--text); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: inherit; }
         .nav-btn:hover { background: var(--hover-background); }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* API keys */
-        .token-section { margin: auto; width: 100%; border-radius: 12px; padding: 30px; border: 1px solid var(--border); }
+        .period-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .period-tab { padding: 6px 16px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--link-text); font-size: 0.8rem; font-family: inherit; cursor: pointer; transition: 0.2s; }
+        .period-tab:hover { background: var(--hover-background); color: var(--text); }
+        .period-tab.active { background: rgba(124,58,237,0.15); border-color: var(--purple-mid); color: var(--bright-text); }
+
+        .sub-selector { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .sub-selector .label { font-size: 0.75rem; color: var(--link-text); margin-right: 4px; }
+        .sub-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--link-text); font-size: 0.78rem; font-family: inherit; cursor: pointer; transition: 0.15s; }
+        .sub-btn:hover { background: var(--hover-background); color: var(--text); }
+        .sub-btn.active { border-color: var(--purple-mid); background: rgba(124,58,237,0.12); color: var(--bright-text); }
+
+        .token-section { margin: auto; width: 100%; border-radius: 12px; padding: 30px; border: 1px solid var(--border); background: var(--card-bg); }
         .token-section .header-text { font-size: 1.5rem; margin-bottom: 8px; }
         .description { color: var(--bright-text); margin-bottom: 20px; font-size: 0.9rem; }
 
@@ -58,7 +75,6 @@
         .api-details { display: flex; flex-direction: column; }
         .api-name { font-weight: 600; color: var(--bright-text); }
         .api-hidden-val { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #666; margin-top: 4px; }
-
         .api-actions { display: flex; gap: 15px; align-items: center; }
         .delete-icon { color: #ff4d4d; cursor: pointer; transition: 0.2s; opacity: 0.7; }
         .delete-icon:hover { opacity: 1; transform: scale(1.1); }
@@ -72,6 +88,70 @@
 
         svg { cursor: pointer; transition: 0.2s; vertical-align: middle; }
         svg:hover { color: #9B30FF; }
+
+        .card-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: 0.3s ease; }
+        .card-panel:hover { box-shadow: var(--glow); }
+        .card-panel .title { font-size: 1.15rem; color: var(--bright-text); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .card-panel .subtitle { font-size: 0.8rem; color: var(--link-text); margin-top: -14px; margin-bottom: 20px; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+        .summary-item { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: 0.2s; }
+        .summary-item:hover { background: rgba(255,255,255,0.06); }
+        .summary-item .label { font-size: 0.75rem; color: var(--link-text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .summary-item .value { font-size: 1.4rem; font-weight: 700; }
+        .summary-item .pct { font-size: 0.8rem; color: var(--link-text); margin-top: 4px; }
+        .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+
+        .pricing-list { display: flex; flex-direction: column; gap: 8px; }
+        .pricing-container { max-height: 320px; overflow-y: auto; padding-right: 4px; }
+        .pricing-container::-webkit-scrollbar { width: 4px; }
+        .pricing-container::-webkit-scrollbar-track { background: transparent; }
+        .pricing-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .pricing-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; transition: 0.2s; }
+        .pricing-row:hover { background: rgba(255,255,255,0.06); }
+        .pricing-row .model { color: var(--bright-text); font-weight: 600; font-size: 0.85rem; min-width: 120px; }
+        .pricing-row .rates { display: flex; gap: 8px; flex-wrap: wrap; }
+        .pricing-row .rate { font-size: 0.72rem; padding: 3px 8px; border-radius: 5px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+        .pricing-row .rate .val { font-weight: 600; }
+        .pricing-row .rate.in { color: #c4b5fd; }
+        .pricing-row .rate.ca { color: #a78bfa; }
+        .pricing-row .rate.out { color: #7c3aed; }
+
+        .cost-display { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+        .cost-amount { font-size: 2rem; font-weight: 700; color: var(--bright-text); }
+        .cost-label { font-size: 0.85rem; color: var(--link-text); }
+        .cost-breakdown { font-size: 0.8rem; color: var(--link-text); margin-top: 6px; line-height: 1.5; }
+
+        .legend { display: flex; gap: 20px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text); padding: 4px 12px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+        .legend-swatch { width: 10px; height: 10px; border-radius: 3px; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+        .chart-container { width: 100%; min-height: 320px; }
+        .chart-container canvas { max-height: 360px; }
+
+        .key-selector { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+        .key-selector .label { font-size: 0.8rem; color: var(--link-text); }
+        .key-pill { padding: 5px 14px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--link-text); font-size: 0.78rem; font-family: inherit; cursor: pointer; transition: 0.15s; }
+        .key-pill:hover { background: var(--hover-background); color: var(--text); }
+        .key-pill.active { border-color: var(--purple-mid); background: rgba(124,58,237,0.12); color: var(--bright-text); }
+
+        .history-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .history-table th { text-align: left; padding: 10px 8px; color: var(--link-text); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        .history-table td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .history-table tr:hover td { background: rgba(255,255,255,0.03); }
+        .history-table .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+        .history-table .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+        .history-table .model-cell { color: var(--bright-text); }
+        .history-wrap { max-height: 400px; overflow-y: auto; }
+        .history-wrap::-webkit-scrollbar { width: 4px; }
+        .history-wrap::-webkit-scrollbar-track { background: transparent; }
+        .history-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 16px; }
+        .pagination .info { font-size: 0.8rem; color: var(--link-text); }
     </style>
 </head>
 <body>
@@ -104,20 +184,104 @@
         {% endif %}
     </div>
 
-    <br><br><br><br>
+    <br><br>
 
     <div class="usage-header-container">
-        <button class="nav-btn" onclick="changeMonth(-1)">←</button>
-        <div class="usage-header" id="display-month">Monthly Usage ({{month}})</div>
-        <button class="nav-btn" id="next-btn" onclick="changeMonth(1)" disabled>→</button>
+        <button class="nav-btn" onclick="changePeriod(-1)">&#8592;</button>
+        <div class="usage-header" id="display-month">Usage &mdash; {{month}}</div>
+        <button class="nav-btn" id="next-btn" onclick="changePeriod(1)" disabled>&#8594;</button>
+        <div class="period-tabs">
+            <button class="period-tab" data-period="daily" onclick="setPeriod('daily')">Daily</button>
+            <button class="period-tab" data-period="weekly" onclick="setPeriod('weekly')">Weekly</button>
+            <button class="period-tab active" data-period="monthly" onclick="setPeriod('monthly')">Monthly</button>
+            <button class="period-tab" data-period="yearly" onclick="setPeriod('yearly')">Yearly</button>
+        </div>
     </div>
+
+    <div id="sub-selector-row" style="margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"></div>
 
     <br>
-    <div class="total_tokens_chart">
-        <canvas class="chart" id="total-tokens"></canvas>
+
+    <div class="card-panel" id="summary-panel">
+        <div class="title">Token Summary</div>
+        <div class="summary-grid" id="summary-grid">
+            <div class="summary-item">
+                <div class="label"><span class="dot" style="background: var(--purple-dark);"></span>Input</div>
+                <div class="value" id="sum-input">0</div>
+                <div class="pct" id="pct-input">0% of total</div>
+            </div>
+            <div class="summary-item">
+                <div class="label"><span class="dot" style="background: var(--purple-mid);"></span>Cached Input</div>
+                <div class="value" id="sum-cached">0</div>
+                <div class="pct" id="pct-cached">0% of total</div>
+            </div>
+            <div class="summary-item">
+                <div class="label"><span class="dot" style="background: var(--purple-light);"></span>Output</div>
+                <div class="value" id="sum-output">0</div>
+                <div class="pct" id="pct-output">0% of total</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Total</div>
+                <div class="value" id="sum-total" style="color: var(--bright-text);">0</div>
+                <div class="pct" id="pct-total">All usage</div>
+            </div>
+        </div>
     </div>
 
-    <br><br><br><br>
+    <br><br>
+
+    <div class="dashboard-grid">
+        <div class="card-panel">
+            <div class="title">Token Distribution</div>
+            <div class="chart-container">
+                <canvas id="total-tokens"></canvas>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-swatch" style="background:var(--purple-dark);"></span>Input</div>
+                <div class="legend-item"><span class="legend-swatch" style="background:var(--purple-mid);"></span>Cached</div>
+                <div class="legend-item"><span class="legend-swatch" style="background:var(--purple-light);"></span>Output</div>
+            </div>
+        </div>
+
+        <div class="card-panel">
+            <div class="title">Pricing &amp; Cost</div>
+            <div class="subtitle">Per million tokens</div>
+            <div class="pricing-container"><div class="pricing-list" id="pricing-list"></div></div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                <div class="cost-label">Estimated cost this period</div>
+                <div class="cost-display">
+                    <span class="cost-amount" id="estimated-cost">$0.0000</span>
+                </div>
+                <div class="cost-breakdown" id="cost-breakdown"></div>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    <div class="card-panel">
+        <div class="title">Usage History</div>
+        <div class="key-selector" id="key-selector"></div>
+        <div class="history-wrap">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Model</th>
+                        <th style="text-align:right;">Input</th>
+                        <th style="text-align:right;">Cached</th>
+                        <th style="text-align:right;">Output</th>
+                        <th style="text-align:right;">Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body"></tbody>
+            </table>
+        </div>
+        <div class="pagination" id="history-pagination"></div>
+    </div>
+
+    <br><br>
 
     <div class="token-section">
         {% if api_tokens is defined %}
@@ -228,75 +392,427 @@
 
         function displayError(msg) { createToast(msg); }
 
-        // Chart & Data Logic
-        const now = new Date();
-        let viewYear = now.getFullYear();
-        let viewMonth = now.getMonth() + 1;
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1;
-        let total_tokens_chart;
+        // ===== Model Pricing =====
+        const MODEL_PRICING = {
+            "deepseek-v4-pro": { input: 0.40, cached: 0.08, output: 0.85 },
+            "glm-5.1":        { input: 0.45, cached: 0.09, output: 2.10 },
+            "kimi-k2.6":      { input: 0.50, cached: 0.10, output: 1.99 },
+            "qwen3.5-9b":     { input: 0.00, cached: 0.00, output: 0.00 },
+        };
 
+        const DEFAULT_PRICING = { input: 1.00, cached: 0.50, output: 2.00 };
+
+        function getModelPricing(model) {
+            return MODEL_PRICING[model] || DEFAULT_PRICING;
+        }
+
+        function calculateCost(model, d) {
+            const p = getModelPricing(model);
+            return (d.input_tokens / 1e6) * p.input + (d.cached_input_tokens / 1e6) * p.cached + (d.output_tokens / 1e6) * p.output;
+        }
+
+        // ===== Mock Data =====
+        function seededRand(seed) {
+            const x = Math.sin(seed * 9301 + 49297) * 49297;
+            return x - Math.floor(x);
+        }
+
+        function scaleData(base, factor) {
+            const r = {};
+            Object.entries(base).forEach(([m, d]) => {
+                r[m] = { input_tokens: Math.round(d.input_tokens * factor), cached_input_tokens: Math.round(d.cached_input_tokens * factor), output_tokens: Math.round(d.output_tokens * factor) };
+            });
+            return r;
+        }
+
+        function varyData(base, seed) {
+            const r = {};
+            Object.entries(base).forEach(([m, d]) => {
+                const v = 0.6 + seededRand(seed + m.charCodeAt(0)) * 0.8;
+                r[m] = { input_tokens: Math.round(d.input_tokens * v), cached_input_tokens: Math.round(d.cached_input_tokens * v), output_tokens: Math.round(d.output_tokens * v) };
+            });
+            return r;
+        }
+
+        const MOCK_BASE_MONTHLY = {
+            "deepseek-v4-pro": { input_tokens: 3250000, cached_input_tokens: 1450000, output_tokens: 980000 },
+            "glm-5.1":        { input_tokens: 2100000, cached_input_tokens: 720000,  output_tokens: 650000 },
+            "kimi-k2.6":      { input_tokens: 1800000, cached_input_tokens: 680000,  output_tokens: 510000 },
+            "qwen3.5-9b":     { input_tokens: 420000,  cached_input_tokens: 95000,   output_tokens: 130000 },
+        };
+
+        const MOCK_YEARLY = {};
+        let yearlyTotal = {};
+        for (let m = 1; m <= 12; m++) {
+            MOCK_YEARLY[m] = varyData(MOCK_BASE_MONTHLY, m * 7);
+        }
+        Object.values(MOCK_YEARLY).forEach(md => {
+            Object.entries(md).forEach(([model, d]) => {
+                if (!yearlyTotal[model]) yearlyTotal[model] = { input_tokens: 0, cached_input_tokens: 0, output_tokens: 0 };
+                yearlyTotal[model].input_tokens += d.input_tokens;
+                yearlyTotal[model].cached_input_tokens += d.cached_input_tokens;
+                yearlyTotal[model].output_tokens += d.output_tokens;
+            });
+        });
+
+        const MOCK_MONTHLY = MOCK_BASE_MONTHLY;
+        const MOCK_WEEKLY = {};
+        for (let w = 1; w <= 4; w++) MOCK_WEEKLY[w] = varyData(scaleData(MOCK_BASE_MONTHLY, 0.25), w * 13);
+        const MOCK_DAILY = {};
+        for (let d = 1; d <= 31; d++) MOCK_DAILY[d] = varyData(scaleData(MOCK_BASE_MONTHLY, 1/31), d * 31);
+
+        // ===== Mock API Keys =====
+        const MOCK_KEYS = {
+            "sk-prod":   { name: "Production", weight: 0.55 },
+            "sk-staging": { name: "Staging",    weight: 0.30 },
+            "sk-dev":     { name: "Development",weight: 0.15 },
+        };
+
+        let selectedKey = 'all';
+
+        // ===== Mock Request History =====
+        function generateHistory(periodData, key) {
+            const models = Object.keys(periodData);
+            const rows = [];
+            const totalReqs = 85;
+            const now = new Date();
+
+            for (let i = 0; i < totalReqs; i++) {
+                const model = models[i % models.length];
+                const base = periodData[model];
+                const fe = 0.3 + seededRand(i * 17) * 1.4;
+                const inT = Math.round((base.input_tokens / totalReqs) * fe);
+                const caT = Math.round((base.cached_input_tokens / totalReqs) * fe);
+                const ouT = Math.round((base.output_tokens / totalReqs) * fe);
+                const cost = calculateCost(model, { input_tokens: inT, cached_input_tokens: caT, output_tokens: ouT });
+
+                const kNames = Object.keys(MOCK_KEYS);
+                const reqKey = kNames[i % kNames.length];
+
+                if (key !== 'all' && reqKey !== key) continue;
+
+                const date = new Date(now);
+                date.setDate(date.getDate() - Math.floor(i / 3));
+                date.setHours(date.getHours() - i * 2);
+
+                rows.push({
+                    ts: date,
+                    model: model,
+                    input: inT,
+                    cached: caT,
+                    output: ouT,
+                    cost: cost,
+                    key: reqKey,
+                });
+            }
+
+            rows.sort((a, b) => b.ts - a.ts);
+            return rows;
+        }
+
+        let historyData = [];
+        const PAGE_SIZE = 15;
+        let historyPage = 0;
+
+        // ===== State =====
+        let currentPeriod = 'monthly';
+        let currentSub = 0;
+        let viewYear = new Date().getFullYear();
+        let viewMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+        let total_tokens_chart;
+        let currentUsageData = {};
+
+        const PERIOD_SELECTORS = {
+            daily: { count: 'dynamic', label: 'Day' },
+            weekly: { count: 4, label: 'Week' },
+            monthly: { count: 0, label: '' },
+            yearly: { count: 0, label: '' },
+        };
+
+        function getDaysInMonth() { return new Date(viewYear, viewMonth, 0).getDate(); }
+        function getSubCount() { return currentPeriod === 'daily' ? getDaysInMonth() : PERIOD_SELECTORS[currentPeriod].count; }
+
+        function formatTokens(n) {
+            if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        function getDataForPeriod() {
+            if (currentPeriod === 'daily') return MOCK_DAILY[currentSub] || MOCK_DAILY[1];
+            if (currentPeriod === 'weekly') return MOCK_WEEKLY[currentSub] || MOCK_WEEKLY[1];
+            if (currentPeriod === 'monthly') return MOCK_MONTHLY;
+            if (currentPeriod === 'yearly') return yearlyTotal;
+            return MOCK_MONTHLY;
+        }
+
+        function getPeriodLabel() {
+            const mn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const names = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly' };
+            const label = names[currentPeriod] || 'Usage';
+            if (currentPeriod === 'yearly') return label + ' &mdash; ' + viewYear;
+            return label + ' &mdash; ' + mn[viewMonth-1] + ' ' + viewYear;
+        }
+
+        function getHeaderForSub() {
+            if (currentPeriod === 'daily') return 'Day ' + currentSub;
+            if (currentPeriod === 'weekly') return 'Week ' + currentSub;
+            return '';
+        }
+
+        // ===== Render: Sub Selector =====
+        function renderSubSelector() {
+            const count = getSubCount();
+            const container = document.getElementById('sub-selector-row');
+            container.innerHTML = '';
+            if (count === 0) return;
+            const inner = document.createElement('div');
+            inner.className = 'sub-selector';
+            const label = document.createElement('span');
+            label.className = 'label';
+            label.textContent = PERIOD_SELECTORS[currentPeriod].label + ':';
+            inner.appendChild(label);
+            for (let i = 1; i <= count; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'sub-btn' + (i === currentSub ? ' active' : '');
+                btn.textContent = i;
+                btn.onclick = () => { currentSub = i; renderSubSelector(); renderAll(); };
+                inner.appendChild(btn);
+            }
+            container.appendChild(inner);
+        }
+
+        // ===== Render: Pricing =====
+        function renderPricing(models) {
+            const list = document.getElementById('pricing-list');
+            list.innerHTML = '';
+            models.forEach(model => {
+                const price = getModelPricing(model);
+                const row = document.createElement('div');
+                row.className = 'pricing-row';
+                row.innerHTML = '<span class="model">' + model + '</span><div class="rates"><span class="rate in">Input <span class="val">$' + price.input.toFixed(3) + '</span></span><span class="rate ca">Cached <span class="val">$' + price.cached.toFixed(3) + '</span></span><span class="rate out">Output <span class="val">$' + price.output.toFixed(3) + '</span></span></div>';
+                list.appendChild(row);
+            });
+        }
+
+        // ===== Render: Summary & Cost =====
+        function updateSummary(data) {
+            let totalInput = 0, totalCached = 0, totalOutput = 0, totalCost = 0;
+
+            Object.entries(data).forEach(([model, d]) => {
+                totalInput += d.input_tokens || 0;
+                totalCached += d.cached_input_tokens || 0;
+                totalOutput += d.output_tokens || 0;
+                totalCost += calculateCost(model, d);
+            });
+
+            const overallTotal = totalInput + totalCached + totalOutput;
+
+            document.getElementById('sum-input').textContent = formatTokens(totalInput);
+            document.getElementById('sum-cached').textContent = formatTokens(totalCached);
+            document.getElementById('sum-output').textContent = formatTokens(totalOutput);
+            document.getElementById('sum-total').textContent = formatTokens(overallTotal);
+
+            if (overallTotal > 0) {
+                document.getElementById('pct-input').textContent = (totalInput / overallTotal * 100).toFixed(1) + '% of total';
+                document.getElementById('pct-cached').textContent = (totalCached / overallTotal * 100).toFixed(1) + '% of total';
+                document.getElementById('pct-output').textContent = (totalOutput / overallTotal * 100).toFixed(1) + '% of total';
+            }
+
+            document.getElementById('estimated-cost').textContent = '$' + totalCost.toFixed(4);
+            const brk = [];
+            if (totalCost > 0.0001) {
+                Object.entries(data).forEach(([model, d]) => {
+                    const c = calculateCost(model, d);
+                    if (c > 0.0001) brk.push(model + ': $' + c.toFixed(4));
+                });
+            }
+            document.getElementById('cost-breakdown').textContent = brk.join(' \u00b7 ');
+        }
+
+        // ===== Render: Stacked Chart =====
+        function renderStackedChart(data) {
+            const sorted = Object.entries(data).sort((a, b) => {
+                const ta = (a[1].input_tokens || 0) + (a[1].cached_input_tokens || 0) + (a[1].output_tokens || 0);
+                const tb = (b[1].input_tokens || 0) + (b[1].cached_input_tokens || 0) + (b[1].output_tokens || 0);
+                return tb - ta;
+            });
+
+            const labels = sorted.map(([model]) => model);
+            const inputData = sorted.map(([, d]) => d.input_tokens || 0);
+            const cachedData = sorted.map(([, d]) => d.cached_input_tokens || 0);
+            const outputData = sorted.map(([, d]) => d.output_tokens || 0);
+
+            if (total_tokens_chart) total_tokens_chart.destroy();
+
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            const gridColor = isDark ? '#292929' : '#e4e4e7';
+
+            total_tokens_chart = new Chart(document.getElementById('total-tokens'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Input Tokens', data: inputData, backgroundColor: 'rgba(59, 7, 100, 0.55)', borderColor: '#6b21a8', borderWidth: 2, hoverBackgroundColor: 'rgba(88, 28, 135, 0.75)' },
+                        { label: 'Cached Input Tokens', data: cachedData, backgroundColor: 'rgba(124, 58, 237, 0.45)', borderColor: '#9333ea', borderWidth: 2, hoverBackgroundColor: 'rgba(139, 92, 246, 0.65)' },
+                        { label: 'Output Tokens', data: outputData, backgroundColor: 'rgba(196, 181, 253, 0.35)', borderColor: '#ddd6fe', borderWidth: 2, hoverBackgroundColor: 'rgba(233, 213, 255, 0.55)' },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(20,20,20,0.95)' : 'rgba(255,255,255,0.95)',
+                            titleColor: isDark ? '#e5e5e5' : '#111',
+                            bodyColor: isDark ? '#ccc' : '#333',
+                            borderColor: 'rgba(124,58,237,0.3)',
+                            borderWidth: 1,
+                            padding: 14,
+                            cornerRadius: 10,
+                            callbacks: {
+                                title: function(items) { return items[0].label; },
+                                label: function(ctx) { return ' ' + ctx.dataset.label + ': ' + (ctx.raw || 0).toLocaleString(); },
+                                afterBody: function(items) {
+                                    const model = items[0].label;
+                                    const d = data[model];
+                                    if (!d) return [];
+                                    const total = (d.input_tokens || 0) + (d.cached_input_tokens || 0) + (d.output_tokens || 0);
+                                    const cost = calculateCost(model, d);
+                                    return [' Total Tokens: ' + total.toLocaleString(), ' Est. Cost: $' + cost.toFixed(4)];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, stacked: true, grid: { color: gridColor }, ticks: { callback: function(val) { return formatTokens(val); } } },
+                        x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 45, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // ===== Render: Key Selector =====
+        function renderKeySelector() {
+            const container = document.getElementById('key-selector');
+            container.innerHTML = '<span class="label">Filter by key:</span>';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = 'key-pill' + (selectedKey === 'all' ? ' active' : '');
+            allBtn.textContent = 'All Keys';
+            allBtn.onclick = () => { selectedKey = 'all'; renderKeySelector(); renderHistory(); };
+            container.appendChild(allBtn);
+
+            Object.entries(MOCK_KEYS).forEach(([id, k]) => {
+                const btn = document.createElement('button');
+                btn.className = 'key-pill' + (selectedKey === id ? ' active' : '');
+                btn.textContent = k.name;
+                btn.onclick = () => { selectedKey = id; renderKeySelector(); renderHistory(); };
+                container.appendChild(btn);
+            });
+        }
+
+        // ===== Render: Request History =====
+        function renderHistory() {
+            const tbody = document.getElementById('history-body');
+            const pagination = document.getElementById('history-pagination');
+            tbody.innerHTML = '';
+
+            const totalPages = Math.ceil(historyData.length / PAGE_SIZE) || 1;
+            if (historyPage >= totalPages) historyPage = totalPages - 1;
+            if (historyPage < 0) historyPage = 0;
+
+            const start = historyPage * PAGE_SIZE;
+            const page = historyData.slice(start, start + PAGE_SIZE);
+
+            page.forEach(r => {
+                const tr = document.createElement('tr');
+                const d = r.ts;
+                const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                const timeStr = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+                tr.innerHTML = '<td class="mono">' + dateStr + '</td><td class="mono">' + timeStr + '</td><td class="model-cell">' + r.model + '</td><td class="num">' + r.input.toLocaleString() + '</td><td class="num">' + r.cached.toLocaleString() + '</td><td class="num">' + r.output.toLocaleString() + '</td><td class="num" style="color:var(--bright-text);">$' + r.cost.toFixed(4) + '</td>';
+                tbody.appendChild(tr);
+            });
+
+            pagination.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            const prev = document.createElement('button');
+            prev.className = 'nav-btn';
+            prev.textContent = '\u2190';
+            prev.disabled = historyPage === 0;
+            prev.onclick = () => { if (historyPage > 0) { historyPage--; renderHistory(); } };
+            pagination.appendChild(prev);
+
+            const info = document.createElement('span');
+            info.className = 'info';
+            info.textContent = 'Page ' + (historyPage + 1) + ' of ' + totalPages;
+            pagination.appendChild(info);
+
+            const next = document.createElement('button');
+            next.className = 'nav-btn';
+            next.textContent = '\u2192';
+            next.disabled = historyPage >= totalPages - 1;
+            next.onclick = () => { if (historyPage < totalPages - 1) { historyPage++; renderHistory(); } };
+            pagination.appendChild(next);
+        }
+
+        // ===== Master Render =====
+        function renderAll() {
+            const data = getDataForPeriod();
+            currentUsageData = data;
+            const subLabel = getHeaderForSub();
+            const headerEl = document.getElementById('display-month');
+
+            if (subLabel) headerEl.innerHTML = getPeriodLabel() + ' <span style="color:var(--link-text);font-size:1.2rem;">&middot;</span> ' + subLabel;
+            else headerEl.innerHTML = getPeriodLabel();
+
+            renderPricing(Object.keys(data));
+            updateSummary(data);
+            renderStackedChart(data);
+
+            historyData = generateHistory(data, selectedKey === 'all' ? null : selectedKey);
+            historyPage = 0;
+            renderHistory();
+        }
+
+        // ===== Navigation =====
+        function setPeriod(period) {
+            if (period === currentPeriod && period !== 'daily') return;
+            currentPeriod = period;
+            const count = getSubCount();
+            if (currentSub > count || currentSub === 0) currentSub = 1;
+            document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.period-tab[data-period="' + period + '"]').classList.add('active');
+            document.getElementById('next-btn').disabled = currentPeriod !== 'yearly' && viewYear === currentYear && viewMonth === currentMonth;
+            renderSubSelector();
+            renderAll();
+        }
+
+        function changePeriod(direction) {
+            if (currentPeriod === 'yearly') { viewYear += direction; renderAll(); return; }
+            viewMonth += direction;
+            if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+            else if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+            const count = getSubCount();
+            if (currentSub > count) currentSub = count;
+            document.getElementById('next-btn').disabled = viewYear === currentYear && viewMonth === currentMonth;
+            renderSubSelector();
+            renderAll();
+        }
+
+        // ===== Legacy =====
         function getCredits() {
-            styLget("/user-api/credits").then(json => { document.getElementById("credits").innerHTML = json; });
+            styLget("/user-api/credits").then(json => { if (json !== null) document.getElementById("credits").innerHTML = json; });
             styLget("/u_v2/get_usable_requests").then(json => {
                 const usable = parseInt(json, 10);
                 const usableEl = document.getElementById("usable_requests");
-                if (usableEl) usableEl.innerHTML = usable + "/{{requests_plan}}";
+                if (!isNaN(usable) && usableEl) usableEl.innerHTML = usable + "/{{requests_plan}}";
             });
-        }
-
-        function updateUsage() {
-            let endpoint = (viewYear === currentYear && viewMonth === currentMonth) 
-                ? "/user-api/usage" 
-                : `/monthly-usage-api/${viewYear}/${viewMonth}`;
-
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById("display-month").innerText = `Monthly Usage (${monthNames[viewMonth-1]} ${viewYear})`;
-            document.getElementById("next-btn").disabled = (viewYear === currentYear && viewMonth === currentMonth);
-
-            styLget(endpoint).then(json => {
-                let model_list = [], tokens_list = [];
-                let entries = Object.entries(json).sort((a, b) => (b[1].total_tokens || 0) - (a[1].total_tokens || 0));
-                entries.forEach(([model, data]) => {
-                    model_list.push(model);
-                    tokens_list.push(data.total_tokens);
-                });
-
-                if (total_tokens_chart) total_tokens_chart.destroy();
-                total_tokens_chart = new Chart(document.getElementById('total-tokens'), {
-                    type: 'bar',
-                    data: {
-                        labels: model_list,
-                        datasets: [{
-                            label: 'Total Tokens',
-                            data: tokens_list,
-                            backgroundColor: "rgba(155, 48, 255, 0.4)",
-                            borderColor: "rgba(155, 48, 255, 1)",
-                            borderWidth: 1,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        interaction: { mode: 'index', intersect: false },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: ctx => ' ' + ctx.parsed.y.toLocaleString() + ' tokens'
-                                }
-                            }
-                        },
-                        scales: { y: { beginAtZero: true, grid: { color: "#292929" } }, x: { grid: { color: "#292929" } } }
-                    }
-                });
-                total_tokens_chart.canvas.parentNode.style.cssText = "background: var(--palette-bg-2); border-radius: 15px; width: 100%; margin: auto;";
-            });
-        }
-
-        function changeMonth(step) {
-            viewMonth += step;
-            if (viewMonth > 12) { viewMonth = 1; viewYear++; }
-            else if (viewMonth < 1) { viewMonth = 12; viewYear--; }
-            updateUsage();
         }
 
         function updateResetTimer() {
@@ -309,13 +825,15 @@
             const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
             const s = String(diff % 60).padStart(2, '0');
             const el = document.getElementById('reset-timer');
-            if (el) el.textContent = `${h}:${m}:${s}`;
+            if (el) el.textContent = h + ':' + m + ':' + s;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             getCredits();
             setInterval(getCredits, 10000);
-            updateUsage();
+            renderSubSelector();
+            renderKeySelector();
+            renderAll();
             updateResetTimer();
             setInterval(updateResetTimer, 1000);
 
@@ -323,13 +841,8 @@
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.overlay');
 
-            hamburger.addEventListener('click', () => {
-                [hamburger, sidebar, overlay].forEach(el => el.classList.toggle('active'));
-            });
-
-            overlay.addEventListener('click', () => {
-                [hamburger, sidebar, overlay].forEach(el => el.classList.remove('active'));
-            });
+            hamburger.addEventListener('click', () => { [hamburger, sidebar, overlay].forEach(el => el.classList.toggle('active')); });
+            overlay.addEventListener('click', () => { [hamburger, sidebar, overlay].forEach(el => el.classList.remove('active')); });
         });
     </script>
 </body>
